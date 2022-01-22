@@ -1,0 +1,31 @@
+{
+  "name": "dodipes-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrollmatias/dodipes-server.git"
+  },
+  "author": "Pedro Matias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pedrollmatias/dodipes-server/issues"
+  },
+  "homepage": "https://github.com/pedrollmatias/dodipes-server#readme",
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "dotenv": "^14.2.0",
+    "fastify": "^3.27.0",
+    "fastify-cors": "^6.0.2",
+    "fastify-jwt": "^4.1.3",
+    "fastify-sensible": "^3.1.2",
+    "fastify-swagger": "^4.13.1"
+  }
+}
