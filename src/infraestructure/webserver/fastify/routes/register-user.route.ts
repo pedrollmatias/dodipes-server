@@ -1,0 +1,35 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { FastifyInstance } from "fastify";
+import { RegisterUser } from "../../../../application/use-cases/user/register-user.use-case";
+import { RegisterUserController } from "../../../../interfaces/controllers/register-user.controller";
+import { RegisterUserPresenter } from "../../../../interfaces/presenters/register-user.presenter";
+import { MongodbUserRepository } from "../../../repositories/mongodb/mongodb-user-repository";
+import { PasswordHasher } from "../../../security/password-hasher";
+import { FastifyRequest, FastifyReply } from "fastify";
+import { IRegisterUserSchema } from "./register-user.schema";
+
+export default async (server: FastifyInstance, opts: any): Promise<void> => {
+  console.log(opts)
+
+  server.post<IRegisterUserSchema>(
+    "/user/registration",
+    async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+      const mongodbUserRepository = new MongodbUserRepository();
+      const passwordHasher = new PasswordHasher();
+
+      const controller = new RegisterUserController(passwordHasher.hash);
+      const contorllerInput = request;
+      const controllerOutput = await controller.handle(contorllerInput);
+
+      const useCase = new RegisterUser(mongodbUserRepository);
+      const userCaseInput = controllerOutput;
+      const useCaseOutput = await useCase.handle(userCaseInput);
+
+      const presenter = new RegisterUserPresenter();
+      const presenterInput = useCaseOutput;
+      const presenterOutput = presenter.handle(presenterInput);
+
+      reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    }
+  );
+};
