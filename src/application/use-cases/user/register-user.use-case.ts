@@ -1,6 +1,7 @@
 import { CustomError, ErrorCodes } from "../../../domain/custom-error";
 import { User } from "../../../domain/user/user";
 import { IUserData } from "../../../domain/user/user-data";
+import { TInsertResponse } from "../../helpers/insert-response";
 import { UserRepository } from "./user-repository";
 
 export class RegisterUser {
@@ -10,7 +11,7 @@ export class RegisterUser {
     this.userRepository = userRepo;
   }
 
-  async handle(userData: IUserData): Promise<any> {
+  async handle(userData: IUserData): Promise<TInsertResponse> {
     const user = User.create(userData);
 
     await this.validate(user);

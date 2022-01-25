@@ -1,4 +1,4 @@
-import { TInsertResponse } from "../../application/use-cases/helpers/insert-response";
+import { TInsertResponse } from "../../application/helpers/insert-response";
 
 interface PresenterResponse {
   statusCode: number;

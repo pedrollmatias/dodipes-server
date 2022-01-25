@@ -1,5 +1,5 @@
 import { IUserData } from "../../../domain/user/user-data";
-import { TInsertResponse } from "../helpers/insert-response";
+import { TInsertResponse } from "../../helpers/insert-response";
 
 export abstract class UserRepository {
   abstract findOne: (query?: any) => Promise<IUserData | null>;
