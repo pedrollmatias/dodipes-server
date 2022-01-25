@@ -1,3 +1,4 @@
+import { CustomError, ErrorCodes } from "../custom-error";
 import { INameData } from "./user-data";
 
 export class Name {
@@ -30,18 +31,27 @@ export class Name {
 
   static validateFirstOrLastName(firstOrLastName: string): void {
     if (!firstOrLastName) {
-      throw new Error(`O nome não pode ser vazio.`);
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: `O nome não pode ser vazio.`,
+      };
     }
 
     const minChar = 2;
     const maxChar = 255;
 
     if (firstOrLastName.length < minChar) {
-      throw new Error(`O nome precisa ter pelo menos ${minChar} caracteres.`);
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: `O nome precisa ter pelo menos ${minChar} caracteres.`,
+      };
     }
 
     if (firstOrLastName.length > maxChar) {
-      throw new Error(`O nome precisa ter no máximo ${maxChar} caracteres.`);
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: `O nome precisa ter no máximo ${maxChar} caracteres.`,
+      };
     }
   }
 }

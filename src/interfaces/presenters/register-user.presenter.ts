@@ -1,13 +1,13 @@
-import { IUserData } from "../../domain/user/user-data";
+import { TInsertResponse } from "../../application/use-cases/helpers/insert-response";
 
 interface PresenterResponse {
   statusCode: number;
   message?: string;
-  payload: Object;
+  payload: TInsertResponse;
 }
 
 export class RegisterUserPresenter {
-  handle(useCaseOutput: IUserData): PresenterResponse {
+  handle(useCaseOutput: TInsertResponse): PresenterResponse {
     const presenterResponse: PresenterResponse = {
       statusCode: 200,
       message: "OK",

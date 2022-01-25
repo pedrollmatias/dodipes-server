@@ -5,15 +5,13 @@ import { RegisterUserController } from "../../../../interfaces/controllers/regis
 import { RegisterUserPresenter } from "../../../../interfaces/presenters/register-user.presenter";
 import { MongodbUserRepository } from "../../../repositories/mongodb/mongodb-user-repository";
 import { PasswordHasher } from "../../../security/password-hasher";
-import { FastifyRequest, FastifyReply } from "fastify";
-import { IRegisterUserSchema } from "./register-user.schema";
+import { IRegisterUserRouteInterface, schema } from "./register-user.schema";
 
-export default async (server: FastifyInstance, opts: any): Promise<void> => {
-  console.log(opts)
-
-  server.post<IRegisterUserSchema>(
+export default async (server: FastifyInstance): Promise<void> => {
+  server.post<IRegisterUserRouteInterface>(
     "/user/registration",
-    async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+    { schema },
+    async (request, reply): Promise<void> => {
       const mongodbUserRepository = new MongodbUserRepository();
       const passwordHasher = new PasswordHasher();
 

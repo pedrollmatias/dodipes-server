@@ -2,6 +2,7 @@ import { MongoHelper } from "./helpers/mongo-helper";
 import { IUserData } from "../../../domain/user/user-data";
 import { UserRepository } from "../../../application/use-cases/user/user-repository";
 import { Document, Filter, FindCursor, ObjectId, WithId } from "mongodb";
+import { TInsertResponse } from "../../../application/use-cases/helpers/insert-response";
 
 const userCollection = "users";
 
@@ -12,7 +13,7 @@ export class MongodbUserRepository implements UserRepository {
     return <IUserData>(<unknown>user);
   }
 
-  async add(user: IUserData): Promise<{ insertedId: string }> {
+  async insertOne(user: IUserData): Promise<TInsertResponse> {
     const inserted = await MongoHelper.getCollection(userCollection).insertOne(
       user
     );

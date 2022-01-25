@@ -1,4 +1,4 @@
-export interface IRegisterUserSchema {
+export interface IRegisterUserRouteInterface {
   Body: Body;
   Reply: Reply;
 }
@@ -16,5 +16,8 @@ interface Body {
 }
 
 interface Reply {
-  _id: string;
+  insertedId: string;
 }
+
+// TODO: Reutilizar interfaces e tipos ja refinidos
+export const schema = {};
