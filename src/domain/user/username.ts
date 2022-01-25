@@ -1,3 +1,5 @@
+import { CustomError, ErrorCodes } from "../custom-error";
+
 export class Username {
   private readonly username: string;
 
@@ -16,9 +18,15 @@ export class Username {
     return new Username(username);
   }
 
-  static validate(name: string): boolean {
-    // TODO
+  static validate(username: string): void {
+    const usernameRegex =
+      /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/;
 
-    return true;
+    if (!usernameRegex.test(username)) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: "O nome de usuário não é válido.",
+      };
+    }
   }
 }

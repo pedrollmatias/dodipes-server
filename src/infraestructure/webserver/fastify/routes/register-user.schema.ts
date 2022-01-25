@@ -1,23 +1,47 @@
-export interface IRegisterUserRouteInterface {
-  Body: Body;
-  Reply: Reply;
-}
+import { FastifySchema } from "fastify";
 
-interface Body {
-  username: string;
-  name: {
-    firstName: string;
-    lastName: string;
-  };
-  email: string;
-  bornDate: Date;
-  sex: "M" | "F";
-  password: string;
-}
-
-interface Reply {
-  insertedId: string;
-}
-
-// TODO: Reutilizar interfaces e tipos ja refinidos
-export const schema = {};
+export default <FastifySchema>{
+  body: {
+    type: "object",
+    properties: {
+      username: {
+        type: "string",
+      },
+      name: {
+        type: "object",
+        properties: {
+          firstName: {
+            type: "string",
+          },
+          lastName: {
+            type: "string",
+          },
+        },
+      },
+      email: {
+        type: "string",
+      },
+      bornDate: {
+        type: "string",
+      },
+      sex: {
+        type: "string",
+        emum: ["M", "F"],
+      },
+      password: {
+        type: "string",
+      },
+    },
+    required: ["username", "name", "email", "bornDate", "sex", "password"],
+  },
+  response: {
+    200: {
+      type: "object",
+      properties: {
+        insertedId: {
+          type: "string",
+        },
+      },
+    },
+  },
+};

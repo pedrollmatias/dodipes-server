@@ -5,4 +5,5 @@ export interface CustomError {
 
 export enum ErrorCodes {
   NOT_ACCEPTABLE = 406,
+  PRECONDITION_FAILED = 412,
 }

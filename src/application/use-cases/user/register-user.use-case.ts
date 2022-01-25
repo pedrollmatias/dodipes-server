@@ -34,7 +34,7 @@ export class RegisterUser {
       };
     }
 
-    if (await this.userRepository.exists({ username: user.username.value })) {
+    if (await this.userRepository.exists({ email: user.email.value })) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
         message: "Já existe um usuário com este email",

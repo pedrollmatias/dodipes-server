@@ -1,14 +1,23 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { FastifyInstance } from "fastify";
 import { RegisterUser } from "../../../../application/use-cases/user/register-user.use-case";
-import { RegisterUserController } from "../../../../interfaces/controllers/register-user.controller";
-import { RegisterUserPresenter } from "../../../../interfaces/presenters/register-user.presenter";
+import {
+  IRegisterUserInput,
+  RegisterUserController,
+} from "../../../../interfaces/controllers/register-user.controller";
+import {
+  IRegisterUserOutput,
+  RegisterUserPresenter,
+} from "../../../../interfaces/presenters/register-user.presenter";
 import { MongodbUserRepository } from "../../../repositories/mongodb/mongodb-user-repository";
 import { PasswordHasher } from "../../../security/password-hasher";
-import { IRegisterUserRouteInterface, schema } from "./register-user.schema";
+import schema from "./register-user.schema";
 
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post<IRegisterUserRouteInterface>(
+  server.post<{
+    Body: IRegisterUserInput;
+    Reply: IRegisterUserOutput;
+  }>(
     "/user/registration",
     { schema },
     async (request, reply): Promise<void> => {
