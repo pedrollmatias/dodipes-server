@@ -8,6 +8,7 @@ export class Name {
   private constructor(name: { firstName: string; lastName: string }) {
     this.firstName = name.firstName;
     this.lastName = name.lastName;
+    
     Object.freeze(this);
   }
 
