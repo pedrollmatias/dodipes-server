@@ -1,8 +1,8 @@
-import { CustomError, ErrorCodes } from "../../../domain/custom-error";
-import { Item } from "../../../domain/item/item";
-import { IItemData } from "../../../domain/item/item-data";
-import { CategoryRepository } from "../category/category-repository";
-import { ItemRepository } from "./item-repository";
+import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
+import { Item } from '../../../domain/item/item';
+import { IItemData } from '../../../domain/item/item-data';
+import { CategoryRepository } from '../category/category-repository';
+import { ItemRepository } from './item-repository';
 
 interface IAddItemData extends IItemData {
   categoryId: string;
@@ -10,6 +10,7 @@ interface IAddItemData extends IItemData {
 
 export class AddItem {
   private readonly itemRepository: ItemRepository;
+
   private readonly categoryRepository: CategoryRepository;
 
   constructor(

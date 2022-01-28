@@ -1,6 +1,6 @@
-import "dotenv/config";
-import { createServer } from "./infraestructure/webserver/fastify/server";
-import { MongoHelper } from "./infraestructure/repositories/mongodb/helpers/mongo-helper";
+import 'dotenv/config';
+import { createServer } from './infraestructure/webserver/fastify/server';
+import { MongoHelper } from './infraestructure/repositories/mongodb/helpers/mongo-helper';
 
 (async () => {
   try {
@@ -14,6 +14,7 @@ import { MongoHelper } from "./infraestructure/repositories/mongodb/helpers/mong
 
     logger.info(`Connected to database '${process.env.MONGODB_URI}'`);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
   }
 })();

@@ -1,12 +1,10 @@
-import { CustomError, ErrorCodes } from "../custom-error";
+import { CustomError, ErrorCodes } from '../shared/custom-error';
 
 export class Email {
   private readonly email: string;
 
   private constructor(email: string) {
     this.email = email;
-
-    Object.freeze(this);
   }
 
   get value(): string {
@@ -26,12 +24,12 @@ export class Email {
     if (!email) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: "O email não pode ser vazio.",
+        message: 'O email não pode ser vazio.',
       };
     } else if (!emailRegex.test(email)) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: "O email não é válido.",
+        message: 'O email não é válido.',
       };
     }
   }

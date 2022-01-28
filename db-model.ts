@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface User {
   username: string;
   firstName: string;
@@ -35,7 +37,7 @@ interface Store {
     _id: string;
     insertedAt: Date;
     isAdmin: boolean;
-  }[]
+  }[];
 }
 
 interface Item {
@@ -94,6 +96,6 @@ interface Bill {
   storeId: string;
   createdAt: Date;
   participants: Partcipant[];
-  orders: BillOrder[]
-  expenses: Expense
+  orders: BillOrder[];
+  expenses: Expense;
 }

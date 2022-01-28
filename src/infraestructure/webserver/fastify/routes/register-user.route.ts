@@ -1,42 +1,35 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { FastifyInstance } from "fastify";
-import { RegisterUser } from "../../../../application/use-cases/user/register-user.use-case";
-import {
-  IRegisterUserInput,
-  RegisterUserController,
-} from "../../../../interfaces/controllers/register-user.controller";
-import {
-  IRegisterUserOutput,
-  RegisterUserPresenter,
-} from "../../../../interfaces/presenters/register-user.presenter";
-import { MongodbUserRepository } from "../../../repositories/mongodb/mongodb-user-repository";
-import { PasswordHasher } from "../../../security/password-hasher";
-import schema from "./register-user.schema";
+import { FastifyInstance } from 'fastify';
+import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
+import { MongodbUserRepository } from '../../../repositories/mongodb/mongodb-user-repository';
+import { BcryptHasher } from '../../../security/bcrypt-hasher';
+import { TInsertResponse } from '../../../../application/helpers/insert-response';
+import { IRegisterUserInput, RegisterUser } from '../../../../application/use-cases/user/register-user.use-case';
+import { DefaultController } from '../../../../interfaces/controllers/default.controller';
+import { DefaultPresenter } from '../../../../interfaces/presenters/default.presenter';
+import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
 
+import schema from '../../../../interfaces/controllers/schemas/register-user.schema';
+import Ajv from 'ajv';
+import { ajvConfig } from '../../../external/ajv/ajv.config';
+
+// eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post<{
-    Body: IRegisterUserInput;
-    Reply: IRegisterUserOutput;
-  }>(
-    "/user/registration",
-    { schema },
-    async (request, reply): Promise<void> => {
-      const mongodbUserRepository = new MongodbUserRepository();
-      const passwordHasher = new PasswordHasher();
+  server.post('/user/registration', async (request, reply): Promise<void> => {
+    const ajv = new Ajv(ajvConfig);
+    const ajvDataValidator = new AjvDataValidator<IRegisterUserInput>(ajv);
+    const ajvSchemaValidator = new AjvSchemaValidator(ajv);
+    const mongodbUserRepository = new MongodbUserRepository();
+    const bcryptHasher = new BcryptHasher();
 
-      const controller = new RegisterUserController(passwordHasher.hash);
-      const contorllerInput = request;
-      const controllerOutput = await controller.handle(contorllerInput);
+    const controller = new DefaultController<IRegisterUserInput>(ajvDataValidator, ajvSchemaValidator);
+    const useCase = new RegisterUser(mongodbUserRepository, bcryptHasher.hash);
+    const presenter = new DefaultPresenter<TInsertResponse>();
 
-      const useCase = new RegisterUser(mongodbUserRepository);
-      const userCaseInput = controllerOutput;
-      const useCaseOutput = await useCase.handle(userCaseInput);
+    const controllerOutput = controller.handle({ httpRequest: request, schema });
+    const useCaseOutput = await useCase.handle(controllerOutput);
+    const presenterOutput = presenter.handle(useCaseOutput);
 
-      const presenter = new RegisterUserPresenter();
-      const presenterInput = useCaseOutput;
-      const presenterOutput = presenter.handle(presenterInput);
-
-      reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
-    }
-  );
+    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+  });
 };

@@ -1,11 +1,15 @@
-import { CustomError, ErrorCodes } from "../custom-error";
-import { IItemData } from "./item-data";
+import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { IItemData } from './item-data';
 
 export class Item {
   public readonly name: string;
+
   public readonly description?: string;
+
   public readonly price: number;
+
   public readonly active?: boolean;
+
   public readonly media?: Buffer[];
 
   private constructor(item: IItemData) {
@@ -14,8 +18,6 @@ export class Item {
     this.price = item.price;
     this.active = item.active;
     this.media = item.media;
-
-    Object.freeze(this);
   }
 
   static create(item: IItemData): Item {
@@ -28,21 +30,21 @@ export class Item {
     if (!item.name) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: "O nome do item não pode ser vazio.",
+        message: 'O nome do item não pode ser vazio.',
       };
     }
 
     if (!item.price) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: "O preço do item não pode ser vazio.",
+        message: 'O preço do item não pode ser vazio.',
       };
     }
 
     if (item.price <= 0) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: "O preço do item precisa ser positivo.",
+        message: 'O preço do item precisa ser positivo.',
       };
     }
   }

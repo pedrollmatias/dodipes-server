@@ -1,8 +1,12 @@
-import { IUserData } from "../../../domain/user/user-data";
-import { TInsertResponse } from "../../helpers/insert-response";
+import { IDomainUser } from '../../../domain/user/user.types';
+import { TInsertResponse } from '../../helpers/insert-response';
 
 export abstract class UserRepository {
-  abstract findOne: (query?: any) => Promise<IUserData | null>;
-  abstract insertOne: (userData: IUserData) => Promise<TInsertResponse>;
-  abstract exists: (query?: any) => Promise<boolean>;
+  abstract getNextId: () => string;
+
+  abstract findOne: <QueryType>(query: QueryType) => Promise<IDomainUser | null>;
+
+  abstract insertOne: (userData: IDomainUser) => Promise<TInsertResponse>;
+
+  abstract exists: <QueryType>(query: QueryType) => Promise<boolean>;
 }

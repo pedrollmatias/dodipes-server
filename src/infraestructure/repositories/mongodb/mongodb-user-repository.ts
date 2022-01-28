@@ -1,22 +1,28 @@
-import { MongoHelper } from "./helpers/mongo-helper";
-import { IUserData } from "../../../domain/user/user-data";
-import { UserRepository } from "../../../application/use-cases/user/user-repository";
-import { Document, Filter } from "mongodb";
-import { TInsertResponse } from "../../../application/helpers/insert-response";
+import { MongoHelper } from './helpers/mongo-helper';
+import { UserRepository } from '../../../application/use-cases/user/user-repository';
+import { Document, Filter, ObjectId } from 'mongodb';
+import { TInsertResponse } from '../../../application/helpers/insert-response';
+import { IDomainUser } from '../../../domain/user/user.types';
 
-const userCollectionName = "users";
+const userCollectionName = 'users';
 
 export class MongodbUserRepository implements UserRepository {
-  async findOne(query: Filter<Document>): Promise<IUserData | null> {
-    const user = await MongoHelper.getCollection(userCollectionName).findOne(query);
-
-    return <IUserData>(<unknown>user);
+  getNextId(): string {
+    return new ObjectId().toString();
   }
 
-  async insertOne(user: IUserData): Promise<TInsertResponse> {
-    const inserted = await MongoHelper.getCollection(userCollectionName).insertOne(
-      user
-    );
+  async findOne(query: Filter<Document>): Promise<IDomainUser | null> {
+    const user = await MongoHelper.getCollection(userCollectionName).findOne(query);
+
+    return <IDomainUser>(<unknown>user);
+  }
+
+  async insertOne(user: IDomainUser): Promise<TInsertResponse> {
+    const _id: ObjectId = new ObjectId(user._id);
+    const inserted = await MongoHelper.getCollection(userCollectionName).insertOne({
+      ...user,
+      _id,
+    });
 
     return { insertedId: inserted.insertedId.toString() };
   }

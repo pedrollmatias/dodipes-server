@@ -1,10 +1,12 @@
-import { Item } from "../item/item";
-import { IItemData } from "../item/item-data";
-import { ICategoryData } from "./category-data";
+import { Item } from '../item/item';
+import { IItemData } from '../item/item-data';
+import { ICategoryData } from './category-data';
 
 export class Category {
   public readonly name: string;
+
   public readonly active?: boolean;
+
   public readonly items?: Item[];
 
   private constructor(category: {
@@ -15,8 +17,6 @@ export class Category {
     this.name = category.name;
     this.active = category.active;
     this.items = category.items;
-
-    Object.freeze(this);
   }
 
   static create(categoryData: ICategoryData): Category {

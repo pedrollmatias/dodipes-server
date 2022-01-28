@@ -1,4 +1,4 @@
-import { IItemData } from "../item/item-data";
+import { IItemData } from '../item/item-data';
 
 export interface ICategoryData {
   name: string;

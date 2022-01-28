@@ -1,13 +1,10 @@
-import { TInsertResponse } from "../../application/helpers/insert-response";
-import { PresenterResponse } from "./presenter-response";
-
-export interface IRegisterUserOutput extends TInsertResponse {}
-
+import { TInsertResponse } from '../../application/helpers/insert-response';
+import { PresenterResponse } from './presenter.types';
 export class RegisterUserPresenter {
   handle(useCaseOutput: TInsertResponse): PresenterResponse<TInsertResponse> {
     const presenterResponse: PresenterResponse<TInsertResponse> = {
       statusCode: 200,
-      message: "OK",
+      message: 'OK',
       payload: useCaseOutput,
     };
 

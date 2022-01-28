@@ -1,4 +1,5 @@
 export abstract class StoreRepository {
-  abstract exists(query: any): Promise<boolean>;
-  abstract findOne(query: any): Promise<boolean>;
+  abstract exists(query: unknown): Promise<boolean>;
+
+  abstract findOne(query: unknown): Promise<boolean>;
 }

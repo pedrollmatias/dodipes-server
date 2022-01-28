@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { FastifyInstance } from "fastify";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
 
-export default async (server: FastifyInstance, opts: any): Promise<void> => {
-  server.get(
-    "/health",
-    async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
-      reply.send({ health: 'ok' });
-    }
-  );
+// eslint-disable-next-line require-await
+export default async (server: FastifyInstance): Promise<void> => {
+  server.get('/health', (request: FastifyRequest, reply: FastifyReply): void => {
+    reply.send({ health: 'ok' });
+  });
 };
