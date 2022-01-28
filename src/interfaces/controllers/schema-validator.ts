@@ -1,7 +1,7 @@
-import { IKeySchema } from './controller.types';
+import { TSchemaModel } from './controller.types';
 
-export abstract class SchemaValidator {
+export abstract class SchemaValidator<DataType> {
   abstract getInstance?: () => unknown;
 
-  abstract validate: (schema: IKeySchema) => boolean | Promise<boolean>;
+  abstract validate: (schema: TSchemaModel<DataType>) => boolean | Promise<boolean>;
 }

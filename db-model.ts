@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 interface User {
-  username: string;
   firstName: string;
   lastName: string;
   email: string;
   bornDate: string;
   sex: string;
-  passwordHash: string;
+  passwordHash?: string;
   createdAt: Date;
   modifiedAt: Date;
 }
@@ -82,7 +81,7 @@ interface BillOrder {
 
 interface Partcipant {
   _id: string;
-  username: string;
+  email: string;
   firstName: string;
   lastName: string;
 }

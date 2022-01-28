@@ -1,4 +1,4 @@
-import { TInsertResponse } from '../../application/helpers/insert-response';
+import { TInsertResponse } from '../../application/shared/insert-response';
 import { PresenterResponse } from './presenter.types';
 export class RegisterUserPresenter {
   handle(useCaseOutput: TInsertResponse): PresenterResponse<TInsertResponse> {

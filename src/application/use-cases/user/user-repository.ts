@@ -1,5 +1,5 @@
 import { IDomainUser } from '../../../domain/user/user.types';
-import { TInsertResponse } from '../../helpers/insert-response';
+import { TInsertResponse } from '../../shared/insert-response';
 
 export abstract class UserRepository {
   abstract getNextId: () => string;
@@ -9,4 +9,6 @@ export abstract class UserRepository {
   abstract insertOne: (userData: IDomainUser) => Promise<TInsertResponse>;
 
   abstract exists: <QueryType>(query: QueryType) => Promise<boolean>;
+
+  abstract findById: (_id: string) => Promise<IDomainUser | null>;
 }

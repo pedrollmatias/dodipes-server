@@ -1,7 +1,7 @@
-import { IKeySchema } from './controller.types';
+import { TSchemaModel } from './controller.types';
 
 export abstract class DataValidator<DataType> {
   abstract getError: () => string;
 
-  abstract validate: (data: DataType, schema: IKeySchema) => boolean;
+  abstract validate: (data: DataType, schema: TSchemaModel<DataType>) => boolean;
 }

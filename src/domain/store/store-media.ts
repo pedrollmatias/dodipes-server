@@ -1,96 +1,62 @@
 // import { CustomError, ErrorCodes } from "../custom-error";
 
-// interface IImageDimensions {
-//   width: number;
-//   height: number;
-// }
-
-// interface IImageProcessor {
-//   getDimensions: (buffer: Buffer) => Promise<IImageDimensions>;
-//   getSize: (buffer: Buffer) => Promise<number>;
-//   validateAspectRatio: (
-//     dimensions: IImageDimensions,
-//     aspectRatio: number[]
-//   ) => Boolean;
-//   validateSize: (
-//     sizeInBytes: Number,
-//     {
-//       minSizeInBytes,
-//       maxSizeInBytes,
-//     }: {
-//       minSizeInBytes?: number;
-//       maxSizeInBytes: number;
-//     }
-//   ) => Promise<Boolean>;
-// }
-
-interface IStoreMediaData {
-  logo: Buffer;
-  coverPhoto: Buffer;
-}
+import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { ImageProcessor } from '../shared/image-processor';
+import { IStoreMedia } from './store-data';
 
 export class StoreMedia {
-  public readonly logo: Buffer;
+  private readonly logo?: Buffer;
 
-  public readonly coverPhoto: Buffer;
-  // public readonly imageProcessor: IImageProcessor;
+  private readonly coverPhoto?: Buffer;
 
-  constructor(media: IStoreMediaData) {
-    this.logo = media.logo;
-    this.coverPhoto = media.coverPhoto;
-    // this.imageProcessor = imageProcessor;
+  constructor(media?: IStoreMedia) {
+    this.logo = media?.logo;
+    this.coverPhoto = media?.coverPhoto;
   }
 
-  static create(media: IStoreMediaData): StoreMedia {
+  get value(): IStoreMedia {
+    return {
+      logo: this.logo,
+      coverPhoto: this.coverPhoto,
+    };
+  }
+
+  static async create({
+    media,
+    imageProcessor,
+  }: {
+    media?: IStoreMedia;
+    imageProcessor: ImageProcessor;
+  }): Promise<StoreMedia> {
+    if (media?.logo) {
+      await StoreMedia.validateImage(media.logo, imageProcessor);
+    }
+
+    if (media?.coverPhoto) {
+      await StoreMedia.validateImage(media.coverPhoto, imageProcessor);
+    }
+
     return new StoreMedia(media);
   }
 
-  // static async validateImage(image: Buffer) {
-  //   const aspectRatio = [1, 1];
-  //   const [aspectRatioWidth, aspectRatioHeight] = aspectRatio;
+  private static async validateImage(image: Buffer, imageProcessor: ImageProcessor): Promise<void> {
+    if (!image) {
+      return;
+    }
 
-  //   const dimensions = await this.imageProcessor.getDimensions(image);
-  //   const isValidAspectRation = this.imageProcessor.validateAspectRatio(
-  //     dimensions,
-  //     aspectRatio
-  //   );
+    const aspectRatio = [1, 1];
 
-  //   if (!isValidAspectRation) {
-  //     throw <CustomError>{
-  //       statusCode: ErrorCodes.BAD_REQUEST,
-  //       message: `A imagem não tem a proporção esperada de ${aspectRatioWidth}:${aspectRatioHeight}`,
-  //     };
-  //   }
+    const dimensions = await imageProcessor.getDimensions(image);
 
-  //   const imageSizeInBytes = await this.imageProcessor.getSize(image);
+    const isValidAspectRatio = imageProcessor.validateAspectRatio(dimensions, aspectRatio);
 
-  //   const megaBytes = 1000000;
-  //   const minSizeInBytes = undefined;
-  //   const maxSizeInBytes = 30 * megaBytes;
-  //   const isValidSize = this.imageProcessor.validateSize(imageSizeInBytes, {
-  //     minSizeInBytes,
-  //     maxSizeInBytes,
-  //   });
+    if (!isValidAspectRatio) {
+      const [aspectRatioWidth, aspectRatioHeight] = aspectRatio;
 
-  //   if (!isValidSize) {
-  //     throw <CustomError>{
-  //       statusCode: ErrorCodes.BAD_REQUEST,
-  //       message: `A imagem não tem a proporção esperada de ${aspectRatioWidth}:${aspectRatioHeight}`,
-  //     };
-  //   }
-  // }
-
-  // // TODO: Move to controller
-  // validateAspectRatio(
-  //   dimensions: IImageDimensions,
-  //   aspectRatio: number[]
-  // ): Boolean {
-  //   const [aspectRatioWidth, aspectRatioHeight] = aspectRatio;
-  //   const validAspectRatio = aspectRatioWidth / aspectRatioHeight;
-
-  //   const { width, height } = dimensions;
-  //   const imageAspectRatio = width / height;
-
-  //   return imageAspectRatio !== validAspectRatio;
-  // }
+      throw <CustomError>{
+        statusCode: ErrorCodes.BAD_REQUEST,
+        message: `A imagem não tem a proporção esperada de ${aspectRatioWidth}:${aspectRatioHeight}`,
+      };
+    }
+  }
 }

@@ -1,42 +1,42 @@
-// TODO: Verificar se o tipo do schema pode vir da camada superior da clean architecture
+import { TSchemaModel } from '../controller.types';
+import { IRegisterUserInput } from '../../../application/use-cases/user/register-user.use-case';
 
-import { IKeySchema } from '../controller.types';
-
-const bodySchema: IKeySchema = {
+const schema: TSchemaModel<IRegisterUserInput> = {
   type: 'object',
   properties: {
-    bornDate: {
-      type: 'object',
-    },
-    email: {
-      type: 'string',
-    },
-    name: {
+    body: {
       type: 'object',
       properties: {
-        firstName: {
+        bornDate: {
+          type: 'object',
+          required: [],
+        },
+        email: {
           type: 'string',
         },
-        lastName: {
+        name: {
+          type: 'object',
+          properties: {
+            firstName: {
+              type: 'string',
+            },
+            lastName: {
+              type: 'string',
+            },
+          },
+          required: ['firstName', 'lastName'],
+        },
+        password: {
+          type: 'string',
+        },
+        sex: {
           type: 'string',
         },
       },
-      required: ['firstName', 'lastName'],
+      required: ['bornDate', 'email', 'name', 'password', 'sex'],
     },
-    password: {
-      type: 'string',
-    },
-    sex: {
-      type: 'string',
-    },
-    username: { type: 'string' },
   },
-  required: ['bornDate', 'email', 'name', 'password', 'sex', 'username'],
+  required: ['body'],
 };
 
-export default <IKeySchema>{
-  type: 'object',
-  properties: {
-    body: bodySchema,
-  },
-};
+export default schema;

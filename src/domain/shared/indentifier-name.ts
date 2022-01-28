@@ -1,7 +1,7 @@
 import { CustomError, ErrorCodes } from './custom-error';
 import { standardizeLabel } from '../helpers/utils';
 
-type IIdentifiesType = 'username' | 'storename';
+type IIdentifiesType = 'storename';
 
 export class IdentifierName {
   private readonly identifierName: string;
@@ -28,7 +28,7 @@ export class IdentifierName {
 
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `O ${standardizedIdentifierLabel} não é válido.`,
+        message: `O ${standardizedIdentifierLabel} não é válido`,
       };
     }
   }

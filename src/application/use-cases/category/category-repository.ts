@@ -1,5 +1,5 @@
 import { ICategoryData } from '../../../domain/category/category-data';
-import { TInsertResponse } from '../../helpers/insert-response';
+import { TInsertResponse } from '../../shared/insert-response';
 
 export abstract class CategoryRepository {
   abstract findOne: (query?: unknown) => Promise<ICategoryData | null>;

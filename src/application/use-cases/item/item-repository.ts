@@ -1,5 +1,5 @@
 import { IItemData } from '../../../domain/item/item-data';
-import { TInsertResponse } from '../../helpers/insert-response';
+import { TInsertResponse } from '../../shared/insert-response';
 
 export abstract class ItemRepository {
   abstract insertOne(

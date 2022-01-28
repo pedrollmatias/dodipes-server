@@ -1,19 +1,19 @@
 import { CustomError, ErrorCodes } from '../../domain/shared/custom-error';
-import { HttpRequest, IKeySchema } from './controller.types';
+import { HttpRequest, TSchemaModel } from './controller.types';
 import { DataValidator } from './data-validator';
 import { SchemaValidator } from './schema-validator';
 
 export class DefaultController<DataType> {
   private readonly dataValidator: DataValidator<DataType>;
 
-  private readonly schemaValidator: SchemaValidator;
+  private readonly schemaValidator: SchemaValidator<DataType>;
 
-  constructor(dataValidator: DataValidator<DataType>, schemaValidator: SchemaValidator) {
+  constructor(dataValidator: DataValidator<DataType>, schemaValidator: SchemaValidator<DataType>) {
     this.dataValidator = dataValidator;
     this.schemaValidator = schemaValidator;
   }
 
-  handle({ httpRequest, schema }: { httpRequest: HttpRequest; schema: IKeySchema }): DataType {
+  handle({ httpRequest, schema }: { httpRequest: HttpRequest; schema: TSchemaModel<DataType> }): DataType {
     this.schemaValidator.validate(schema);
 
     const { body } = httpRequest;

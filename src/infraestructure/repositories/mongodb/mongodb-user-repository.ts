@@ -1,7 +1,7 @@
 import { MongoHelper } from './helpers/mongo-helper';
 import { UserRepository } from '../../../application/use-cases/user/user-repository';
 import { Document, Filter, ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/helpers/insert-response';
+import { TInsertResponse } from '../../../application/shared/insert-response';
 import { IDomainUser } from '../../../domain/user/user.types';
 
 const userCollectionName = 'users';
@@ -31,5 +31,13 @@ export class MongodbUserRepository implements UserRepository {
     const result = await this.findOne(query);
 
     return Boolean(result);
+  }
+
+  async findById(_id: string): Promise<IDomainUser | null> {
+    const objectId = new ObjectId(_id);
+
+    const user = await this.findOne({ _id: objectId });
+
+    return user;
   }
 }

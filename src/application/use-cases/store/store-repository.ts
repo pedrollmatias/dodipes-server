@@ -1,5 +1,12 @@
-export abstract class StoreRepository {
-  abstract exists(query: unknown): Promise<boolean>;
+import { IDomainStore } from '../../../domain/store/store-data';
+import { TInsertResponse } from '../../shared/insert-response';
 
-  abstract findOne(query: unknown): Promise<boolean>;
+export abstract class StoreRepository {
+  abstract getNextId: () => string;
+
+  abstract findOne: <QueryType>(query: QueryType) => Promise<IDomainStore | null>;
+
+  abstract exists: <QueryType>(query: QueryType) => Promise<boolean>;
+
+  abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
 }

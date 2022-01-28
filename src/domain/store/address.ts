@@ -1,27 +1,22 @@
 import { CustomError, ErrorCodes } from '../shared/custom-error';
-import {
-  getNotProvidadFieldsStr,
-  getNotProvidedFields,
-  IField,
-} from '../helpers/utils';
-import { IAddressData } from './store-data';
+import { IAddress } from './store-data';
 
 export class Address {
-  public readonly street: string;
+  private readonly street: string;
 
-  public readonly number: string;
+  private readonly number: string;
 
-  public readonly complement?: string;
+  private readonly complement?: string;
 
-  public readonly neighborhood: string;
+  private readonly neighborhood: string;
 
-  public readonly city: string;
+  private readonly city: string;
 
-  public readonly state: string;
+  private readonly state: string;
 
-  public readonly zipCode: string;
+  private readonly zipCode: string;
 
-  constructor(addressData: IAddressData) {
+  constructor(addressData: IAddress) {
     this.street = addressData.street;
     this.number = addressData.number;
     this.complement = addressData.complement;
@@ -31,59 +26,31 @@ export class Address {
     this.zipCode = addressData.zipCode;
   }
 
-  static create(addressData: IAddressData) {
+  get value(): IAddress {
+    return {
+      street: this.street,
+      number: this.number,
+      complement: this.complement,
+      neighborhood: this.neighborhood,
+      city: this.city,
+      state: this.state,
+      zipCode: this.zipCode,
+    };
+  }
+
+  static create(addressData: IAddress) {
     Address.validate(addressData);
 
     return new Address(addressData);
   }
 
-  static validate(addressData: IAddressData) {
-    const requiredFields: IField[] = [
-      {
-        name: 'street',
-        label: 'logradouro',
-      },
-      {
-        name: 'number',
-        label: 'número',
-      },
-      {
-        name: 'neighborhood',
-        label: 'bairro',
-      },
-      {
-        name: 'city',
-        label: 'Cidade',
-      },
-      {
-        name: 'state',
-        label: 'estado',
-      },
-      {
-        name: 'zipCode',
-        label: 'cep',
-      },
-    ];
-
-    const fieldsNotProvided = getNotProvidedFields<IAddressData>(
-      requiredFields,
-      addressData
-    );
-    const fieldsNotProvidadStr = getNotProvidadFieldsStr(fieldsNotProvided);
-
-    if (!addressData.street) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.BAD_REQUEST,
-        message: `Os seguintes campos não foram fornecidos: ${fieldsNotProvidadStr}.`,
-      };
-    }
-
+  static validate(addressData: IAddress) {
     const zipCodeLength = 8;
 
     if (addressData.zipCode.length !== zipCodeLength) {
       throw <CustomError>{
         statusCode: ErrorCodes.BAD_REQUEST,
-        message: `O fornecido deve ter ${zipCodeLength} caracteres.`,
+        message: `O fornecido deve ter ${zipCodeLength} caracteres`,
       };
     }
   }

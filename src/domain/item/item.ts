@@ -30,21 +30,21 @@ export class Item {
     if (!item.name) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O nome do item não pode ser vazio.',
+        message: 'O nome do item não pode ser vazio',
       };
     }
 
     if (!item.price) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O preço do item não pode ser vazio.',
+        message: 'O preço do item não pode ser vazio',
       };
     }
 
     if (item.price <= 0) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O preço do item precisa ser positivo.',
+        message: 'O preço do item precisa ser positivo',
       };
     }
   }
