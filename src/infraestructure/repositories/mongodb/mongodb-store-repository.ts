@@ -4,7 +4,7 @@ import { TInsertResponse } from '../../../application/shared/insert-response';
 import { StoreRepository } from '../../../application/use-cases/store/store-repository';
 import { IDomainStore } from '../../../domain/store/store-data';
 
-const storeCollectionName = 'stores';
+export const storeCollectionName = 'stores';
 
 export class MongodbStoreRepository implements StoreRepository {
   getNextId(): string {
@@ -31,5 +31,13 @@ export class MongodbStoreRepository implements StoreRepository {
     const result = await this.findOne(query);
 
     return Boolean(result);
+  }
+
+  async findById(storeId: string): Promise<IDomainStore | null> {
+    const storeObjectId = new ObjectId(storeId);
+
+    const store = await this.findOne({ _id: storeObjectId });
+
+    return store;
   }
 }

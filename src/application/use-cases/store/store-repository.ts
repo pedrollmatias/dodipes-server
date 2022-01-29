@@ -9,4 +9,6 @@ export abstract class StoreRepository {
   abstract exists: <QueryType>(query: QueryType) => Promise<boolean>;
 
   abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
+
+  abstract findById: (storeId: string) => Promise<IDomainStore | null>;
 }

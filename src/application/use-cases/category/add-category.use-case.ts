@@ -1,10 +1,18 @@
 import { Category } from '../../../domain/category/category';
-import { ICategoryData } from '../../../domain/category/category-data';
+import { IDomainCategory } from '../../../domain/category/category.types';
+import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
+import { TInsertResponse } from '../../shared/insert-response';
 import { StoreRepository } from '../store/store-repository';
 import { CategoryRepository } from './category-repository';
 
-interface IAddCategoryData extends ICategoryData {
-  storeId: string;
+export interface IAddCategoryRequest {
+  params: {
+    storeId: string;
+  };
+  body: {
+    name: string;
+    active?: boolean;
+  };
 }
 
 export class AddCategory {
@@ -17,11 +25,59 @@ export class AddCategory {
     this.storeRepository = storeRepository;
   }
 
-  handler(categoryData: IAddCategoryData) {
-    Category.create(categoryData);
+  async handle(validatedRequest: IAddCategoryRequest): Promise<TInsertResponse> {
+    const {
+      body: categoryData,
+      params: { storeId },
+    } = validatedRequest;
+
+    await this.validateStore(storeId);
+
+    const _id = this.categoryRepository.getNextId();
+
+    const { name, active } = categoryData;
+
+    const category = Category.create({
+      _id,
+      name,
+      active,
+      items: [],
+      createdAt: new Date(),
+    });
+
+    await this.validate(category.value, storeId);
+
+    return this.categoryRepository.insertOne(storeId, {
+      ...category.value,
+      _id,
+    });
   }
 
-  validateStore(storeId: string): void {
-    this.storeRepository.exists({ _id: storeId });
+  async validateStore(storeId: string): Promise<void> {
+    const storeExists = Boolean(await this.storeRepository.findById(storeId));
+
+    if (!storeExists) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: 'O estabelecimento não existe',
+      };
+    }
+  }
+
+  private async validate(category: IDomainCategory, storeId: string): Promise<void> {
+    const categories = await this.categoryRepository.findByName(storeId, category.name);
+
+    if (!categories?.length) {
+      return;
+    }
+
+    const existsCategoriesWithSameName = Boolean(categories?.length);
+
+    if (existsCategoriesWithSameName) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_ACCEPTABLE,
+        message: `Já existe uma categoria com o nome ${category.name}`,
+      };
+    }
   }
 }

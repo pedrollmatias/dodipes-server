@@ -1,10 +1,12 @@
-import { ICategoryData } from '../../../domain/category/category-data';
+import { IDomainCategory } from '../../../domain/category/category.types';
 import { TInsertResponse } from '../../shared/insert-response';
 
 export abstract class CategoryRepository {
-  abstract findOne: (query?: unknown) => Promise<ICategoryData | null>;
+  abstract getNextId: () => string;
 
-  abstract insertOne: (categoryData: ICategoryData) => Promise<TInsertResponse>;
+  // abstract findById: (storeId: string, categoryId: string) => Promise<IDomainCategory | null>;
 
-  abstract exists: (query?: unknown) => Promise<boolean>;
+  abstract insertOne: (storeId: string, categoryData: IDomainCategory) => Promise<TInsertResponse>;
+
+  abstract findByName: (storeId: string, categoryName: string) => Promise<IDomainCategory[] | null>;
 }

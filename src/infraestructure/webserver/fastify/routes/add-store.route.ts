@@ -9,20 +9,20 @@ import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
 import ajv from '../../../external/ajv/ajv-instance';
 
 import schema from '../../../../interfaces/controllers/schemas/add-store.schema';
-import { AddStore, IAddStoreInput } from '../../../../application/use-cases/store/add-store.use-case';
+import { AddStore, IAddStoreRequest } from '../../../../application/use-cases/store/add-store.use-case';
 import { MongodbStoreRepository } from '../../../repositories/mongodb/mongodb-store-repository';
 import { JimpImageProcessor } from '../../../external/jimp-image-processor';
 
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post('/store', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IAddStoreInput>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IAddStoreInput>(ajv);
+  server.post('/stores', async (request, reply): Promise<void> => {
+    const ajvDataValidator = new AjvDataValidator<IAddStoreRequest>(ajv);
+    const ajvSchemaValidator = new AjvSchemaValidator<IAddStoreRequest>(ajv);
     const mongodbUserRepository = new MongodbUserRepository();
     const mongodbStoreRepository = new MongodbStoreRepository();
     const jimpImageProcessor = new JimpImageProcessor();
 
-    const controller = new DefaultController<IAddStoreInput>(ajvDataValidator, ajvSchemaValidator);
+    const controller = new DefaultController<IAddStoreRequest>(ajvDataValidator, ajvSchemaValidator);
     const useCase = new AddStore(mongodbStoreRepository, mongodbUserRepository, jimpImageProcessor);
     const presenter = new DefaultPresenter<TInsertResponse>();
 

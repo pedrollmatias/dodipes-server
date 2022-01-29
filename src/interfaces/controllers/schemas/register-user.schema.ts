@@ -1,7 +1,7 @@
+import { IRegisterUserRequest } from '../../../application/use-cases/user/register-user.use-case';
 import { TSchemaModel } from '../controller.types';
-import { IRegisterUserInput } from '../../../application/use-cases/user/register-user.use-case';
 
-const schema: TSchemaModel<IRegisterUserInput> = {
+const schema: TSchemaModel<IRegisterUserRequest> = {
   type: 'object',
   properties: {
     body: {

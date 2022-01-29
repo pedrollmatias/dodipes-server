@@ -1,12 +1,15 @@
 import { TSchemaModel } from '../controller.types';
-import { IAddStoreInput } from '../../../application/use-cases/store/add-store.use-case';
+import { IAddStoreRequest } from '../../../application/use-cases/store/add-store.use-case';
 
-const schema: TSchemaModel<IAddStoreInput> = {
+const schema: TSchemaModel<IAddStoreRequest> = {
   type: 'object',
   properties: {
     body: {
       type: 'object',
       properties: {
+        userId: {
+          type: 'string',
+        },
         name: {
           type: 'string',
         },
@@ -55,12 +58,6 @@ const schema: TSchemaModel<IAddStoreInput> = {
               type: 'object',
               required: [],
             },
-          },
-        },
-        users: {
-          type: 'array',
-          items: {
-            type: 'string',
           },
         },
       },

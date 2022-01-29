@@ -4,7 +4,7 @@ import { IDomainUser, IName, TPasswordHashMethod, TSex } from '../../../domain/u
 import { TInsertResponse } from '../../shared/insert-response';
 import { UserRepository } from './user-repository';
 
-export interface IRegisterUserInput {
+export interface IRegisterUserRequest {
   body: {
     name: IName;
     email: string;
@@ -24,13 +24,13 @@ export class RegisterUser {
     this.passwordHashMethod = passwordHashMethod;
   }
 
-  async handle(userInput: IRegisterUserInput): Promise<TInsertResponse> {
-    const { body } = userInput;
+  async handle(validatedRequest: IRegisterUserRequest): Promise<TInsertResponse> {
+    const { body: userData } = validatedRequest;
     const userId = this.userRepository.getNextId();
 
     const user = await User.create(
       {
-        ...body,
+        ...userData,
         _id: userId,
         createdAt: new Date(),
       },

@@ -1,9 +1,10 @@
 import { IItemData } from '../item/item-data';
 
-export interface ICategoryData {
+export interface IDomainCategory {
+  _id: string;
   name: string;
   active?: boolean;
-  items?: IItemData[];
+  items: IItemData[];
   createdAt?: Date;
   modifiedAt?: Date;
 }

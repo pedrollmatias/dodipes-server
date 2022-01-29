@@ -16,10 +16,13 @@ export class DefaultController<DataType> {
   handle({ httpRequest, schema }: { httpRequest: HttpRequest; schema: TSchemaModel<DataType> }): DataType {
     this.schemaValidator.validate(schema);
 
-    const { body } = httpRequest;
+    const { body, params, headers, querystring } = httpRequest;
     // TODO: Verificar conversão para unknown
     const data = <DataType>(<unknown>{
       body,
+      params,
+      headers,
+      querystring,
     });
     const isValidData = this.dataValidator.validate(data, schema);
 

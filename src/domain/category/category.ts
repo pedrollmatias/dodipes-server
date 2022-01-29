@@ -1,33 +1,51 @@
 import { Item } from '../item/item';
-import { IItemData } from '../item/item-data';
-import { ICategoryData } from './category-data';
+import { ValidDate } from '../shared/valid-date';
+import { IDomainCategory } from './category.types';
 
 export class Category {
-  public readonly name: string;
+  private readonly _id: string;
 
-  public readonly active?: boolean;
+  private readonly name: string;
 
-  public readonly items?: Item[];
+  private readonly active?: boolean;
 
-  private constructor(category: {
-    name: string;
-    active?: boolean;
-    items?: Item[];
-  }) {
+  private readonly items: Item[];
+
+  private readonly createdAt: ValidDate;
+
+  private constructor(category: { _id: string; name: string; active?: boolean; items: Item[]; createdAt: ValidDate }) {
+    this._id = category._id;
     this.name = category.name;
     this.active = category.active;
     this.items = category.items;
+    this.createdAt = category.createdAt;
   }
 
-  static create(categoryData: ICategoryData): Category {
-    const items = categoryData.items?.map((item: IItemData) =>
-      Item.create(item)
-    );
+  get value(): IDomainCategory {
+    return {
+      _id: this._id,
+      name: this.name,
+      active: this.active,
+      items: this.items,
+      createdAt: this.createdAt.value,
+    };
+  }
+
+  static create(categoryData: {
+    _id: string;
+    name: string;
+    active?: boolean;
+    createdAt: Date;
+    items: any[];
+  }): Category {
+    const createdAt = ValidDate.create(categoryData.createdAt, 'data de criação da categoria');
 
     return new Category({
+      _id: categoryData._id,
       name: categoryData.name,
       active: categoryData.active,
-      items,
+      items: categoryData.items,
+      createdAt,
     });
   }
 }

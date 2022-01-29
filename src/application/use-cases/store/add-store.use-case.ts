@@ -8,8 +8,9 @@ import { TInsertResponse } from '../../shared/insert-response';
 import { UserRepository } from '../user/user-repository';
 import { StoreRepository } from './store-repository';
 
-export interface IAddStoreInput {
+export interface IAddStoreRequest {
   body: {
+    userId: string;
     name: string;
     storename: string;
     address: IAddress;
@@ -17,7 +18,6 @@ export interface IAddStoreInput {
       logo?: Buffer;
       coverPhoto?: Buffer;
     };
-    users: string[];
   };
 }
 
@@ -34,23 +34,24 @@ export class AddStore {
     this.imageProcessor = imageProcessor;
   }
 
-  async handle(storeInput: IAddStoreInput): Promise<TInsertResponse> {
-    const { body } = storeInput;
+  async handle(validatedRequest: IAddStoreRequest): Promise<TInsertResponse> {
+    const {
+      body: { userId, ...storeData },
+    } = validatedRequest;
 
     const now = new Date();
 
-    const storeUsers = body.users.map((_id: string): IStoreUser => ({ _id, insertedAt: now, isAdmin: true }));
+    await this.validateUser(userId);
 
-    await this.validateStoreUsers(storeUsers);
-
+    const storeUser: IStoreUser = { _id: userId, insertedAt: now, isAdmin: true };
     const storeId = this.storeRepository.getNextId();
 
     const store = await Store.create(
       {
-        ...body,
+        ...storeData,
         _id: storeId,
         createdAt: now,
-        users: storeUsers,
+        users: [storeUser],
       },
       this.imageProcessor
     );
@@ -60,17 +61,8 @@ export class AddStore {
     return this.storeRepository.insertOne(store.value);
   }
 
-  private async validateStoreUsers(storeUsers: IStoreUser[]): Promise<void> {
-    if (storeUsers.length > 1) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'Não é possível criar um estabelecimento com mais de um usuário',
-      };
-    }
-
-    const [user] = storeUsers;
-
-    const userExists = Boolean(await this.userRepository.findById(user._id));
+  private async validateUser(userId: string): Promise<void> {
+    const userExists = Boolean(await this.userRepository.findById(userId));
 
     if (!userExists) {
       throw <CustomError>{
