@@ -1,4 +1,4 @@
-import { IDomainStore } from '../../../domain/store/store-data';
+import { IDomainStore } from '../../../domain/store/store.types';
 import { TInsertResponse } from '../../shared/insert-response';
 
 export abstract class StoreRepository {

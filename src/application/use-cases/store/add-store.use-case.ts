@@ -3,7 +3,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { ImageProcessor } from '../../../domain/shared/image-processor';
 import { Store } from '../../../domain/store/store';
-import { IAddress, IDomainStore, IStoreUser } from '../../../domain/store/store-data';
+import { IAddress, IDomainStore, IStoreUser } from '../../../domain/store/store.types';
 import { TInsertResponse } from '../../shared/insert-response';
 import { UserRepository } from '../user/user-repository';
 import { StoreRepository } from './store-repository';

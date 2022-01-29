@@ -1,5 +1,5 @@
 import { CustomError, ErrorCodes } from '../shared/custom-error';
-import { IStoreUser } from './store-data';
+import { IStoreUser } from './store.types';
 
 // TODO: Avaliar mudança para classe de um usuario apenas
 export class StoreUser {

@@ -2,7 +2,7 @@ import { MongoHelper } from './helpers/mongo-helper';
 import { Document, Filter, ObjectId } from 'mongodb';
 import { TInsertResponse } from '../../../application/shared/insert-response';
 import { StoreRepository } from '../../../application/use-cases/store/store-repository';
-import { IDomainStore } from '../../../domain/store/store-data';
+import { IDomainStore } from '../../../domain/store/store.types';
 
 export const storeCollectionName = 'stores';
 

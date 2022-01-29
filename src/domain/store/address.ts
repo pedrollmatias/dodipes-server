@@ -1,5 +1,5 @@
 import { CustomError, ErrorCodes } from '../shared/custom-error';
-import { IAddress } from './store-data';
+import { IAddress } from './store.types';
 
 export class Address {
   private readonly street: string;

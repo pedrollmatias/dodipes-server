@@ -2,7 +2,7 @@
 
 import { CustomError, ErrorCodes } from '../shared/custom-error';
 import { ImageProcessor } from '../shared/image-processor';
-import { IStoreMedia } from './store-data';
+import { IStoreMedia } from './store.types';
 
 export class StoreMedia {
   private readonly logo?: Buffer;
