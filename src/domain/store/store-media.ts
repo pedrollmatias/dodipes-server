@@ -1,15 +1,14 @@
-// import { CustomError, ErrorCodes } from "../custom-error";
-
-import { CustomError, ErrorCodes } from '../shared/custom-error';
 import { ImageProcessor } from '../shared/image-processor';
+import { Media } from '../shared/media';
 import { IStoreMedia } from './store.types';
 
-export class StoreMedia {
+export class StoreMedia extends Media {
   private readonly logo?: Buffer;
 
   private readonly coverPhoto?: Buffer;
 
   constructor(media?: IStoreMedia) {
+    super();
     this.logo = media?.logo;
     this.coverPhoto = media?.coverPhoto;
   }
@@ -29,34 +28,17 @@ export class StoreMedia {
     imageProcessor: ImageProcessor;
   }): Promise<StoreMedia> {
     if (media?.logo) {
-      await StoreMedia.validateImage(media.logo, imageProcessor);
+      const aspectRatio = [1, 1];
+
+      await StoreMedia.validateImage(media.logo, imageProcessor, { aspectRatio });
     }
 
     if (media?.coverPhoto) {
-      await StoreMedia.validateImage(media.coverPhoto, imageProcessor);
+      const aspectRatio = [1, 1];
+
+      await StoreMedia.validateImage(media.coverPhoto, imageProcessor, { aspectRatio });
     }
 
     return new StoreMedia(media);
-  }
-
-  private static async validateImage(image: Buffer, imageProcessor: ImageProcessor): Promise<void> {
-    if (!image) {
-      return;
-    }
-
-    const aspectRatio = [1, 1];
-
-    const dimensions = await imageProcessor.getDimensions(image);
-
-    const isValidAspectRatio = imageProcessor.validateAspectRatio(dimensions, aspectRatio);
-
-    if (!isValidAspectRatio) {
-      const [aspectRatioWidth, aspectRatioHeight] = aspectRatio;
-
-      throw <CustomError>{
-        statusCode: ErrorCodes.BAD_REQUEST,
-        message: `A imagem não tem a proporção esperada de ${aspectRatioWidth}:${aspectRatioHeight}`,
-      };
-    }
   }
 }

@@ -5,7 +5,6 @@ import { IDomainCategory } from '../../../domain/category/category.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { storeCollectionName } from './mongodb-store-repository';
 
-export const categoriesCollectionName = 'categories';
 export class MongodbCategoryRepository implements CategoryRepository {
   getNextId(): string {
     return new ObjectId().toString();
@@ -39,5 +38,15 @@ export class MongodbCategoryRepository implements CategoryRepository {
     const categories = await categoriesCursor.toArray();
 
     return categories;
+  }
+
+  async findById(storeId: string, categoryId: string): Promise<IDomainCategory | null> {
+    const storeObjectId = new ObjectId(storeId);
+    const categoryObjectId = new ObjectId(categoryId);
+    const storeCollection = MongoHelper.getCollection(storeCollectionName);
+
+    const store = await storeCollection.findOne({ _id: storeObjectId, 'categories._id': categoryObjectId });
+
+    return store?.categories?.find((category: IDomainCategory) => categoryObjectId.equals(category._id));
   }
 }

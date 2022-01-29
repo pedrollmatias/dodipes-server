@@ -1,51 +1,64 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
-import { IItemData } from './item-data';
+import { ImageProcessor } from '../shared/image-processor';
+import { ValidDate } from '../shared/valid-date';
+import { ItemMedia } from './item-media';
+import { IDomainItem } from './item.types';
+import { Price } from './price';
 
 export class Item {
-  public readonly name: string;
+  private readonly _id: string;
 
-  public readonly description?: string;
+  private readonly name: string;
 
-  public readonly price: number;
+  private readonly description?: string;
 
-  public readonly active?: boolean;
+  private readonly price: Price;
 
-  public readonly media?: Buffer[];
+  private readonly active?: boolean;
 
-  private constructor(item: IItemData) {
+  private readonly media?: ItemMedia;
+
+  private readonly createdAt: ValidDate;
+
+  private constructor(item: {
+    _id: string;
+    name: string;
+    description?: string;
+    price: Price;
+    active?: boolean;
+    media?: ItemMedia;
+    createdAt: ValidDate;
+  }) {
+    this._id = item._id;
     this.name = item.name;
     this.description = item.description;
     this.price = item.price;
     this.active = item.active;
     this.media = item.media;
+    this.createdAt = item.createdAt;
   }
 
-  static create(item: IItemData): Item {
-    Item.validate(item);
-
-    return new Item(item);
+  get value(): IDomainItem {
+    return {
+      _id: this._id,
+      name: this.name,
+      description: this.description,
+      price: this.price.value,
+      active: this.active,
+      media: this.media?.value,
+      createdAt: this.createdAt.value,
+    };
   }
 
-  private static validate(item: IItemData): void {
-    if (!item.name) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O nome do item não pode ser vazio',
-      };
-    }
+  static async create(item: IDomainItem, imageProcessor: ImageProcessor): Promise<Item> {
+    const price = Price.create(item.price);
+    const media = await ItemMedia.create({ media: item.media, imageProcessor });
+    const createdAt = ValidDate.create(item.createdAt, 'data de criação do item');
 
-    if (!item.price) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O preço do item não pode ser vazio',
-      };
-    }
-
-    if (item.price <= 0) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O preço do item precisa ser positivo',
-      };
-    }
+    return new Item({
+      ...item,
+      price,
+      media,
+      createdAt,
+    });
   }
 }
