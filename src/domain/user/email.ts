@@ -11,7 +11,7 @@ export class Email {
     return this.email;
   }
 
-  static create(email: string): Email {
+  static create({ email }: { email: string }): Email {
     this.validate(email);
 
     return new Email(email);

@@ -1,5 +1,3 @@
-// import { Store } from '../../../domain/store/store';
-// import { IStoreData } from '../../../domain/store/store-data';
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { ImageProcessor } from '../../../domain/shared/image-processor';
 import { Store } from '../../../domain/store/store';
@@ -21,6 +19,15 @@ export interface IAddStoreRequest {
   };
 }
 
+export interface IAddStoreRepositories {
+  storeRepository: StoreRepository;
+  userRepository: UserRepository;
+}
+
+export interface IAddStoreExternalInterfaces {
+  imageProcessor: ImageProcessor;
+}
+
 export class AddStore {
   private readonly storeRepository: StoreRepository;
 
@@ -28,16 +35,25 @@ export class AddStore {
 
   private readonly imageProcessor: ImageProcessor;
 
-  constructor(storeRepository: StoreRepository, userRepository: UserRepository, imageProcessor: ImageProcessor) {
+  constructor({
+    repositories,
+    externalInterfaces,
+  }: {
+    repositories: IAddStoreRepositories;
+    externalInterfaces: IAddStoreExternalInterfaces;
+  }) {
+    const { storeRepository, userRepository } = repositories;
+    const { imageProcessor } = externalInterfaces;
+
     this.storeRepository = storeRepository;
     this.userRepository = userRepository;
     this.imageProcessor = imageProcessor;
   }
 
-  async handle(validatedRequest: IAddStoreRequest): Promise<TInsertResponse> {
+  async handle({ input }: { input: IAddStoreRequest }): Promise<TInsertResponse> {
     const {
       body: { userId, ...storeData },
-    } = validatedRequest;
+    } = input;
 
     const now = new Date();
 
@@ -46,15 +62,15 @@ export class AddStore {
     const storeUser: IStoreUser = { _id: userId, insertedAt: now, isAdmin: true };
     const storeId = this.storeRepository.getNextId();
 
-    const store = await Store.create(
-      {
+    const store = await Store.create({
+      data: {
         ...storeData,
         _id: storeId,
         createdAt: now,
         users: [storeUser],
       },
-      this.imageProcessor
-    );
+      imageProcessor: this.imageProcessor,
+    });
 
     await this.validate(store.value);
 
@@ -73,7 +89,9 @@ export class AddStore {
   }
 
   private async validate(store: IDomainStore): Promise<void> {
-    if (await this.storeRepository.exists({ storename: store.storename })) {
+    const storeExists = Boolean(await this.storeRepository.findOne({ storename: store.storename }));
+
+    if (storeExists) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
         message: 'Já existe um estabelecimento com este storename',

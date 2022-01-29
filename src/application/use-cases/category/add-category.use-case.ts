@@ -15,21 +15,28 @@ export interface IAddCategoryRequest {
   };
 }
 
+export interface IAddCategoryRepositories {
+  categoryRepository: CategoryRepository;
+  storeRepository: StoreRepository;
+}
+
 export class AddCategory {
   private readonly categoryRepository: CategoryRepository;
 
   private readonly storeRepository: StoreRepository;
 
-  constructor(categoryRepository: CategoryRepository, storeRepository: StoreRepository) {
+  constructor({ repositories }: { repositories: IAddCategoryRepositories }) {
+    const { categoryRepository, storeRepository } = repositories;
+
     this.categoryRepository = categoryRepository;
     this.storeRepository = storeRepository;
   }
 
-  async handle(validatedRequest: IAddCategoryRequest): Promise<TInsertResponse> {
+  async handle({ input }: { input: IAddCategoryRequest }): Promise<TInsertResponse> {
     const {
       body: categoryData,
       params: { storeId },
-    } = validatedRequest;
+    } = input;
 
     await this.validateStore(storeId);
 
@@ -38,11 +45,13 @@ export class AddCategory {
     const { name, active } = categoryData;
 
     const category = Category.create({
-      _id,
-      name,
-      active,
-      items: [],
-      createdAt: new Date(),
+      data: {
+        _id,
+        name,
+        active,
+        items: [],
+        createdAt: new Date(),
+      },
     });
 
     await this.validate(category.value, storeId);

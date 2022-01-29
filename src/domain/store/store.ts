@@ -19,8 +19,6 @@ export class Store {
 
   private readonly media?: StoreMedia;
 
-  // private readonly categories?: Category[];
-
   private readonly users: StoreUser[];
 
   private readonly createdAt: ValidDate;
@@ -31,7 +29,6 @@ export class Store {
     storename: IdentifierName;
     address: Address;
     media?: StoreMedia;
-    // categories?: Category[];
     users: StoreUser[];
     createdAt: ValidDate;
   }) {
@@ -40,7 +37,6 @@ export class Store {
     this.storename = store.storename;
     this.address = store.address;
     this.media = store.media;
-    // this.categories = store.categories;
     this.users = store.users;
     this.createdAt = store.createdAt;
   }
@@ -57,8 +53,11 @@ export class Store {
     };
   }
 
-  static async create(
-    storeData: {
+  static async create({
+    data: { _id, address, createdAt, name, storename, users, media },
+    imageProcessor,
+  }: {
+    data: {
       _id: string;
       name: string;
       storename: string;
@@ -66,40 +65,42 @@ export class Store {
       media?: IStoreMedia;
       createdAt: Date;
       users: IStoreUser[];
-    },
-    imageProcessor: ImageProcessor
-  ): Promise<Store> {
-    const name = StoreName.create(storeData.name);
-    const storename = IdentifierName.create(storeData.storename, 'storename');
-    const address = Address.create(storeData.address);
-    const media = await StoreMedia.create({ media: storeData.media, imageProcessor });
-    const createdAt = ValidDate.create(storeData.createdAt, 'data de criação do estabelecimento');
+    };
+    imageProcessor: ImageProcessor;
+  }): Promise<Store> {
+    const nameInstance = StoreName.create({ storeName: name });
+    const storenameInstance = IdentifierName.create({ identifierName: storename, identifierLabel: 'storename' });
+    const addressInstance = Address.create({ address });
+    const mediaInstance = await StoreMedia.create({ media, imageProcessor });
+    const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do estabelecimento' });
 
-    if (storeData.users.length > 1) {
+    if (users.length > 1) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
         message: 'Não é possível criar um estabelecimento com mais de um usuário',
       };
     }
 
-    const users = storeData.users.map((user: IStoreUser): StoreUser => {
-      const insertedAt = ValidDate.create(new Date(), 'data de inserção do usuário');
+    const usersInstances = users.map(({ _id, insertedAt, isAdmin }: IStoreUser): StoreUser => {
+      const insertedAtInstance = ValidDate.create({ date: insertedAt, dateLabel: 'data de inserção do usuário' });
 
       return StoreUser.create({
-        _id: user._id,
-        isAdmin: user.isAdmin,
-        insertedAt: insertedAt.value,
+        storeUser: {
+          _id,
+          isAdmin,
+          insertedAt: insertedAtInstance.value,
+        },
       });
     });
 
     return new Store({
-      _id: storeData._id,
-      name,
-      storename,
-      address,
-      media,
-      createdAt,
-      users,
+      _id,
+      name: nameInstance,
+      storename: storenameInstance,
+      address: addressInstance,
+      media: mediaInstance,
+      createdAt: createdAtInstance,
+      users: usersInstances,
     });
   }
 }

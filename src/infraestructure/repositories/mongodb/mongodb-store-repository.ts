@@ -7,14 +7,22 @@ import { IDomainStore } from '../../../domain/store/store.types';
 export const storeCollectionName = 'stores';
 
 export class MongodbStoreRepository implements StoreRepository {
-  getNextId(): string {
-    return new ObjectId().toString();
+  async findById(storeId: string): Promise<IDomainStore | null> {
+    const storeObjectId = new ObjectId(storeId);
+
+    const store = await this.findOne({ _id: storeObjectId });
+
+    return store;
   }
 
   async findOne(query: Filter<Document>): Promise<IDomainStore | null> {
     const store = await MongoHelper.getCollection(storeCollectionName).findOne(query);
 
     return <IDomainStore>(<unknown>store);
+  }
+
+  getNextId(): string {
+    return new ObjectId().toString();
   }
 
   async insertOne(store: IDomainStore): Promise<TInsertResponse> {
@@ -25,19 +33,5 @@ export class MongodbStoreRepository implements StoreRepository {
     });
 
     return { insertedId: inserted.insertedId.toString() };
-  }
-
-  async exists(query: Filter<Document>): Promise<boolean> {
-    const result = await this.findOne(query);
-
-    return Boolean(result);
-  }
-
-  async findById(storeId: string): Promise<IDomainStore | null> {
-    const storeObjectId = new ObjectId(storeId);
-
-    const store = await this.findOne({ _id: storeObjectId });
-
-    return store;
   }
 }

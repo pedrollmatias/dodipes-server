@@ -6,7 +6,7 @@ export abstract class CategoryRepository {
 
   abstract findById: (storeId: string, categoryId: string) => Promise<IDomainCategory | null>;
 
-  abstract insertOne: (storeId: string, categoryData: IDomainCategory) => Promise<TInsertResponse>;
-
   abstract findByName: (storeId: string, categoryName: string) => Promise<IDomainCategory[] | null>;
+
+  abstract insertOne: (storeId: string, categoryData: IDomainCategory) => Promise<TInsertResponse>;
 }

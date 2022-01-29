@@ -11,7 +11,7 @@ export class ValidDate {
     return this.date;
   }
 
-  static create(date: Date, dateLabel: string) {
+  static create({ date, dateLabel }: { date: Date; dateLabel: string }) {
     ValidDate.validate(date, dateLabel);
 
     return new ValidDate(date);

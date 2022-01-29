@@ -18,6 +18,15 @@ export interface IAddItemRequest {
   };
 }
 
+export interface IAddItemRepositories {
+  itemRepository: ItemRepository;
+  categoryRepository: CategoryRepository;
+}
+
+export interface IAddItemExternalInterfaces {
+  imageProcessor: ImageProcessor;
+}
+
 export class AddItem {
   private readonly itemRepository: ItemRepository;
 
@@ -25,31 +34,40 @@ export class AddItem {
 
   private readonly imageProcessor: ImageProcessor;
 
-  constructor(itemRepository: ItemRepository, categoryRepository: CategoryRepository, imageProcessor: ImageProcessor) {
+  constructor({
+    repositories,
+    externalInterfaces,
+  }: {
+    repositories: IAddItemRepositories;
+    externalInterfaces: IAddItemExternalInterfaces;
+  }) {
+    const { categoryRepository, itemRepository } = repositories;
+    const { imageProcessor } = externalInterfaces;
+
     this.itemRepository = itemRepository;
     this.categoryRepository = categoryRepository;
     this.imageProcessor = imageProcessor;
   }
 
-  async handle(validatedRequest: IAddItemRequest) {
+  async handle({ input }: { input: IAddItemRequest }) {
     const {
       body: itemData,
       params: { storeId, categoryId },
-    } = validatedRequest;
+    } = input;
 
     const itemId = this.itemRepository.getNextId();
 
     await this.validateCategory(storeId, categoryId);
 
     const now = new Date();
-    const item = await Item.create(
-      {
+    const item = await Item.create({
+      data: {
         ...itemData,
         _id: itemId,
         createdAt: now,
       },
-      this.imageProcessor
-    );
+      imageProcessor: this.imageProcessor,
+    });
 
     return this.itemRepository.insertOne(storeId, categoryId, item.value);
   }

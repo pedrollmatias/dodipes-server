@@ -19,7 +19,15 @@ export class User {
 
   public readonly createdAt: ValidDate;
 
-  private constructor(user: {
+  private constructor({
+    _id,
+    bornDate,
+    createdAt,
+    email,
+    name,
+    sex,
+    passwordHash,
+  }: {
     _id: string;
     name: Name;
     email: Email;
@@ -28,13 +36,13 @@ export class User {
     passwordHash?: string;
     createdAt: ValidDate;
   }) {
-    this._id = user._id;
-    this.name = user.name;
-    this.email = user.email;
-    this.bornDate = user.bornDate;
-    this.sex = user.sex;
-    this.passwordHash = user.passwordHash;
-    this.createdAt = user.createdAt;
+    this._id = _id;
+    this.name = name;
+    this.email = email;
+    this.bornDate = bornDate;
+    this.sex = sex;
+    this.passwordHash = passwordHash;
+    this.createdAt = createdAt;
   }
 
   get value(): IDomainUser {
@@ -49,8 +57,11 @@ export class User {
     };
   }
 
-  static async create(
-    userData: {
+  static async create({
+    data: { _id, bornDate, createdAt, email, name, sex, password },
+    passwordHashMethod,
+  }: {
+    data: {
       _id: string;
       name: IName;
       email: string;
@@ -58,29 +69,29 @@ export class User {
       sex: TSex;
       password?: string;
       createdAt: Date;
-    },
-    passwordHashMethod: TPasswordHashMethod
-  ): Promise<User> {
-    const name = Name.create(userData.name);
-    const email = Email.create(userData.email);
-    const bornDate = ValidDate.create(userData.bornDate, 'data de nascimento');
+    };
+    passwordHashMethod: TPasswordHashMethod;
+  }): Promise<User> {
+    const nameInstance = Name.create({ name });
+    const emailInstance = Email.create({ email });
+    const bornDateInstance = ValidDate.create({ date: bornDate, dateLabel: 'data de nascimento' });
 
-    let passwordHash;
+    let passwordHashInstance;
 
-    if (userData.password) {
-      passwordHash = await Password.create(userData.password, passwordHashMethod);
+    if (password) {
+      passwordHashInstance = await Password.create({ plainText: password, passwordHashMethod });
     }
 
-    const createdAt = ValidDate.create(userData.createdAt, 'data de criação do usuário');
+    const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do usuário' });
 
     return new User({
-      _id: userData._id,
-      name,
-      email,
-      bornDate,
-      sex: userData.sex,
-      passwordHash: passwordHash?.value,
-      createdAt,
+      _id,
+      name: nameInstance,
+      email: emailInstance,
+      bornDate: bornDateInstance,
+      sex,
+      passwordHash: passwordHashInstance?.value,
+      createdAt: createdAtInstance,
     });
   }
 }

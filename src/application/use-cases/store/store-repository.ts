@@ -4,11 +4,9 @@ import { TInsertResponse } from '../../shared/insert-response';
 export abstract class StoreRepository {
   abstract getNextId: () => string;
 
+  abstract findById: (storeId: string) => Promise<IDomainStore | null>;
+
   abstract findOne: <QueryType>(query: QueryType) => Promise<IDomainStore | null>;
 
-  abstract exists: <QueryType>(query: QueryType) => Promise<boolean>;
-
   abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
-
-  abstract findById: (storeId: string) => Promise<IDomainStore | null>;
 }

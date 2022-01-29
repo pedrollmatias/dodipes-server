@@ -1,7 +1,6 @@
 import { CustomError, ErrorCodes } from '../shared/custom-error';
 import { IStoreUser } from './store.types';
 
-// TODO: Avaliar mudança para classe de um usuario apenas
 export class StoreUser {
   private readonly _id: string;
 
@@ -9,10 +8,10 @@ export class StoreUser {
 
   private readonly isAdmin: boolean;
 
-  constructor(user: IStoreUser) {
-    this._id = user._id;
-    this.insertedAt = user.insertedAt;
-    this.isAdmin = user.isAdmin;
+  constructor({ _id, insertedAt, isAdmin }: IStoreUser) {
+    this._id = _id;
+    this.insertedAt = insertedAt;
+    this.isAdmin = isAdmin;
   }
 
   get value(): IStoreUser {
@@ -23,14 +22,14 @@ export class StoreUser {
     };
   }
 
-  static create(user: IStoreUser): StoreUser {
-    StoreUser.validate(user);
+  static create({ storeUser }: { storeUser: IStoreUser }): StoreUser {
+    StoreUser.validate(storeUser);
 
-    return new StoreUser(user);
+    return new StoreUser(storeUser);
   }
 
-  private static validate(user: IStoreUser): void {
-    if (!user.isAdmin) {
+  private static validate(storeUser: IStoreUser): void {
+    if (!storeUser.isAdmin) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
         message: 'O criador do estabelecimento precisa ser o administrador.',

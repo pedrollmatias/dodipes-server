@@ -11,7 +11,7 @@ export class Price {
     return this.price;
   }
 
-  static create(price: number): Price {
+  static create({ price }: { price: number }): Price {
     this.validate(price);
 
     return new Price(price);

@@ -14,28 +14,45 @@ export interface IRegisterUserRequest {
   };
 }
 
+export interface IRegisterUserRepositories {
+  userRepository: UserRepository;
+}
+
+export interface IRegisterUserExternalInterfaces {
+  passwordHashMethod: TPasswordHashMethod;
+}
+
 export class RegisterUser {
   private readonly userRepository: UserRepository;
 
   private readonly passwordHashMethod: TPasswordHashMethod;
 
-  constructor(userRepository: UserRepository, passwordHashMethod: TPasswordHashMethod) {
+  constructor({
+    repositories,
+    externalInterfaces,
+  }: {
+    repositories: IRegisterUserRepositories;
+    externalInterfaces: IRegisterUserExternalInterfaces;
+  }) {
+    const { userRepository } = repositories;
+    const { passwordHashMethod } = externalInterfaces;
+
     this.userRepository = userRepository;
     this.passwordHashMethod = passwordHashMethod;
   }
 
-  async handle(validatedRequest: IRegisterUserRequest): Promise<TInsertResponse> {
-    const { body: userData } = validatedRequest;
+  async handle({ input }: { input: IRegisterUserRequest }): Promise<TInsertResponse> {
+    const { body: userData } = input;
     const userId = this.userRepository.getNextId();
 
-    const user = await User.create(
-      {
+    const user = await User.create({
+      data: {
         ...userData,
         _id: userId,
         createdAt: new Date(),
       },
-      this.passwordHashMethod
-    );
+      passwordHashMethod: this.passwordHashMethod,
+    });
 
     await this.validate(user.value);
 
@@ -43,7 +60,9 @@ export class RegisterUser {
   }
 
   private async validate(user: IDomainUser): Promise<void> {
-    if (await this.userRepository.exists({ email: user.email })) {
+    const userExists = Boolean(await this.userRepository.findOne({ email: user.email }));
+
+    if (userExists) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
         message: 'Já existe um usuário com este email',

@@ -3,7 +3,11 @@ import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
 import { MongodbCategoryRepository } from '../../../repositories/mongodb/mongodb-category-repository';
 import { MongodbStoreRepository } from '../../../repositories/mongodb/mongodb-store-repository';
-import { AddCategory, IAddCategoryRequest } from '../../../../application/use-cases/category/add-category.use-case';
+import {
+  AddCategory,
+  IAddCategoryRepositories,
+  IAddCategoryRequest,
+} from '../../../../application/use-cases/category/add-category.use-case';
 import { TInsertResponse } from '../../../../application/shared/insert-response';
 import { DefaultController } from '../../../../interfaces/controllers/default.controller';
 import { DefaultPresenter } from '../../../../interfaces/presenters/default.presenter';
@@ -17,16 +21,23 @@ export default async (server: FastifyInstance): Promise<void> => {
   server.post('/stores/:storeId/categories', async (request, reply): Promise<void> => {
     const ajvDataValidator = new AjvDataValidator<IAddCategoryRequest>(ajv);
     const ajvSchemaValidator = new AjvSchemaValidator<IAddCategoryRequest>(ajv);
-    const mongodbCategoryRepository = new MongodbCategoryRepository();
-    const mongodbStoreRepository = new MongodbStoreRepository();
 
-    const controller = new DefaultController<IAddCategoryRequest>(ajvDataValidator, ajvSchemaValidator);
-    const useCase = new AddCategory(mongodbCategoryRepository, mongodbStoreRepository);
+    const repositories: IAddCategoryRepositories = {
+      categoryRepository: new MongodbCategoryRepository(),
+      storeRepository: new MongodbStoreRepository(),
+    };
+
+    const controller = new DefaultController<IAddCategoryRequest>({
+      dataValidator: ajvDataValidator,
+      schemaValidator: ajvSchemaValidator,
+      schema,
+    });
+    const useCase = new AddCategory({ repositories });
     const presenter = new DefaultPresenter<TInsertResponse>();
 
-    const controllerOutput = controller.handle({ httpRequest: request, schema });
-    const useCaseOutput = await useCase.handle(controllerOutput);
-    const presenterOutput = presenter.handle(useCaseOutput);
+    const controllerOutput = controller.handle({ input: request });
+    const useCaseOutput = await useCase.handle({ input: controllerOutput });
+    const presenterOutput = presenter.handle({ input: useCaseOutput });
 
     reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
   });

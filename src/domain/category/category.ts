@@ -13,12 +13,24 @@ export class Category {
 
   private readonly createdAt: ValidDate;
 
-  private constructor(category: { _id: string; name: string; active?: boolean; items: Item[]; createdAt: ValidDate }) {
-    this._id = category._id;
-    this.name = category.name;
-    this.active = category.active;
-    this.items = category.items;
-    this.createdAt = category.createdAt;
+  private constructor({
+    _id,
+    createdAt,
+    items,
+    name,
+    active,
+  }: {
+    _id: string;
+    name: string;
+    active?: boolean;
+    items: Item[];
+    createdAt: ValidDate;
+  }) {
+    this._id = _id;
+    this.name = name;
+    this.active = active;
+    this.items = items;
+    this.createdAt = createdAt;
   }
 
   get value(): IDomainCategory {
@@ -31,21 +43,25 @@ export class Category {
     };
   }
 
-  static create(categoryData: {
-    _id: string;
-    name: string;
-    active?: boolean;
-    createdAt: Date;
-    items: any[];
+  static create({
+    data: { _id, createdAt, items, name, active },
+  }: {
+    data: {
+      _id: string;
+      name: string;
+      active?: boolean;
+      createdAt: Date;
+      items: [];
+    };
   }): Category {
-    const createdAt = ValidDate.create(categoryData.createdAt, 'data de criação da categoria');
+    const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação da categoria' });
 
     return new Category({
-      _id: categoryData._id,
-      name: categoryData.name,
-      active: categoryData.active,
-      items: categoryData.items,
-      createdAt,
+      _id,
+      name,
+      active,
+      items,
+      createdAt: createdAtInstance,
     });
   }
 }

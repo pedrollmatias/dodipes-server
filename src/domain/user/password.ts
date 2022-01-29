@@ -12,7 +12,13 @@ export class Password {
     return this.password;
   }
 
-  static async create(plainText: string, passwordHashMethod: TPasswordHashMethod): Promise<Password> {
+  static async create({
+    plainText,
+    passwordHashMethod,
+  }: {
+    plainText: string;
+    passwordHashMethod: TPasswordHashMethod;
+  }): Promise<Password> {
     Password.validate(plainText);
 
     const password = await passwordHashMethod(plainText);

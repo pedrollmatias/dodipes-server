@@ -8,15 +8,26 @@ export class DefaultController<DataType> {
 
   private readonly schemaValidator: SchemaValidator<DataType>;
 
-  constructor(dataValidator: DataValidator<DataType>, schemaValidator: SchemaValidator<DataType>) {
+  private readonly schema: TSchemaModel<DataType>;
+
+  constructor({
+    dataValidator,
+    schemaValidator,
+    schema,
+  }: {
+    dataValidator: DataValidator<DataType>;
+    schemaValidator: SchemaValidator<DataType>;
+    schema: TSchemaModel<DataType>;
+  }) {
     this.dataValidator = dataValidator;
     this.schemaValidator = schemaValidator;
+    this.schema = schema;
   }
 
-  handle({ httpRequest, schema }: { httpRequest: HttpRequest; schema: TSchemaModel<DataType> }): DataType {
-    this.schemaValidator.validate(schema);
+  handle({ input }: { input: HttpRequest }): DataType {
+    this.schemaValidator.validate(this.schema);
 
-    const { body, params, headers, querystring } = httpRequest;
+    const { body, params, headers, querystring } = input;
     // TODO: Verificar conversão para unknown
     const data = <DataType>(<unknown>{
       body,
@@ -24,7 +35,7 @@ export class DefaultController<DataType> {
       headers,
       querystring,
     });
-    const isValidData = this.dataValidator.validate(data, schema);
+    const isValidData = this.dataValidator.validate(data, this.schema);
 
     if (!isValidData) {
       const error = this.dataValidator.getError();

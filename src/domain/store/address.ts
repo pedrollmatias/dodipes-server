@@ -16,14 +16,14 @@ export class Address {
 
   private readonly zipCode: string;
 
-  constructor(addressData: IAddress) {
-    this.street = addressData.street;
-    this.number = addressData.number;
-    this.complement = addressData.complement;
-    this.neighborhood = addressData.neighborhood;
-    this.city = addressData.city;
-    this.state = addressData.state;
-    this.zipCode = addressData.zipCode;
+  constructor({ city, neighborhood, number, state, street, zipCode, complement }: IAddress) {
+    this.street = street;
+    this.number = number;
+    this.complement = complement;
+    this.neighborhood = neighborhood;
+    this.city = city;
+    this.state = state;
+    this.zipCode = zipCode;
   }
 
   get value(): IAddress {
@@ -38,16 +38,16 @@ export class Address {
     };
   }
 
-  static create(addressData: IAddress) {
-    Address.validate(addressData);
+  static create({ address }: { address: IAddress }) {
+    Address.validate(address);
 
-    return new Address(addressData);
+    return new Address(address);
   }
 
-  static validate(addressData: IAddress) {
+  static validate(address: IAddress) {
     const zipCodeLength = 8;
 
-    if (addressData.zipCode.length !== zipCodeLength) {
+    if (address.zipCode.length !== zipCodeLength) {
       throw <CustomError>{
         statusCode: ErrorCodes.BAD_REQUEST,
         message: `O fornecido deve ter ${zipCodeLength} caracteres`,

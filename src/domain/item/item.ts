@@ -49,16 +49,25 @@ export class Item {
     };
   }
 
-  static async create(item: IDomainItem, imageProcessor: ImageProcessor): Promise<Item> {
-    const price = Price.create(item.price);
-    const media = await ItemMedia.create({ media: item.media, imageProcessor });
-    const createdAt = ValidDate.create(item.createdAt, 'data de criação do item');
+  static async create({
+    data: { _id, createdAt, name, price, active, description, media },
+    imageProcessor,
+  }: {
+    data: IDomainItem;
+    imageProcessor: ImageProcessor;
+  }): Promise<Item> {
+    const priceInstance = Price.create({ price });
+    const mediaInstance = await ItemMedia.create({ media, imageProcessor });
+    const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do item' });
 
     return new Item({
-      ...item,
-      price,
-      media,
-      createdAt,
+      _id,
+      name,
+      active,
+      description,
+      price: priceInstance,
+      media: mediaInstance,
+      createdAt: createdAtInstance,
     });
   }
 }

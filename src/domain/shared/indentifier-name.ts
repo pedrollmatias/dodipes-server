@@ -14,7 +14,13 @@ export class IdentifierName {
     return this.identifierName;
   }
 
-  static create(identifierName: string, identifierLabel: IIdentifiesType): IdentifierName {
+  static create({
+    identifierName,
+    identifierLabel,
+  }: {
+    identifierName: string;
+    identifierLabel: IIdentifiesType;
+  }): IdentifierName {
     IdentifierName.validate(identifierName, identifierLabel);
 
     return new IdentifierName(identifierName);

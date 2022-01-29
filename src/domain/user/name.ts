@@ -18,7 +18,7 @@ export class Name {
     };
   }
 
-  static create(name: IName): Name {
+  static create({ name }: { name: IName }): Name {
     Name.validate(name);
 
     return new Name(name);

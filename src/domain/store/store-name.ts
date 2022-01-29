@@ -11,7 +11,7 @@ export class StoreName {
     return this.storeName;
   }
 
-  static create(storeName: string): StoreName {
+  static create({ storeName }: { storeName: string }): StoreName {
     this.validate(storeName);
 
     return new StoreName(storeName);
