@@ -27,11 +27,12 @@ export class MongodbUserRepository implements UserRepository {
 
   async insertOne(user: IDomainUser): Promise<TInsertResponse> {
     const userObjectId = new ObjectId(user._id);
-    const inserted = await MongoHelper.getCollection(userCollectionName).insertOne({
+
+    await MongoHelper.getCollection(userCollectionName).insertOne({
       ...user,
       _id: userObjectId,
     });
 
-    return { insertedId: inserted.insertedId.toString() };
+    return { insertedId: user._id };
   }
 }

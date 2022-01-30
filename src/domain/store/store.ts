@@ -23,7 +23,18 @@ export class Store {
 
   private readonly createdAt: ValidDate;
 
-  constructor(store: {
+  private readonly modifiedAt?: ValidDate;
+
+  constructor({
+    _id,
+    address,
+    createdAt,
+    name,
+    storename,
+    users,
+    media,
+    modifiedAt,
+  }: {
     _id: string;
     name: StoreName;
     storename: IdentifierName;
@@ -31,14 +42,16 @@ export class Store {
     media?: StoreMedia;
     users: StoreUser[];
     createdAt: ValidDate;
+    modifiedAt?: ValidDate;
   }) {
-    this._id = store._id;
-    this.name = store.name;
-    this.storename = store.storename;
-    this.address = store.address;
-    this.media = store.media;
-    this.users = store.users;
-    this.createdAt = store.createdAt;
+    this._id = _id;
+    this.name = name;
+    this.storename = storename;
+    this.address = address;
+    this.media = media;
+    this.users = users;
+    this.createdAt = createdAt;
+    this.modifiedAt = modifiedAt;
   }
 
   get value(): IDomainStore {
@@ -54,7 +67,7 @@ export class Store {
   }
 
   static async create({
-    data: { _id, address, createdAt, name, storename, users, media },
+    data: { _id, address, createdAt, name, storename, users, media, modifiedAt },
     imageProcessor,
   }: {
     data: {
@@ -63,8 +76,9 @@ export class Store {
       storename: string;
       address: IAddress;
       media?: IStoreMedia;
-      createdAt: Date;
       users: IStoreUser[];
+      createdAt: Date;
+      modifiedAt?: Date;
     };
     imageProcessor: ImageProcessor;
   }): Promise<Store> {
@@ -93,6 +107,12 @@ export class Store {
       });
     });
 
+    let modifiedAtInstance;
+
+    if (modifiedAt) {
+      modifiedAtInstance = ValidDate.create({ date: modifiedAt, dateLabel: 'data de atualização do estabelecimento' });
+    }
+
     return new Store({
       _id,
       name: nameInstance,
@@ -101,6 +121,7 @@ export class Store {
       media: mediaInstance,
       createdAt: createdAtInstance,
       users: usersInstances,
+      modifiedAt: modifiedAtInstance
     });
   }
 }
