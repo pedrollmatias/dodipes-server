@@ -1,7 +1,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { ImageProcessor } from '../../../domain/shared/image-processor';
 import { Store } from '../../../domain/store/store';
-import { IAddress, IStoreMedia } from '../../../domain/store/store.types';
+import { IAddress, IDomainStore, IStoreMedia } from '../../../domain/store/store.types';
 import { TUpdateResponse } from '../../shared/update-reponse';
 import { StoreRepository } from './store-repository';
 
@@ -49,14 +49,11 @@ export class EditStore {
       body: { address, media, name },
     } = input;
 
-    const preUpdateStore = await this.storeRepository.findById(storeId);
+    const findStoreResult = await this.storeRepository.findById(storeId);
 
-    if (!preUpdateStore) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_FOUND,
-        message: 'Estabelecimento não encontrado',
-      };
-    }
+    this.validateStoreExistence(findStoreResult);
+
+    const preUpdateStore = <IDomainStore>findStoreResult;
 
     const now = new Date();
     const update = {
@@ -79,5 +76,14 @@ export class EditStore {
     });
 
     return this.storeRepository.updateOne(storeId, update);
+  }
+
+  validateStoreExistence(store: IDomainStore | null): void {
+    if (!store) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.NOT_FOUND,
+        message: 'Estabelecimento não encontrado',
+      };
+    }
   }
 }

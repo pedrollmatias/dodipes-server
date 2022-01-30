@@ -5,10 +5,35 @@ import { StoreRepository } from '../../../application/use-cases/store/store-repo
 import { IDomainStore } from '../../../domain/store/store.types';
 import { IEditStoreRequest } from '../../../application/use-cases/store/edit-store.use-case';
 import { TUpdateResponse } from '../../../application/shared/update-reponse';
+import { TRemoveResponse } from '../../../application/shared/remove-response';
+import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 
 export const storeCollectionName = 'stores';
 
 export class MongodbStoreRepository implements StoreRepository {
+  async deleteOne(storeId: string): Promise<TRemoveResponse> {
+    const storeObjectId = new ObjectId(storeId);
+
+    const removeResult = await MongoHelper.getCollection(storeCollectionName).deleteOne({ _id: storeObjectId });
+
+    if (!removeResult.deletedCount) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.INTERNAL_SERVER_ERROR,
+        message: 'Falha ao remover estabelecimento',
+      };
+    }
+
+    return { removedId: storeId };
+  }
+
+  async updateOne(storeId: string, storeUpdateData: IEditStoreRequest['body']): Promise<TUpdateResponse> {
+    const storeObjectId = new ObjectId(storeId);
+
+    await MongoHelper.getCollection(storeCollectionName).updateOne({ _id: storeObjectId }, { $set: storeUpdateData });
+
+    return { updatedId: storeId };
+  }
+
   async findById(storeId: string): Promise<IDomainStore | null> {
     const storeObjectId = new ObjectId(storeId);
 
@@ -36,13 +61,5 @@ export class MongodbStoreRepository implements StoreRepository {
     });
 
     return { insertedId: store._id };
-  }
-
-  async updateOne(storeId: string, storeUpdateData: IEditStoreRequest['body']): Promise<TUpdateResponse> {
-    const storeObjectId = new ObjectId(storeId);
-
-    await MongoHelper.getCollection(storeCollectionName).updateOne({ _id: storeObjectId }, { $set: storeUpdateData });
-
-    return { updatedId: storeId };
   }
 }
