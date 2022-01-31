@@ -1,30 +1,28 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { ImageProcessor } from '../../../domain/shared/image-processor';
-import { Store } from '../../../domain/store/store';
-import { IAddress, IDomainStore, IStoreMedia } from '../../../domain/store/store.types';
+import { StoreMedia } from '../../../domain/store/store-media';
+import { IDomainStore } from '../../../domain/store/store.types';
 import { TUpdateResponse } from '../../shared/update-reponse';
 import { StoreRepository } from './store-repository';
 
-export interface IEditStoreRequest {
+export interface IEditStoreLogoRequest {
   params: {
     storeId: string;
   };
   body: {
-    address?: IAddress;
-    name?: string;
-    media?: IStoreMedia;
+    logo?: Buffer;
   };
 }
 
-export interface IEditStoreRepositories {
+export interface IEditStoreLogoRepositories {
   storeRepository: StoreRepository;
 }
 
-export interface IEditStoreExternalInterfaces {
+export interface IEditStoreLogoExternalInterfaces {
   imageProcessor: ImageProcessor;
 }
 
-export class EditStore {
+export class EditStoreLogo {
   private readonly storeRepository: StoreRepository;
 
   private readonly imageProcessor: ImageProcessor;
@@ -33,8 +31,8 @@ export class EditStore {
     repositories,
     externalInterfaces,
   }: {
-    repositories: IEditStoreRepositories;
-    externalInterfaces: IEditStoreExternalInterfaces;
+    repositories: IEditStoreLogoRepositories;
+    externalInterfaces: IEditStoreLogoExternalInterfaces;
   }) {
     const { storeRepository } = repositories;
     const { imageProcessor } = externalInterfaces;
@@ -43,37 +41,30 @@ export class EditStore {
     this.imageProcessor = imageProcessor;
   }
 
-  async handle({ input }: { input: IEditStoreRequest }): Promise<TUpdateResponse> {
+  async handle({ input }: { input: IEditStoreLogoRequest }): Promise<TUpdateResponse> {
     const {
       params: { storeId },
-      body: { address, media, name },
+      body: { logo },
     } = input;
 
     const findStoreResult = await this.storeRepository.findById(storeId);
 
     this.validateStoreExistence(findStoreResult);
 
-    const preUpdateStore = <IDomainStore>findStoreResult;
-
-    const now = new Date();
-    const update = {
-      ...(address && { address }),
-      ...(name && { name }),
+    await StoreMedia.create({
       media: {
-        ...preUpdateStore.media,
-        ...(media?.logo && { ...media.logo }),
-        ...(media?.coverPhoto && { ...media.coverPhoto }),
-      },
-      modifiedAt: now,
-    };
-
-    await Store.create({
-      data: {
-        ...preUpdateStore,
-        ...update,
+        logo,
       },
       imageProcessor: this.imageProcessor,
     });
+
+    const preUpdateStore = <IDomainStore>findStoreResult;
+    const update = {
+      media: {
+        ...preUpdateStore.media,
+        logo,
+      },
+    };
 
     return this.storeRepository.updateOne(storeId, update);
   }

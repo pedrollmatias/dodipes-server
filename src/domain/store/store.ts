@@ -63,6 +63,7 @@ export class Store {
       media: this.media?.value,
       users: this.users.map((user) => user.value),
       createdAt: this.createdAt.value,
+      modifiedAt: this.modifiedAt?.value,
     };
   }
 
@@ -121,7 +122,7 @@ export class Store {
       media: mediaInstance,
       createdAt: createdAtInstance,
       users: usersInstances,
-      modifiedAt: modifiedAtInstance
+      modifiedAt: modifiedAtInstance,
     });
   }
 }

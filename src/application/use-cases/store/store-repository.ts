@@ -1,8 +1,13 @@
-import { IDomainStore } from '../../../domain/store/store.types';
+import { IAddress, IDomainStore, IStoreMedia } from '../../../domain/store/store.types';
 import { TInsertResponse } from '../../shared/insert-response';
 import { TRemoveResponse } from '../../shared/remove-response';
 import { TUpdateResponse } from '../../shared/update-reponse';
-import { IEditStoreRequest } from './edit-store.use-case';
+
+export interface IEdtitStoreUpdateOneData {
+  address?: IAddress;
+  name?: string;
+  media?: IStoreMedia;
+}
 
 export abstract class StoreRepository {
   abstract deleteOne: (storeId: string) => Promise<TRemoveResponse>;
@@ -15,5 +20,5 @@ export abstract class StoreRepository {
 
   abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
 
-  abstract updateOne: (storeId: string, storeUpdateData: IEditStoreRequest['body']) => Promise<TUpdateResponse>;
+  abstract updateOne: (storeId: string, storeUpdateData: IEdtitStoreUpdateOneData) => Promise<TUpdateResponse>;
 }
