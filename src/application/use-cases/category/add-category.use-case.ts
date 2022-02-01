@@ -38,7 +38,7 @@ export class AddCategory {
       params: { storeId },
     } = input;
 
-    await this.validateStore(storeId);
+    await this.validateStoreExistence(storeId);
 
     const _id = this.categoryRepository.getNextId();
 
@@ -62,7 +62,7 @@ export class AddCategory {
     });
   }
 
-  async validateStore(storeId: string): Promise<void> {
+  private async validateStoreExistence(storeId: string): Promise<void> {
     const storeExists = Boolean(await this.storeRepository.findById(storeId));
 
     if (!storeExists) {
