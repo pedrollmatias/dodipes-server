@@ -3,7 +3,7 @@ import { TInsertResponse } from '../../shared/insert-response';
 import { TRemoveResponse } from '../../shared/remove-response';
 import { TUpdateResponse } from '../../shared/update-reponse';
 
-export interface IEdtitStoreUpdateOneData {
+export interface IStoreRepositoryUpdateOneData {
   address?: IAddress;
   name?: string;
   media?: IStoreMedia;
@@ -20,5 +20,5 @@ export abstract class StoreRepository {
 
   abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
 
-  abstract updateOne: (storeId: string, storeUpdateData: IEdtitStoreUpdateOneData) => Promise<TUpdateResponse>;
+  abstract updateOne: (storeId: string, storeUpdateData: IStoreRepositoryUpdateOneData) => Promise<TUpdateResponse>;
 }

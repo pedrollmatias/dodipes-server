@@ -1,7 +1,7 @@
 import { MongoHelper } from './helpers/mongo-helper';
 import { Document, Filter, ObjectId } from 'mongodb';
 import { TInsertResponse } from '../../../application/shared/insert-response';
-import { IEdtitStoreUpdateOneData, StoreRepository } from '../../../application/use-cases/store/store-repository';
+import { IStoreRepositoryUpdateOneData, StoreRepository } from '../../../application/use-cases/store/store-repository';
 import { IDomainStore } from '../../../domain/store/store.types';
 import { TUpdateResponse } from '../../../application/shared/update-reponse';
 import { TRemoveResponse } from '../../../application/shared/remove-response';
@@ -25,7 +25,7 @@ export class MongodbStoreRepository implements StoreRepository {
     return { removedId: storeId };
   }
 
-  async updateOne(storeId: string, storeUpdateData: IEdtitStoreUpdateOneData): Promise<TUpdateResponse> {
+  async updateOne(storeId: string, storeUpdateData: IStoreRepositoryUpdateOneData): Promise<TUpdateResponse> {
     const storeObjectId = new ObjectId(storeId);
 
     await MongoHelper.getCollection(storeCollectionName).updateOne({ _id: storeObjectId }, { $set: storeUpdateData });

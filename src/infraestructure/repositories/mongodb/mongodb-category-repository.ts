@@ -1,6 +1,11 @@
 import { ObjectId } from 'mongodb';
 import { TInsertResponse } from '../../../application/shared/insert-response';
-import { CategoryRepository } from '../../../application/use-cases/category/category-repository';
+import { TRemoveResponse } from '../../../application/shared/remove-response';
+import { TUpdateResponse } from '../../../application/shared/update-reponse';
+import {
+  CategoryRepository,
+  ICategoryRepositoryUpdateOneData,
+} from '../../../application/use-cases/category/category-repository';
 import { IDomainCategory } from '../../../domain/category/category.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { storeCollectionName } from './mongodb-store-repository';
@@ -48,5 +53,31 @@ export class MongodbCategoryRepository implements CategoryRepository {
     );
 
     return { insertedId: category._id };
+  }
+
+  async updateOne(
+    storeId: string,
+    categoryId: string,
+    update: ICategoryRepositoryUpdateOneData
+  ): Promise<TUpdateResponse> {
+    const storeObjectId = new ObjectId(storeId);
+    const categoryObjectId = new ObjectId(categoryId);
+
+    const storeCollection = MongoHelper.getCollection(storeCollectionName);
+
+    await storeCollection.updateOne({ _id: storeObjectId, 'categories._id': categoryObjectId }, { $set: update });
+
+    return { updatedId: categoryId };
+  }
+
+  async deleteOne(storeId: string, categoryId: string): Promise<TRemoveResponse> {
+    const storeObjectId = new ObjectId(storeId);
+    const categoryObjectId = new ObjectId(categoryId);
+
+    const storeCollection = MongoHelper.getCollection(storeCollectionName);
+
+    await storeCollection.deleteOne({ _id: storeObjectId, 'categories._id': categoryObjectId });
+
+    return { removedId: categoryId };
   }
 }
