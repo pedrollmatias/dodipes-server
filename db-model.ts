@@ -4,8 +4,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  bornDate: string;
-  sex: string;
+  avatar?: string;
   passwordHash?: string;
   createdAt: Date;
   modifiedAt: Date;

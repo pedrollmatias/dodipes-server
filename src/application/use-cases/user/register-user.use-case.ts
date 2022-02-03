@@ -1,6 +1,6 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { User } from '../../../domain/user/user';
-import { IDomainUser, IName, TPasswordHashMethod, TSex } from '../../../domain/user/user.types';
+import { IDomainUser, IName, TPasswordHashMethod } from '../../../domain/user/user.types';
 import { TInsertResponse } from '../../shared/insert-response';
 import { UserRepository } from './user-repository';
 
@@ -8,9 +8,8 @@ export interface IRegisterUserRequest {
   body: {
     name: IName;
     email: string;
-    bornDate: Date;
-    sex: TSex;
     password: string;
+    avatar?: string;
   };
 }
 

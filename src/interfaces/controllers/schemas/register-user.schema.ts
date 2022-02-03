@@ -7,10 +7,6 @@ const schema: TSchemaModel<IRegisterUserRequest> = {
     body: {
       type: 'object',
       properties: {
-        bornDate: {
-          type: 'object',
-          required: [],
-        },
         email: {
           type: 'string',
         },
@@ -26,14 +22,15 @@ const schema: TSchemaModel<IRegisterUserRequest> = {
           },
           required: ['firstName', 'lastName'],
         },
+        avatar: {
+          type: 'string',
+          nullable: true,
+        },
         password: {
           type: 'string',
         },
-        sex: {
-          type: 'string',
-        },
       },
-      required: ['bornDate', 'email', 'name', 'password', 'sex'],
+      required: ['email', 'name', 'password'],
     },
   },
   required: ['body'],

@@ -2,7 +2,7 @@ import { ValidDate } from '../shared/valid-date';
 import { Email } from './email';
 import { Name } from './name';
 import { Password } from './password';
-import { IDomainUser, IName, TPasswordHashMethod, TSex } from './user.types';
+import { IDomainUser, IName, TPasswordHashMethod } from './user.types';
 
 export class User {
   public readonly _id: string;
@@ -11,36 +11,31 @@ export class User {
 
   public readonly email: Email;
 
-  public readonly bornDate: ValidDate;
-
-  public readonly sex: TSex;
-
   public readonly passwordHash?: string;
+
+  public readonly avatar?: string;
 
   public readonly createdAt: ValidDate;
 
   private constructor({
     _id,
-    bornDate,
     createdAt,
     email,
     name,
-    sex,
+    avatar,
     passwordHash,
   }: {
     _id: string;
     name: Name;
     email: Email;
-    bornDate: ValidDate;
-    sex: TSex;
     passwordHash?: string;
+    avatar?: string;
     createdAt: ValidDate;
   }) {
     this._id = _id;
     this.name = name;
     this.email = email;
-    this.bornDate = bornDate;
-    this.sex = sex;
+    this.avatar = avatar;
     this.passwordHash = passwordHash;
     this.createdAt = createdAt;
   }
@@ -50,23 +45,21 @@ export class User {
       _id: this._id,
       name: this.name.value,
       email: this.email.value,
-      bornDate: this.bornDate.value,
-      sex: this.sex,
+      avatar: this.avatar,
       passwordHash: this.passwordHash,
       createdAt: this.createdAt.value,
     };
   }
 
   static async create({
-    data: { _id, bornDate, createdAt, email, name, sex, password },
+    data: { _id, createdAt, email, name, avatar, password },
     passwordHashMethod,
   }: {
     data: {
       _id: string;
       name: IName;
       email: string;
-      bornDate: Date;
-      sex: TSex;
+      avatar?: string;
       password?: string;
       createdAt: Date;
     };
@@ -74,7 +67,6 @@ export class User {
   }): Promise<User> {
     const nameInstance = Name.create({ name });
     const emailInstance = Email.create({ email });
-    const bornDateInstance = ValidDate.create({ date: bornDate, dateLabel: 'data de nascimento' });
 
     let passwordHashInstance;
 
@@ -88,8 +80,7 @@ export class User {
       _id,
       name: nameInstance,
       email: emailInstance,
-      bornDate: bornDateInstance,
-      sex,
+      avatar,
       passwordHash: passwordHashInstance?.value,
       createdAt: createdAtInstance,
     });
