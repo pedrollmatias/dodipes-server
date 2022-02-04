@@ -63,7 +63,7 @@ export class User {
       password?: string;
       createdAt: Date;
     };
-    passwordHashMethod: TPasswordHashMethod;
+    passwordHashMethod?: TPasswordHashMethod;
   }): Promise<User> {
     const nameInstance = Name.create({ name });
     const emailInstance = Email.create({ email });
@@ -71,7 +71,7 @@ export class User {
     let passwordHashInstance;
 
     if (password) {
-      passwordHashInstance = await Password.create({ plainText: password, passwordHashMethod });
+      passwordHashInstance = passwordHashMethod && await Password.create({ plainText: password, passwordHashMethod });
     }
 
     const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do usuário' });

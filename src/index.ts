@@ -5,7 +5,7 @@ import { MongoHelper } from './infraestructure/repositories/mongodb/helpers/mong
 (async () => {
   try {
     const server = createServer();
-    const port = <number>(process.env.PORT || 3000);
+    const port = <number>(process.env.PORT || 9000);
 
     await server.start(port);
     const logger = server.logger();

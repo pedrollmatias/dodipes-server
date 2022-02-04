@@ -14,3 +14,4 @@ export interface IName {
 }
 
 export type TPasswordHashMethod = (plainText: string) => Promise<string>;
+export type TPasswordHashVerifyMethod = (plainText: string, hash?: string) => Promise<boolean> | boolean;

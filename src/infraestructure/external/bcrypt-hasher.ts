@@ -1,5 +1,5 @@
-import { hash } from 'bcrypt';
-import { TPasswordHashMethod } from '../../domain/user/user.types';
+import { compare, hash } from 'bcrypt';
+import { TPasswordHashMethod, TPasswordHashVerifyMethod } from '../../domain/user/user.types';
 
 export class BcryptHasher {
   hash: TPasswordHashMethod = (plainText: string): Promise<string> => {
@@ -7,4 +7,7 @@ export class BcryptHasher {
 
     return hash(plainText, saltRounds);
   };
+
+  compare: TPasswordHashVerifyMethod = (plainText: string, hash?: string): Promise<boolean> | boolean =>
+    hash ? compare(plainText, hash) : false;
 }

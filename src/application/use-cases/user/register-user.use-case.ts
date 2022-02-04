@@ -8,7 +8,7 @@ export interface IRegisterUserRequest {
   body: {
     name: IName;
     email: string;
-    password: string;
+    password?: string;
     avatar?: string;
   };
 }

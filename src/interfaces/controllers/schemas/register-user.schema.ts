@@ -28,9 +28,10 @@ const schema: TSchemaModel<IRegisterUserRequest> = {
         },
         password: {
           type: 'string',
+          nullable: true,
         },
       },
-      required: ['email', 'name', 'password'],
+      required: ['email', 'name'],
     },
   },
   required: ['body'],
