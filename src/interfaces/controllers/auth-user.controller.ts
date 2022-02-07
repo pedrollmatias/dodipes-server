@@ -30,6 +30,7 @@ export class AuthUserController {
     this.schemaValidator.validate(this.schema);
 
     const { body, headers } = input;
+
     const data = <IAuthUserRequest>(<unknown>{
       body,
       headers,

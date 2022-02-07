@@ -71,7 +71,7 @@ export class AuthUser {
     const isValidFormAuth = userExists && !token && isValidPassword;
     const isValidFirstGoogleAuth = !userExists && token && isValidGoogleToken;
 
-    if (!isValidGoogleAuth || !isValidFormAuth || !isValidFirstGoogleAuth) {
+    if (!isValidGoogleAuth && !isValidFormAuth && !isValidFirstGoogleAuth) {
       this.throwUnauthorizedError();
     }
 
