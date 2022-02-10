@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import axios from 'axios';
-import jwkToBuffer, { RSA } from 'jwk-to-pem';
+import jwt from 'jsonwebtoken';
 import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
 import { MongodbUserRepository } from '../../../repositories/mongodb/mongodb-user-repository';
@@ -25,11 +25,6 @@ export default async (server: FastifyInstance): Promise<void> => {
     const ajvDataValidator = new AjvDataValidator<IAuthUserRequest>(ajv);
     const ajvSchemaValidator = new AjvSchemaValidator<IAuthUserRequest>(ajv);
 
-    const response = await axios.get('https://www.googleapis.com/oauth2/v3/certs');
-    const { keys } = response.data;
-    const [, key] = keys;
-    const pem = jwkToBuffer(<RSA>key);
-
     const repositories: IAuthUserRepositories = { userRepository: new MongodbUserRepository() };
     const externalInterfaces: IAuthUserExternalInterfaces = {
       passwordHashVerifyMethod: new BcryptHasher().compare,
@@ -45,9 +40,27 @@ export default async (server: FastifyInstance): Promise<void> => {
     const presenter = new DefaultPresenter<IAuthUserResponse>();
 
     const controllerOutput = controller.handle({ input: request });
-    const useCaseOutput = await useCase.handle({ input: controllerOutput, tokenKey: pem });
+
+    const tokenKey = controllerOutput.body.token ? await getGooglePublicKey(controllerOutput.body.token) : undefined;
+
+    const useCaseOutput = await useCase.handle({ input: controllerOutput, tokenKey });
     const presenterOutput = presenter.handle({ input: useCaseOutput });
 
     reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
   });
+};
+
+const getGooglePublicKey = async (token: string): Promise<string | undefined> => {
+  const decoded = jwt.decode(token, { complete: true });
+  const header = decoded?.header;
+
+  if (!header?.kid) {
+    return;
+  }
+
+  const { kid } = header;
+  const response = await axios.get('https://www.googleapis.com/oauth2/v1/certs');
+  const keys = response.data;
+
+  return keys[kid];
 };

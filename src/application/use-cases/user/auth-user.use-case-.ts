@@ -55,7 +55,7 @@ export class AuthUser {
     tokenKey,
   }: {
     input: IAuthUserFormattedRequest;
-    tokenKey: string | Buffer;
+    tokenKey?: string | Buffer;
   }): Promise<IAuthUserResponse> {
     const {
       body: { email, password, name, avatar, token },
@@ -64,16 +64,13 @@ export class AuthUser {
     const user = await this.userRepository.findOne({ email });
 
     const userExists = Boolean(user);
-    const isValidGoogleToken = token ? Boolean(this.tokenHandler.verify(token, tokenKey)) : false;
+    const isValidGoogleToken = token && tokenKey ? Boolean(this.tokenHandler.verify(token, tokenKey)) : false;
     const isValidPassword = password ? await this.passwordHashVerifyMethod(password, user?.passwordHash) : false;
+    const hastToken = Boolean(token);
 
-    const isValidGoogleAuth = userExists && token && isValidGoogleToken;
-    const isValidFormAuth = userExists && !token && isValidPassword;
-    const isValidFirstGoogleAuth = !userExists && token && isValidGoogleToken;
-
-    if (!isValidGoogleAuth && !isValidFormAuth && !isValidFirstGoogleAuth) {
-      this.throwUnauthorizedError();
-    }
+    const isValidGoogleAuth = userExists && hastToken && isValidGoogleToken;
+    const isValidFormAuth = userExists && !hastToken && isValidPassword;
+    const isValidFirstGoogleAuth = !userExists && hastToken && isValidGoogleToken;
 
     if (isValidFirstGoogleAuth) {
       const registeredUser = await this.registerUser({ email, name, avatar });
@@ -82,6 +79,17 @@ export class AuthUser {
       const accessToken = this.generateAccessToken({ payload: { email, userId: insertedId } });
 
       return { accessToken };
+    }
+
+    if (!userExists) {
+      throw <CustomError>{
+        statusCode: ErrorCodes.UNAUTHORIZED,
+        message: 'Usuário ou senha incorretos',
+      };
+    }
+
+    if (!isValidGoogleAuth && !isValidFormAuth) {
+      this.throwUnauthorizedError();
     }
 
     const accessToken = this.generateAccessToken({ payload: { email, userId: user?._id ?? '' } });
