@@ -1,5 +1,5 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { IName } from '../../../domain/user/user.types';
+import { IName } from '../../../domain/entities/user/user.types';
 import { UserRepository } from './user-repository';
 
 export interface IGetUserByEmailRequest {
@@ -13,8 +13,6 @@ export interface IGetUserByEmailResponse {
   name: IName;
   email: string;
   avatar?: string;
-  createdAt: Date;
-  modifiedAt?: string;
 }
 
 export interface IGetUserByEmailRepositories {

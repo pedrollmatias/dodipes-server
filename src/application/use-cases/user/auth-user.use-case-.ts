@@ -1,7 +1,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { User } from '../../../domain/user/user';
-import { IName, TPasswordHashVerifyMethod } from '../../../domain/user/user.types';
-import { TInsertResponse } from '../../shared/insert-response';
+import { User } from '../../../domain/entities/user/user';
+import { IName, TPasswordHashVerifyMethod } from '../../../domain/entities/user/user.types';
+import { TInsertResponse } from '../../shared/use-case.types';
 import { TokenHanlder } from './token-handler';
 import { UserRepository } from './user-repository';
 

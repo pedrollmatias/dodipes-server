@@ -1,6 +1,6 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { IDomainStore } from '../../../domain/store/store.types';
-import { TRemoveResponse } from '../../shared/remove-response';
+import { IDomainStore } from '../../../domain/entities/store/store.types';
+import { TRemoveResponse } from '../../shared/use-case.types';
 import { StoreRepository } from './store-repository';
 
 export interface IRemoveStoreRequest {

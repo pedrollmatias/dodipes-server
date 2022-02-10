@@ -1,7 +1,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { StoreName } from '../../../domain/store/store-name';
-import { IDomainStore } from '../../../domain/store/store.types';
-import { TUpdateResponse } from '../../shared/update-reponse';
+import { StoreName } from '../../../domain/entities/store/store-name';
+import { IDomainStore } from '../../../domain/entities/store/store.types';
+import { TUpdateResponse } from '../../shared/use-case.types';
 import { StoreRepository } from './store-repository';
 
 export interface IEditStoreNameRequest {

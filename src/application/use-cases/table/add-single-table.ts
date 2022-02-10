@@ -1,6 +1,6 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { Table } from '../../../domain/table/table';
-import { TInsertResponse } from '../../shared/insert-response';
+import { Table } from '../../../domain/entities/table/table';
+import { TInsertResponse } from '../../shared/use-case.types';
 import { StoreRepository } from '../store/store-repository';
 import { TableRepository } from './table-repository';
 

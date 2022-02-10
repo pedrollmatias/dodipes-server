@@ -1,5 +1,5 @@
 import { IEditStoreAddressRequest } from '../../../application/use-cases/store/edit-store-address.use-case';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IEditStoreAddressRequest> = {
   type: 'object',

@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable require-await */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
-import { TInsertResponse } from '../../../../application/shared/insert-response';
+import { TInsertResponse } from '../../../../application/shared/use-case.types';
 import { DefaultController } from '../../../../interfaces/controllers/default.controller';
 import { DefaultPresenter } from '../../../../interfaces/presenters/default.presenter';
 import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
@@ -21,29 +23,31 @@ import schema from '../../../../interfaces/controllers/schemas/add-item.schema';
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
   server.post('/stores/:storeId/categories/:categoryId/items', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IAddItemRequest>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IAddItemRequest>(ajv);
+    // const ajvDataValidator = new AjvDataValidator<IAddItemRequest>(ajv);
+    // const ajvSchemaValidator = new AjvSchemaValidator<IAddItemRequest>(ajv);
 
-    const repositories: IAddItemRepositories = {
-      categoryRepository: new MongodbCategoryRepository(),
-      itemRepository: new MongodbItemRepository(),
-    };
-    const externalInterfaces: IAddItemExternalInterfaces = {
-      imageProcessor: new JimpImageProcessor(),
-    };
+    // const repositories: IAddItemRepositories = {
+    //   categoryRepository: new MongodbCategoryRepository(),
+    //   itemRepository: new MongodbItemRepository(),
+    // };
+    // const externalInterfaces: IAddItemExternalInterfaces = {
+    //   imageProcessor: new JimpImageProcessor(),
+    // };
 
-    const controller = new DefaultController<IAddItemRequest>({
-      dataValidator: ajvDataValidator,
-      schemaValidator: ajvSchemaValidator,
-      schema,
-    });
-    const useCase = new AddItem({ repositories, externalInterfaces });
-    const presenter = new DefaultPresenter<TInsertResponse>();
+    // const controller = new DefaultController<IAddItemRequest>({
+    //   dataValidator: ajvDataValidator,
+    //   schemaValidator: ajvSchemaValidator,
+    //   schema,
+    // });
+    // const useCase = new AddItem({ repositories, externalInterfaces });
+    // const presenter = new DefaultPresenter<TInsertResponse>();
 
-    const controllerOutput = controller.handle({ input: request });
-    const useCaseOutput = await useCase.handle({ input: controllerOutput });
-    const presenterOutput = presenter.handle({ input: useCaseOutput });
+    // const controllerOutput = controller.handle({ input: request });
+    // const useCaseOutput = await useCase.handle({ input: controllerOutput });
+    // const presenterOutput = presenter.handle({ input: useCaseOutput });
 
-    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    // reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+
+    reply.send({});
   });
 };

@@ -1,5 +1,5 @@
 import { Item } from '../item/item';
-import { ValidDate } from '../shared/valid-date';
+import { ValidDate } from '../../shared/valid-date';
 import { IDomainCategory } from './category.types';
 
 export class Category {
@@ -38,7 +38,7 @@ export class Category {
       _id: this._id,
       name: this.name,
       active: this.active,
-      items: this.items,
+      items: this.items.map((item: Item) => item.value),
       createdAt: this.createdAt.value,
     };
   }

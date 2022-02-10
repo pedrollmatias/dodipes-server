@@ -1,5 +1,5 @@
-import { IDomainUser } from '../../../domain/user/user.types';
-import { TInsertResponse } from '../../shared/insert-response';
+import { IDomainUser } from '../../../domain/entities/user/user.types';
+import { TInsertResponse } from '../../shared/use-case.types';
 
 export abstract class UserRepository {
   abstract getNextId: () => string;

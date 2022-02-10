@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { FastifyInstance } from 'fastify';
@@ -17,32 +16,37 @@ import { JwtTokenHandler } from '../../../external/jwt-token-handler';
 import { AuthUserController } from '../../../../interfaces/controllers/auth-user.controller';
 import ajv from '../../../external/ajv/ajv-instance';
 
-import schema, { IAuthUserRequest } from '../../../../interfaces/controllers/schemas/auth-user.schema';
+import controllerSchema, { IAuthUserRequest } from '../../../../interfaces/controllers/schemas/auth-user.schema';
+import presenterSchema from '../../../../interfaces/presenters/schemas/auth-user.schema';
 
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
   server.post('/auth', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IAuthUserRequest>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IAuthUserRequest>(ajv);
+    const controllerDataValidator = new AjvDataValidator<IAuthUserRequest>(ajv);
+    const controllerSchemaValidator = new AjvSchemaValidator<IAuthUserRequest>(ajv);
+    const controller = new AuthUserController({
+      dataValidator: controllerDataValidator,
+      schemaValidator: controllerSchemaValidator,
+      schema: controllerSchema,
+    });
 
     const repositories: IAuthUserRepositories = { userRepository: new MongodbUserRepository() };
     const externalInterfaces: IAuthUserExternalInterfaces = {
       passwordHashVerifyMethod: new BcryptHasher().compare,
       tokenHandler: new JwtTokenHandler(),
     };
-
-    const controller = new AuthUserController({
-      dataValidator: ajvDataValidator,
-      schemaValidator: ajvSchemaValidator,
-      schema,
-    });
     const useCase = new AuthUser({ repositories, externalInterfaces });
-    const presenter = new DefaultPresenter<IAuthUserResponse>();
+
+    const presenterDataValidator = new AjvDataValidator<IAuthUserResponse>(ajv);
+    const presenterSchemaValidator = new AjvSchemaValidator<IAuthUserResponse>(ajv);
+    const presenter = new DefaultPresenter<IAuthUserResponse>({
+      dataValidator: presenterDataValidator,
+      schemaValidator: presenterSchemaValidator,
+      schema: presenterSchema,
+    });
 
     const controllerOutput = controller.handle({ input: request });
-
     const tokenKey = controllerOutput.body.token ? await getGooglePublicKey(controllerOutput.body.token) : undefined;
-
     const useCaseOutput = await useCase.handle({ input: controllerOutput, tokenKey });
     const presenterOutput = presenter.handle({ input: useCaseOutput });
 

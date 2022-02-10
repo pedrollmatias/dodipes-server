@@ -1,5 +1,5 @@
 import { IAddSingleTableRequest } from '../../../application/use-cases/table/add-single-table';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IAddSingleTableRequest> = {
   type: 'object',

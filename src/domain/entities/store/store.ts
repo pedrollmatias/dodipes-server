@@ -1,7 +1,7 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
-import { ImageProcessor } from '../shared/image-processor';
-import { IdentifierName } from '../shared/indentifier-name';
-import { ValidDate } from '../shared/valid-date';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
+import { ImageProcessor } from '../../shared/image-processor';
+import { IdentifierName } from '../../shared/indentifier-name';
+import { ValidDate } from '../../shared/valid-date';
 import { Address } from './address';
 import { IAddress, IDomainStore, IStoreMedia, IStoreUser } from './store.types';
 import { StoreMedia } from './store-media';

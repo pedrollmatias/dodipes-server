@@ -1,4 +1,4 @@
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 import { IEditStoreNameRequest } from '../../../application/use-cases/store/edit-store-name.use-case';
 
 const schema: TSchemaModel<IEditStoreNameRequest> = {

@@ -1,5 +1,5 @@
 import { IGetStoreRequest } from '../../../application/use-cases/store/get-store.use-case';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IGetStoreRequest> = {
   type: 'object',

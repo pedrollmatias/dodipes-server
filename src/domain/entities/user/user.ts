@@ -1,4 +1,4 @@
-import { ValidDate } from '../shared/valid-date';
+import { ValidDate } from '../../shared/valid-date';
 import { Email } from './email';
 import { Name } from './name';
 import { Password } from './password';

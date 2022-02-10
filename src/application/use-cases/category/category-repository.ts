@@ -1,8 +1,5 @@
-import { IDomainCategory } from '../../../domain/category/category.types';
-import { TInsertResponse } from '../../shared/insert-response';
-import { TRemoveResponse } from '../../shared/remove-response';
-import { TUpdateResponse } from '../../shared/update-reponse';
-
+import { IDomainCategory } from '../../../domain/entities/category/category.types';
+import { TInsertResponse, TRemoveResponse, TUpdateResponse } from '../../shared/use-case.types';
 export interface ICategoryRepositoryUpdateOneData {
   name?: string;
   active?: boolean;

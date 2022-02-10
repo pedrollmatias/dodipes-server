@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable require-await */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
 import { MongodbUserRepository } from '../../../repositories/mongodb/mongodb-user-repository';
-import { TInsertResponse } from '../../../../application/shared/insert-response';
+import { TInsertResponse } from '../../../../application/shared/use-case.types';
 import { DefaultController } from '../../../../interfaces/controllers/default.controller';
 import { DefaultPresenter } from '../../../../interfaces/presenters/default.presenter';
 import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
@@ -21,27 +23,29 @@ import schema from '../../../../interfaces/controllers/schemas/add-store.schema'
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
   server.post('/stores', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IAddStoreRequest>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IAddStoreRequest>(ajv);
+    // const ajvDataValidator = new AjvDataValidator<IAddStoreRequest>(ajv);
+    // const ajvSchemaValidator = new AjvSchemaValidator<IAddStoreRequest>(ajv);
 
-    const repositories: IAddStoreRepositories = {
-      userRepository: new MongodbUserRepository(),
-      storeRepository: new MongodbStoreRepository(),
-    };
-    const externalInterfaces: IAddStoreExternalInterfaces = { imageProcessor: new JimpImageProcessor() };
+    // const repositories: IAddStoreRepositories = {
+    //   userRepository: new MongodbUserRepository(),
+    //   storeRepository: new MongodbStoreRepository(),
+    // };
+    // const externalInterfaces: IAddStoreExternalInterfaces = { imageProcessor: new JimpImageProcessor() };
 
-    const controller = new DefaultController<IAddStoreRequest>({
-      dataValidator: ajvDataValidator,
-      schemaValidator: ajvSchemaValidator,
-      schema,
-    });
-    const useCase = new AddStore({ repositories, externalInterfaces });
-    const presenter = new DefaultPresenter<TInsertResponse>();
+    // const controller = new DefaultController<IAddStoreRequest>({
+    //   dataValidator: ajvDataValidator,
+    //   schemaValidator: ajvSchemaValidator,
+    //   schema,
+    // });
+    // const useCase = new AddStore({ repositories, externalInterfaces });
+    // const presenter = new DefaultPresenter<TInsertResponse>();
 
-    const controllerOutput = controller.handle({ input: request });
-    const useCaseOutput = await useCase.handle({ input: controllerOutput });
-    const presenterOutput = presenter.handle({ input: useCaseOutput });
+    // const controllerOutput = controller.handle({ input: request });
+    // const useCaseOutput = await useCase.handle({ input: controllerOutput });
+    // const presenterOutput = presenter.handle({ input: useCaseOutput });
 
-    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    // reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+
+    reply.send({});
   });
 };

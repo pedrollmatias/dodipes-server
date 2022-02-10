@@ -1,7 +1,7 @@
-import { Category } from '../../../domain/category/category';
-import { IDomainCategory } from '../../../domain/category/category.types';
+import { Category } from '../../../domain/entities/category/category';
+import { IDomainCategory } from '../../../domain/entities/category/category.types';
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { TInsertResponse } from '../../shared/insert-response';
+import { TInsertResponse } from '../../shared/use-case.types';
 import { StoreRepository } from '../store/store-repository';
 import { CategoryRepository } from './category-repository';
 

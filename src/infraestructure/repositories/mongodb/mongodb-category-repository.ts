@@ -1,12 +1,10 @@
 import { ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/insert-response';
-import { TRemoveResponse } from '../../../application/shared/remove-response';
-import { TUpdateResponse } from '../../../application/shared/update-reponse';
+import { TRemoveResponse, TUpdateResponse, TInsertResponse } from '../../../application/shared/use-case.types';
 import {
   CategoryRepository,
   ICategoryRepositoryUpdateOneData,
 } from '../../../application/use-cases/category/category-repository';
-import { IDomainCategory } from '../../../domain/category/category.types';
+import { IDomainCategory } from '../../../domain/entities/category/category.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { storeCollectionName } from './mongodb-store-repository';
 

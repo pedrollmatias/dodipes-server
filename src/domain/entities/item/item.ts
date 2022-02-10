@@ -1,5 +1,5 @@
-import { ImageProcessor } from '../shared/image-processor';
-import { ValidDate } from '../shared/valid-date';
+import { ImageProcessor } from '../../shared/image-processor';
+import { ValidDate } from '../../shared/valid-date';
 import { ItemMedia } from './item-media';
 import { IDomainItem } from './item.types';
 import { Price } from './price';

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/insert-response';
+import { TInsertResponse } from '../../../application/shared/use-case.types';
 import { TableRepository } from '../../../application/use-cases/table/table-repository';
-import { IDomainTable } from '../../../domain/table/table.types';
+import { IDomainTable } from '../../../domain/entities/table/table.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { storeCollectionName } from './mongodb-store-repository';
 

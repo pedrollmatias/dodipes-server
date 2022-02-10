@@ -1,5 +1,5 @@
 import { IRemoveStoreRequest } from '../../../application/use-cases/store/remove-stores.use-use';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IRemoveStoreRequest> = {
   type: 'object',

@@ -1,5 +1,5 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { Item } from '../../../domain/item/item';
+import { Item } from '../../../domain/entities/item/item';
 import { CategoryRepository } from '../category/category-repository';
 import { ItemRepository } from './item-repository';
 import { ImageProcessor } from '../../../domain/shared/image-processor';

@@ -1,6 +1,6 @@
-import { IDomainCategory } from '../../../domain/category/category.types';
+import { IDomainCategory } from '../../../domain/entities/category/category.types';
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { TRemoveResponse } from '../../shared/remove-response';
+import { TRemoveResponse } from '../../shared/use-case.types';
 import { CategoryRepository } from './category-repository';
 
 export interface IRemoveCategoryRequest {

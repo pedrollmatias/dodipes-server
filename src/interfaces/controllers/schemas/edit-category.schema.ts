@@ -1,4 +1,4 @@
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 import { IEditCategoryRequest } from '../../../application/use-cases/category/edit-category.use-case';
 
 const schema: TSchemaModel<IEditCategoryRequest> = {

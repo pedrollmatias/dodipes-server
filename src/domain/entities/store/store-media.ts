@@ -1,5 +1,5 @@
-import { ImageProcessor } from '../shared/image-processor';
-import { Media } from '../shared/media';
+import { ImageProcessor } from '../../shared/image-processor';
+import { Media } from '../../shared/media';
 import { IStoreMedia } from './store.types';
 
 export class StoreMedia extends Media {

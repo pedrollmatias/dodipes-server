@@ -1,5 +1,5 @@
-import { IName } from '../../../domain/user/user.types';
-import { TSchemaModel } from '../controller.types';
+import { IName } from '../../../domain/entities/user/user.types';
+import { TSchemaModel } from '../../interface.types';
 
 export interface IAuthUserRequest {
   headers?: {

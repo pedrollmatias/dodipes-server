@@ -1,4 +1,4 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
 import { IName } from './user.types';
 
 export class Name {

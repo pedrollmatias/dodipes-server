@@ -1,7 +1,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-import { Address } from '../../../domain/store/address';
-import { IAddress, IDomainStore } from '../../../domain/store/store.types';
-import { TUpdateResponse } from '../../shared/update-reponse';
+import { Address } from '../../../domain/entities/store/address';
+import { IAddress, IDomainStore } from '../../../domain/entities/store/store.types';
+import { TUpdateResponse } from '../../shared/use-case.types';
 import { StoreRepository } from './store-repository';
 
 export interface IEditStoreAddressRequest {

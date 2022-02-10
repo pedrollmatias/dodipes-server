@@ -1,5 +1,5 @@
 import { IRegisterUserRequest } from '../../../application/use-cases/user/register-user.use-case';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IRegisterUserRequest> = {
   type: 'object',

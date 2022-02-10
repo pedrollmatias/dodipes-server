@@ -1,5 +1,5 @@
-import { IDomainTable } from '../../../domain/table/table.types';
-import { TInsertResponse } from '../../shared/insert-response';
+import { IDomainTable } from '../../../domain/entities/table/table.types';
+import { TInsertResponse } from '../../shared/use-case.types';
 
 export abstract class TableRepository {
   abstract findByNumber(storeId: string, tableNumber: number): Promise<IDomainTable | null>;

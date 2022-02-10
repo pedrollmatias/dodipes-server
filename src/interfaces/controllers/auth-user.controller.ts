@@ -1,8 +1,9 @@
 import { IAuthUserFormattedRequest } from '../../application/use-cases/user/auth-user.use-case-';
 import { CustomError, ErrorCodes } from '../../domain/shared/custom-error';
-import { HttpRequest, TSchemaModel } from './controller.types';
-import { DataValidator } from './data-validator';
-import { SchemaValidator } from './schema-validator';
+import { TSchemaModel } from '../interface.types';
+import { HttpRequest } from './controller.types';
+import { DataValidator } from '../data-validator';
+import { SchemaValidator } from '../schema-validator';
 import { IAuthUserRequest } from './schemas/auth-user.schema';
 
 export class AuthUserController {

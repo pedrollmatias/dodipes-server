@@ -1,6 +1,6 @@
 import Ajv, { ValidateFunction } from 'ajv';
-import { DataValidator } from '../../../interfaces/controllers/data-validator';
-import { TSchemaModel } from '../../../interfaces/controllers/controller.types';
+import { DataValidator } from '../../../interfaces/data-validator';
+import { TSchemaModel } from '../../../interfaces/interface.types';
 
 export class AjvDataValidator<DataType> implements DataValidator<DataType> {
   private _validate!: ValidateFunction;

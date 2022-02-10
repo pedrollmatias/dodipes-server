@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
 import { MongodbUserRepository } from '../../../repositories/mongodb/mongodb-user-repository';
 import { BcryptHasher } from '../../../external/bcrypt-hasher';
-import { TInsertResponse } from '../../../../application/shared/insert-response';
+import { TInsertResponse } from '../../../../application/shared/use-case.types';
 import {
   IRegisterUserExternalInterfaces,
   IRegisterUserRepositories,
@@ -15,24 +14,31 @@ import { DefaultPresenter } from '../../../../interfaces/presenters/default.pres
 import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
 import ajv from '../../../external/ajv/ajv-instance';
 
-import schema from '../../../../interfaces/controllers/schemas/register-user.schema';
+import controllerSchema from '../../../../interfaces/controllers/schemas/register-user.schema';
+import presenterSchema from '../../../../interfaces/presenters/schemas/insertion.schema';
 
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
   server.post('/user/registration', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IRegisterUserRequest>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IRegisterUserRequest>(ajv);
+    const controllerDataValidator = new AjvDataValidator<IRegisterUserRequest>(ajv);
+    const controllerSchemaValidator = new AjvSchemaValidator<IRegisterUserRequest>(ajv);
+    const controller = new DefaultController<IRegisterUserRequest>({
+      dataValidator: controllerDataValidator,
+      schemaValidator: controllerSchemaValidator,
+      schema: controllerSchema,
+    });
 
     const repositories: IRegisterUserRepositories = { userRepository: new MongodbUserRepository() };
     const externalInterfaces: IRegisterUserExternalInterfaces = { passwordHashMethod: new BcryptHasher().hash };
-
-    const controller = new DefaultController<IRegisterUserRequest>({
-      dataValidator: ajvDataValidator,
-      schemaValidator: ajvSchemaValidator,
-      schema,
-    });
     const useCase = new RegisterUser({ repositories, externalInterfaces });
-    const presenter = new DefaultPresenter<TInsertResponse>();
+
+    const presenterDataValidator = new AjvDataValidator<TInsertResponse>(ajv);
+    const presenterSchemaValidator = new AjvSchemaValidator<TInsertResponse>(ajv);
+    const presenter = new DefaultPresenter<TInsertResponse>({
+      dataValidator: presenterDataValidator,
+      schemaValidator: presenterSchemaValidator,
+      schema: presenterSchema,
+    });
 
     const controllerOutput = controller.handle({ input: request });
     const useCaseOutput = await useCase.handle({ input: controllerOutput });

@@ -1,5 +1,5 @@
 import { IAddItemRequest } from '../../../application/use-cases/item/add-item.use-case';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IAddItemRequest> = {
   type: 'object',

@@ -1,4 +1,4 @@
-import { TSchemaModel } from './controller.types';
+import { TSchemaModel } from './interface.types';
 
 export abstract class DataValidator<DataType> {
   abstract getError: () => string;

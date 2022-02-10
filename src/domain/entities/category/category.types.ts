@@ -1,10 +1,10 @@
-import { IItem } from '../item/item.types';
+import { IDomainItem } from '../item/item.types';
 
 export interface IDomainCategory {
   _id: string;
   name: string;
   active?: boolean;
-  items: IItem[];
+  items: IDomainItem[];
   createdAt?: Date;
   modifiedAt?: Date;
 }

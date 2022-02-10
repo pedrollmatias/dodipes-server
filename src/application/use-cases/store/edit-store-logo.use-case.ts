@@ -1,8 +1,8 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { ImageProcessor } from '../../../domain/shared/image-processor';
-import { StoreMedia } from '../../../domain/store/store-media';
-import { IDomainStore } from '../../../domain/store/store.types';
-import { TUpdateResponse } from '../../shared/update-reponse';
+import { StoreMedia } from '../../../domain/entities/store/store-media';
+import { IDomainStore } from '../../../domain/entities/store/store.types';
+import { TUpdateResponse } from '../../shared/use-case.types';
 import { StoreRepository } from './store-repository';
 
 export interface IEditStoreLogoRequest {

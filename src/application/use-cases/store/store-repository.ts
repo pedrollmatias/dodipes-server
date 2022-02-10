@@ -1,7 +1,5 @@
-import { IAddress, IDomainStore, IStoreMedia } from '../../../domain/store/store.types';
-import { TInsertResponse } from '../../shared/insert-response';
-import { TRemoveResponse } from '../../shared/remove-response';
-import { TUpdateResponse } from '../../shared/update-reponse';
+import { IAddress, IDomainStore, IStoreMedia } from '../../../domain/entities/store/store.types';
+import { TInsertResponse, TRemoveResponse, TUpdateResponse } from '../../shared/use-case.types';
 
 export interface IStoreRepositoryUpdateOneData {
   address?: IAddress;

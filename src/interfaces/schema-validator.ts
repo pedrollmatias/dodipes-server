@@ -1,4 +1,4 @@
-import { TSchemaModel } from './controller.types';
+import { TSchemaModel } from './interface.types';
 
 export abstract class SchemaValidator<DataType> {
   abstract getInstance?: () => unknown;

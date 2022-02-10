@@ -1,4 +1,4 @@
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 import { IAddStoreRequest } from '../../../application/use-cases/store/add-store.use-case';
 
 const schema: TSchemaModel<IAddStoreRequest> = {

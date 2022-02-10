@@ -1,4 +1,4 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
 
 export class TableNumber {
   private readonly tableNumber: number;

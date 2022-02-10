@@ -1,4 +1,4 @@
-import { IDomainStore } from '../../../domain/store/store.types';
+import { IDomainStore } from '../../../domain/entities/store/store.types';
 import { StoreRepository } from './store-repository';
 
 export interface IGetStoreRepositories {

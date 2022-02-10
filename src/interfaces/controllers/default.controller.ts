@@ -1,35 +1,36 @@
 import { CustomError, ErrorCodes } from '../../domain/shared/custom-error';
-import { HttpRequest, TSchemaModel } from './controller.types';
-import { DataValidator } from './data-validator';
-import { SchemaValidator } from './schema-validator';
+import { TSchemaModel } from '../interface.types';
+import { HttpRequest } from './controller.types';
+import { DataValidator } from '../data-validator';
+import { SchemaValidator } from '../schema-validator';
 
-export class DefaultController<DataType> {
-  private readonly dataValidator: DataValidator<DataType>;
+export class DefaultController<OutputType> {
+  private readonly dataValidator: DataValidator<OutputType>;
 
-  private readonly schemaValidator: SchemaValidator<DataType>;
+  private readonly schemaValidator: SchemaValidator<OutputType>;
 
-  private readonly schema: TSchemaModel<DataType>;
+  private readonly schema: TSchemaModel<OutputType>;
 
   constructor({
     dataValidator,
     schemaValidator,
     schema,
   }: {
-    dataValidator: DataValidator<DataType>;
-    schemaValidator: SchemaValidator<DataType>;
-    schema: TSchemaModel<DataType>;
+    dataValidator: DataValidator<OutputType>;
+    schemaValidator: SchemaValidator<OutputType>;
+    schema: TSchemaModel<OutputType>;
   }) {
     this.dataValidator = dataValidator;
     this.schemaValidator = schemaValidator;
     this.schema = schema;
   }
 
-  handle({ input }: { input: HttpRequest }): DataType {
+  handle({ input }: { input: HttpRequest }): OutputType {
     this.schemaValidator.validate(this.schema);
 
     const { body, params, headers, querystring } = input;
     // TODO: Verificar conversão para unknown
-    const data = <DataType>(<unknown>{
+    const data = <OutputType>(<unknown>{
       body,
       params,
       headers,

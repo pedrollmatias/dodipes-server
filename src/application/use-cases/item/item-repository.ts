@@ -1,5 +1,5 @@
-import { IDomainItem } from '../../../domain/item/item.types';
-import { TInsertResponse } from '../../shared/insert-response';
+import { IDomainItem } from '../../../domain/entities/item/item.types';
+import { TInsertResponse } from '../../shared/use-case.types';
 
 export abstract class ItemRepository {
   abstract getNextId: () => string;

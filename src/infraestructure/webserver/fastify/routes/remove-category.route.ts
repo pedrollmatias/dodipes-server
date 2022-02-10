@@ -1,11 +1,13 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable require-await */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifyInstance } from 'fastify';
 import { AjvDataValidator } from '../../../external/ajv/ajv-data-validator';
 import { DefaultController } from '../../../../interfaces/controllers/default.controller';
 import { DefaultPresenter } from '../../../../interfaces/presenters/default.presenter';
 import { AjvSchemaValidator } from '../../../external/ajv/ajv-schema-validator';
 import { MongodbCategoryRepository } from '../../../repositories/mongodb/mongodb-category-repository';
-import { TRemoveResponse } from '../../../../application/shared/remove-response';
+import { TRemoveResponse } from '../../../../application/shared/use-case.types';
 import {
   IRemoveCategoryRepositories,
   IRemoveCategoryRequest,
@@ -18,25 +20,27 @@ import schema from '../../../../interfaces/controllers/schemas/remove-category.s
 // eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
   server.delete('/stores/:storeId/categories/:categoryId', async (request, reply): Promise<void> => {
-    const ajvDataValidator = new AjvDataValidator<IRemoveCategoryRequest>(ajv);
-    const ajvSchemaValidator = new AjvSchemaValidator<IRemoveCategoryRequest>(ajv);
+    // const ajvDataValidator = new AjvDataValidator<IRemoveCategoryRequest>(ajv);
+    // const ajvSchemaValidator = new AjvSchemaValidator<IRemoveCategoryRequest>(ajv);
 
-    const repositories: IRemoveCategoryRepositories = {
-      categoryRepository: new MongodbCategoryRepository(),
-    };
+    // const repositories: IRemoveCategoryRepositories = {
+    //   categoryRepository: new MongodbCategoryRepository(),
+    // };
 
-    const controller = new DefaultController<IRemoveCategoryRequest>({
-      dataValidator: ajvDataValidator,
-      schemaValidator: ajvSchemaValidator,
-      schema,
-    });
-    const useCase = new RemoveCategory({ repositories });
-    const presenter = new DefaultPresenter<TRemoveResponse>();
+    // const controller = new DefaultController<IRemoveCategoryRequest>({
+    //   dataValidator: ajvDataValidator,
+    //   schemaValidator: ajvSchemaValidator,
+    //   schema,
+    // });
+    // const useCase = new RemoveCategory({ repositories });
+    // const presenter = new DefaultPresenter<TRemoveResponse>();
 
-    const controllerOutput = controller.handle({ input: request });
-    const useCaseOutput = await useCase.handle({ input: controllerOutput });
-    const presenterOutput = presenter.handle({ input: useCaseOutput });
+    // const controllerOutput = controller.handle({ input: request });
+    // const useCaseOutput = await useCase.handle({ input: controllerOutput });
+    // const presenterOutput = presenter.handle({ input: useCaseOutput });
 
-    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    // reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+
+    reply.send({});
   });
 };

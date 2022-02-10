@@ -1,5 +1,5 @@
 import { IGetUserByEmailRequest } from '../../../application/use-cases/user/get-user-by-email.use-case';
-import { TSchemaModel } from '../controller.types';
+import { TSchemaModel } from '../../interface.types';
 
 const schema: TSchemaModel<IGetUserByEmailRequest> = {
   type: 'object',

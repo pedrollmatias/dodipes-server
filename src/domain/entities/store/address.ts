@@ -1,4 +1,4 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
 import { IAddress } from './store.types';
 
 export class Address {

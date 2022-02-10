@@ -1,7 +1,7 @@
 // import { CustomError, ErrorCodes } from "../custom-error";
 
-import { ImageProcessor } from '../shared/image-processor';
-import { Media } from '../shared/media';
+import { ImageProcessor } from '../../shared/image-processor';
+import { Media } from '../../shared/media';
 
 export class ItemMedia extends Media {
   private readonly media?: Buffer;

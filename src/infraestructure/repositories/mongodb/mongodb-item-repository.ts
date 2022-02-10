@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/insert-response';
+import { TInsertResponse } from '../../../application/shared/use-case.types';
 import { ItemRepository } from '../../../application/use-cases/item/item-repository';
-import { IDomainCategory } from '../../../domain/category/category.types';
-import { IDomainItem } from '../../../domain/item/item.types';
+import { IDomainCategory } from '../../../domain/entities/category/category.types';
+import { IDomainItem } from '../../../domain/entities/item/item.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { storeCollectionName } from './mongodb-store-repository';
 

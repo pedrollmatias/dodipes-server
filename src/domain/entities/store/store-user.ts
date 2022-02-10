@@ -1,4 +1,4 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
 import { IStoreUser } from './store.types';
 
 export class StoreUser {

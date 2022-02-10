@@ -1,8 +1,8 @@
 import { MongoHelper } from './helpers/mongo-helper';
 import { UserRepository } from '../../../application/use-cases/user/user-repository';
 import { Document, Filter, ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/insert-response';
-import { IDomainUser } from '../../../domain/user/user.types';
+import { TInsertResponse } from '../../../application/shared/use-case.types';
+import { IDomainUser } from '../../../domain/entities/user/user.types';
 
 const userCollectionName = 'users';
 

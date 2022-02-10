@@ -1,10 +1,8 @@
 import { MongoHelper } from './helpers/mongo-helper';
 import { Document, Filter, ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/insert-response';
+import { TRemoveResponse, TUpdateResponse, TInsertResponse } from '../../../application/shared/use-case.types';
 import { IStoreRepositoryUpdateOneData, StoreRepository } from '../../../application/use-cases/store/store-repository';
-import { IDomainStore } from '../../../domain/store/store.types';
-import { TUpdateResponse } from '../../../application/shared/update-reponse';
-import { TRemoveResponse } from '../../../application/shared/remove-response';
+import { IDomainStore } from '../../../domain/entities/store/store.types';
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 
 export const storeCollectionName = 'stores';

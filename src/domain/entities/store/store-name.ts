@@ -1,4 +1,4 @@
-import { CustomError, ErrorCodes } from '../shared/custom-error';
+import { CustomError, ErrorCodes } from '../../shared/custom-error';
 
 export class StoreName {
   private readonly storeName: string;
