@@ -7,16 +7,15 @@ import { IDomainUser } from '../../../domain/entities/user/user.types';
 const userCollectionName = 'users';
 
 export class MongodbUserRepository implements UserRepository {
-  async findById(userId: string): Promise<IDomainUser | null> {
+  findById(userId: string): Promise<IDomainUser | null> {
     const userObjectId = new ObjectId(userId);
 
-    const user = await this.findOne({ _id: userObjectId });
-
-    return user;
+    return this.findOne({ _id: userObjectId });
   }
 
   async findOne(query: Filter<Document>): Promise<IDomainUser | null> {
-    const user = await MongoHelper.getCollection(userCollectionName).findOne(query);
+    const userDoc = await MongoHelper.getCollection(userCollectionName).findOne(query);
+    const user = userDoc && { ...userDoc, _id: userDoc._id.toString() };
 
     return <IDomainUser>(<unknown>user);
   }

@@ -14,7 +14,7 @@ export class AjvDataValidator<DataType> implements DataValidator<DataType> {
   getError(): string {
     const { errors } = this._validate;
 
-    const defaultErrorMessage = 'Erro na validação dos dados da requisição';
+    const defaultErrorMessage = 'Erro na validação dos dados';
 
     if (errors) {
       const [error] = errors;
