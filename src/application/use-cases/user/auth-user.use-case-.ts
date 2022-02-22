@@ -118,7 +118,7 @@ export class AuthUser {
   }
 
   private generateAccessToken({ payload }: { payload: { email: string; userId: string } }): string {
-    const options = { expiresIn: 20 };
+    const options = { expiresIn: 200000 };
 
     return this.tokenHandler.sign(payload, options);
   }

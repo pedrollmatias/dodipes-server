@@ -180,5 +180,13 @@
     "wrap-iife": "error",
     "yield-star-spacing": "error",
     "yoda": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.route.ts"],
+      "rules": {
+        "require-await": "off"
+      }
+    }
+  ]
 }

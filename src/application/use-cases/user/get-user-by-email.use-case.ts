@@ -1,6 +1,7 @@
 import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
 import { IName } from '../../../domain/entities/user/user.types';
 import { UserRepository } from './user-repository';
+import { throwForbiddenError } from '../../helpers/throw-forbidden-error';
 
 export interface IGetUserByEmailRequest {
   body: {
@@ -28,7 +29,13 @@ export class GetUserByEmail {
     this.userRepository = userRepository;
   }
 
-  async handle({ input }: { input: IGetUserByEmailRequest }): Promise<IGetUserByEmailResponse> {
+  async handle({
+    input,
+    requestUserId,
+  }: {
+    input: IGetUserByEmailRequest;
+    requestUserId: string;
+  }): Promise<IGetUserByEmailResponse> {
     const {
       body: { email },
     } = input;
@@ -40,6 +47,10 @@ export class GetUserByEmail {
         statusCode: ErrorCodes.NOT_FOUND,
         message: 'Usuário não encontrado',
       };
+    }
+
+    if (user._id !== requestUserId) {
+      return throwForbiddenError();
     }
 
     return user;

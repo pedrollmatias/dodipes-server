@@ -19,4 +19,6 @@ export abstract class StoreRepository {
   abstract insertOne: (storeData: IDomainStore) => Promise<TInsertResponse>;
 
   abstract updateOne: (storeId: string, storeUpdateData: IStoreRepositoryUpdateOneData) => Promise<TUpdateResponse>;
+
+  abstract findByUser: (userId: string) => Promise<IDomainStore[]>;
 }

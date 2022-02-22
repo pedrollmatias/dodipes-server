@@ -19,9 +19,8 @@ import ajv from '../../../external/ajv/ajv-instance';
 import controllerSchema, { IAuthUserRequest } from '../../../../interfaces/controllers/schemas/auth-user.schema';
 import presenterSchema from '../../../../interfaces/presenters/schemas/auth-user.schema';
 
-// eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post('/auth', async (request, reply): Promise<void> => {
+  server.post('/auth', async (request): Promise<IAuthUserResponse> => {
     const controllerDataValidator = new AjvDataValidator<IAuthUserRequest>(ajv);
     const controllerSchemaValidator = new AjvSchemaValidator<IAuthUserRequest>(ajv);
     const controller = new AuthUserController({
@@ -48,9 +47,9 @@ export default async (server: FastifyInstance): Promise<void> => {
     const controllerOutput = controller.handle({ input: request });
     const tokenKey = controllerOutput.body.token ? await getGooglePublicKey(controllerOutput.body.token) : undefined;
     const useCaseOutput = await useCase.handle({ input: controllerOutput, tokenKey });
-    const presenterOutput = presenter.handle({ input: useCaseOutput });
+    const { payload } = presenter.handle({ input: useCaseOutput });
 
-    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    return payload;
   });
 };
 

@@ -39,6 +39,16 @@ export class MongodbStoreRepository implements StoreRepository {
     return store;
   }
 
+  async findByUser(userId: string): Promise<IDomainStore[]> {
+    const userObjectId = new ObjectId(userId);
+
+    const stores = <IDomainStore[]>(
+      (<unknown>await MongoHelper.getCollection(storeCollectionName).find({ 'users._id': userObjectId }).toArray())
+    );
+
+    return stores;
+  }
+
   async findOne(query: Filter<Document>): Promise<IDomainStore | null> {
     const store = await MongoHelper.getCollection(storeCollectionName).findOne(query);
 

@@ -6,7 +6,7 @@ export class StoreUser {
 
   private readonly insertedAt: Date;
 
-  private readonly isAdmin: boolean;
+  private readonly isAdmin?: boolean;
 
   constructor({ _id, insertedAt, isAdmin }: IStoreUser) {
     this._id = _id;
@@ -32,7 +32,7 @@ export class StoreUser {
     if (!storeUser.isAdmin) {
       throw <CustomError>{
         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'O criador do estabelecimento precisa ser o administrador.',
+        message: 'O criador do estabelecimento precisa ser o administrador',
       };
     }
   }

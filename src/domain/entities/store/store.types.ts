@@ -1,10 +1,12 @@
+import { IDomainCategory } from '../category/category.types';
+
 export interface IDomainStore {
   _id: string;
   name: string;
   storename: string;
   address: IAddress;
   media?: IStoreMedia;
-  categories?: Category[];
+  categories?: IDomainCategory[];
   createdAt: Date;
   modifiedAt?: Date;
   users: IStoreUser[];
@@ -26,6 +28,6 @@ export interface IStoreMedia {
 
 export interface IStoreUser {
   _id: string;
-  isAdmin: boolean;
+  isAdmin?: boolean;
   insertedAt: Date;
 }

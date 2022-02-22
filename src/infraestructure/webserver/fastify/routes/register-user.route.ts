@@ -17,9 +17,8 @@ import ajv from '../../../external/ajv/ajv-instance';
 import controllerSchema from '../../../../interfaces/controllers/schemas/register-user.schema';
 import presenterSchema from '../../../../interfaces/presenters/schemas/insertion.schema';
 
-// eslint-disable-next-line require-await
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post('/user/registration', async (request, reply): Promise<void> => {
+  server.post('/user/registration', async (request): Promise<TInsertResponse> => {
     const controllerDataValidator = new AjvDataValidator<IRegisterUserRequest>(ajv);
     const controllerSchemaValidator = new AjvSchemaValidator<IRegisterUserRequest>(ajv);
     const controller = new DefaultController<IRegisterUserRequest>({
@@ -42,8 +41,8 @@ export default async (server: FastifyInstance): Promise<void> => {
 
     const controllerOutput = controller.handle({ input: request });
     const useCaseOutput = await useCase.handle({ input: controllerOutput });
-    const presenterOutput = presenter.handle({ input: useCaseOutput });
+    const { payload } = presenter.handle({ input: useCaseOutput });
 
-    reply.code(presenterOutput.statusCode).send(presenterOutput.payload);
+    return payload;
   });
 };
