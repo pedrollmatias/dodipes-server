@@ -62,8 +62,7 @@ const getGooglePublicKey = async (token: string): Promise<string | undefined> =>
   }
 
   const { kid } = header;
-  const response = await axios.get('https://www.googleapis.com/oauth2/v1/certs');
-  const keys = response.data;
+  const { data: keys } = await axios.get('https://www.googleapis.com/oauth2/v1/certs');
 
   return keys[kid];
 };
