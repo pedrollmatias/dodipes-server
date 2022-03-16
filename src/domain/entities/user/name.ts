@@ -1,50 +1,48 @@
-import { CustomError, ErrorCodes } from '../../shared/custom-error';
-import { IName } from './user.types';
+import { Either, left, right } from '../../../core/either';
+import { MaxLengthError, MinLengthError } from '../../shared/domain.errors';
+import { ValueObject } from '../../shared/value-object';
 
-export class Name {
-  private readonly firstName: string;
+interface INameProps {
+  firstName: string;
+  lastName: string;
+}
 
-  private readonly lastName: string;
+export type TNameErrors = MinLengthError | MaxLengthError;
 
-  private constructor(name: { firstName: string; lastName: string }) {
-    this.firstName = name.firstName;
-    this.lastName = name.lastName;
-  }
-
-  get value(): IName {
+export class Name extends ValueObject<INameProps> {
+  get value(): INameProps {
     return {
-      firstName: this.firstName,
-      lastName: this.lastName,
+      firstName: this.props.firstName,
+      lastName: this.props.lastName,
     };
   }
 
-  static create({ name }: { name: IName }): Name {
-    Name.validate(name);
+  static create({ firstName, lastName }: INameProps): Either<TNameErrors, Name> {
+    const isValidOrError = Name.validate({ firstName, lastName });
 
-    return new Name(name);
+    return isValidOrError.isLeft() ? left(isValidOrError.value) : right(new Name({ firstName, lastName }));
   }
 
-  static validate({ firstName, lastName }: IName): void {
-    this.validateFirstOrLastName(firstName);
-    this.validateFirstOrLastName(lastName);
+  private static validate({ firstName, lastName }: INameProps): Either<TNameErrors, boolean> {
+    const isValidFirstNameOrError = this.validateFirstOrLastName(firstName);
+
+    return isValidFirstNameOrError.isLeft()
+      ? left(isValidFirstNameOrError.value)
+      : this.validateFirstOrLastName(lastName);
   }
 
-  static validateFirstOrLastName(firstOrLastName: string): void {
-    const minChar = 2;
-    const maxChar = 255;
+  private static validateFirstOrLastName(firstOrLastName: string): Either<TNameErrors, boolean> {
+    const minLength = 2;
+    const maxLength = 255;
 
-    if (firstOrLastName.length < minChar) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `O nome precisa ter pelo menos ${minChar} caracteres`,
-      };
+    if (firstOrLastName.length < minLength) {
+      return left(new MinLengthError({ fieldName: 'nome', minLength, actualLength: firstOrLastName.length }));
     }
 
-    if (firstOrLastName.length > maxChar) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `O nome precisa ter no máximo ${maxChar} caracteres`,
-      };
+    if (firstOrLastName.length > maxLength) {
+      return left(new MaxLengthError({ fieldName: 'nome', maxLength, actualLength: firstOrLastName.length }));
     }
+
+    return right(true);
   }
 }

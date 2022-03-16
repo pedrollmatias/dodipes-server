@@ -1,76 +1,59 @@
-import { IAuthUserFormattedRequest } from '../../application/use-cases/user/auth-user.use-case-';
-import { CustomError, ErrorCodes } from '../../domain/shared/custom-error';
-import { TSchemaModel } from '../interface.types';
-import { HttpRequest } from './controller.types';
-import { DataValidator } from '../data-validator';
-import { SchemaValidator } from '../schema-validator';
-import { IAuthUserRequest } from './schemas/auth-user.schema';
+import { IAuthUserInputDTO } from '../../application/use-cases/auth-user/auth-user.input-dto';
+import { Either, left, right } from '../../core/either';
+import { IBody, IHeaders } from '../../infraestructure/webserver/fastify/routes/auth-user/auth-user.types';
+import { IRequest } from '../interface.types';
 
 export class AuthUserController {
-  private readonly dataValidator: DataValidator<IAuthUserRequest>;
-
-  private readonly schemaValidator: SchemaValidator<IAuthUserRequest>;
-
-  private readonly schema: TSchemaModel<IAuthUserRequest>;
-
-  constructor({
-    dataValidator,
-    schemaValidator,
-    schema,
+  handle({
+    request,
   }: {
-    dataValidator: DataValidator<IAuthUserRequest>;
-    schemaValidator: SchemaValidator<IAuthUserRequest>;
-    schema: TSchemaModel<IAuthUserRequest>;
-  }) {
-    this.dataValidator = dataValidator;
-    this.schemaValidator = schemaValidator;
-    this.schema = schema;
-  }
+    request: IRequest<{
+      headers: IHeaders;
+      body: IBody;
+    }>;
+  }): Either<InvalidTokenTypeError, IAuthUserInputDTO> {
+    const { body, headers } = request;
+    const { authorization } = headers;
 
-  handle({ input }: { input: HttpRequest }): IAuthUserFormattedRequest {
-    this.schemaValidator.validate(this.schema);
+    const tokenOrError = this.extractToken({ authorization });
 
-    const { body, headers } = input;
-
-    const data = <IAuthUserRequest>(<unknown>{
-      body,
-      headers,
-    });
-    const isValidData = this.dataValidator.validate(data, this.schema);
-
-    if (!isValidData) {
-      const error = this.dataValidator.getError();
-
-      throw <CustomError>{
-        statusCode: ErrorCodes.BAD_REQUEST,
-        message: error,
-      };
+    if (tokenOrError.isLeft()) {
+      return left(tokenOrError.value);
     }
 
-    const authUserFormattedRequest: IAuthUserFormattedRequest = {
-      body: {
-        ...data.body,
-        token: this.extractToken(<IAuthUserRequest['headers']>headers),
-      },
-    };
+    const { email, avatar, name, password } = body;
 
-    return authUserFormattedRequest;
+    return right({
+      email,
+      avatar,
+      name,
+      password,
+      token: tokenOrError.value,
+    });
   }
 
-  private extractToken({ authorization }: { authorization?: string } = {}): string | undefined {
+  private extractToken({ authorization }: { authorization?: string } = {}): Either<
+    InvalidTokenTypeError,
+    string | undefined
+  > {
     if (!authorization) {
-      return;
+      return right(undefined);
     }
 
     const [tokenType, token] = authorization.split(' ');
 
     if (tokenType !== 'Bearer') {
-      throw <CustomError>{
-        statusCode: ErrorCodes.BAD_REQUEST,
-        message: 'O token não é do tipo Bearer',
-      };
+      left(new InvalidTokenTypeError());
     }
 
-    return token;
+    return right(token);
+  }
+}
+
+class InvalidTokenTypeError extends Error {
+  constructor() {
+    super('O token não é do tipo Bearer');
+
+    this.name = 'InvalidTokenTypeError';
   }
 }

@@ -1,88 +1,105 @@
-import { ValidDate } from '../../shared/valid-date';
-import { Email } from './email';
-import { Name } from './name';
-import { Password } from './password';
-import { IDomainUser, IName, TPasswordHashMethod } from './user.types';
+import { Either, left, right } from '../../../core/either';
+import { Entity } from '../../shared/entity';
+import { TValidDateErrors, ValidDate } from '../../shared/valid-date';
+import { Avatar, TAvatarErrors } from './avatar';
+import { Email, TEmailErrors } from './email';
+import { Name, TNameErrors } from './name';
+import { Password, TPasswordErrors } from './password';
+import { IDomainUser, TPasswordHashMethod } from './user.types';
 
-export class User {
-  public readonly _id: string;
+export interface IUserProps {
+  avatar?: Avatar;
+  createdAt: ValidDate;
+  email: Email;
+  modifiedAt?: ValidDate;
+  name: Name;
+  passwordHash?: Password;
+}
 
-  public readonly name: Name;
+export type TUserErrors = TAvatarErrors | TEmailErrors | TNameErrors | TPasswordErrors | TValidDateErrors;
 
-  public readonly email: Email;
-
-  public readonly passwordHash?: string;
-
-  public readonly avatar?: string;
-
-  public readonly createdAt: ValidDate;
-
-  private constructor({
-    _id,
-    createdAt,
-    email,
-    name,
-    avatar,
-    passwordHash,
-  }: {
-    _id: string;
-    name: Name;
-    email: Email;
-    passwordHash?: string;
-    avatar?: string;
-    createdAt: ValidDate;
-  }) {
-    this._id = _id;
-    this.name = name;
-    this.email = email;
-    this.avatar = avatar;
-    this.passwordHash = passwordHash;
-    this.createdAt = createdAt;
-  }
-
+export class User extends Entity<IUserProps> {
   get value(): IDomainUser {
     return {
       _id: this._id,
-      name: this.name.value,
-      email: this.email.value,
-      avatar: this.avatar,
-      passwordHash: this.passwordHash,
-      createdAt: this.createdAt.value,
+      name: this.props.name.value,
+      email: this.props.email.value,
+      avatar: this.props.avatar?.value,
+      passwordHash: this.props.passwordHash?.value,
+      createdAt: this.props.createdAt.value.date,
+      modifiedAt: this.props.modifiedAt?.value.date,
     };
   }
 
   static async create({
-    data: { _id, createdAt, email, name, avatar, password },
+    data: { _id, createdAt, email, name, avatar, password, modifiedAt },
     passwordHashMethod,
   }: {
     data: {
       _id: string;
-      name: IName;
+      name: {
+        firstName: string;
+        lastName: string;
+      };
       email: string;
       avatar?: string;
       password?: string;
       createdAt: Date;
+      modifiedAt?: Date;
     };
     passwordHashMethod?: TPasswordHashMethod;
-  }): Promise<User> {
-    const nameInstance = Name.create({ name });
-    const emailInstance = Email.create({ email });
+  }): Promise<Either<TUserErrors, User>> {
+    const emailOrError = Email.create({ email });
 
-    let passwordHashInstance;
-
-    if (password) {
-      passwordHashInstance = passwordHashMethod && await Password.create({ plainText: password, passwordHashMethod });
+    if (emailOrError.isLeft()) {
+      return left(emailOrError.value);
     }
 
-    const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do usuário' });
+    const nameOrError = Name.create(name);
 
-    return new User({
-      _id,
-      name: nameInstance,
-      email: emailInstance,
-      avatar,
-      passwordHash: passwordHashInstance?.value,
-      createdAt: createdAtInstance,
-    });
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
+
+    const avatarOrError = !avatar ? undefined : Avatar.create({ url: avatar });
+
+    if (avatarOrError && avatarOrError.isLeft()) {
+      return left(avatarOrError.value);
+    }
+
+    const passwordHashOrError =
+      !password || !passwordHashMethod ? undefined : await Password.create({ plainText: password, passwordHashMethod });
+
+    if (passwordHashOrError && passwordHashOrError.isLeft()) {
+      return left(passwordHashOrError.value);
+    }
+
+    const createdAtOrError = ValidDate.create({ date: createdAt, label: 'data de criação do usuário' });
+
+    if (createdAtOrError.isLeft()) {
+      return left(createdAtOrError.value);
+    }
+
+    const modifiedAtOrError = !modifiedAt
+      ? undefined
+      : ValidDate.create({ date: modifiedAt, label: 'data de modificação do usuário' });
+
+    if (modifiedAtOrError && modifiedAtOrError.isLeft()) {
+      return left(modifiedAtOrError.value);
+    }
+
+    return right(
+      new User(
+        {
+          name: nameOrError.value,
+          email: emailOrError.value,
+          avatar: avatarOrError?.value,
+          passwordHash: passwordHashOrError?.value,
+          createdAt: createdAtOrError.value,
+          modifiedAt: modifiedAtOrError?.value,
+        },
+        _id
+      )
+    );
   }
 }

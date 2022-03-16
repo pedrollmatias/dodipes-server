@@ -1,11 +1,12 @@
-export interface IDomainUser {
-  _id: string;
+import { IDomainEntity } from '../../shared/domain.types';
+
+export interface IDomainUserProps {
   name: IName;
   email: string;
   passwordHash?: string;
   avatar?: string;
   createdAt: Date;
-  modifiedAt?: string;
+  modifiedAt?: Date;
 }
 
 export interface IName {
@@ -13,5 +14,6 @@ export interface IName {
   lastName: string;
 }
 
+export type IDomainUser = IDomainEntity & IDomainUserProps;
+
 export type TPasswordHashMethod = (plainText: string) => Promise<string>;
-export type TPasswordHashVerifyMethod = (plainText: string, hash?: string) => Promise<boolean> | boolean;

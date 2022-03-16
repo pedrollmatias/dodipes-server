@@ -1,32 +1,41 @@
-import { CustomError, ErrorCodes } from './custom-error';
+import { Either, left, right } from '../../core/either';
+import { InvalidFieldError } from './domain.errors';
+import { ValueObject } from './value-object';
 
-export class ValidDate {
-  private readonly date: Date;
+interface IValidDateProps {
+  label: string;
+  date: Date;
+}
 
-  private constructor(date: Date) {
-    this.date = date;
+export type TValidDateErrors = InvalidFieldError;
+
+export class ValidDate extends ValueObject<IValidDateProps> {
+  get value(): IValidDateProps {
+    return {
+      date: this.props.date,
+      label: this.props.label,
+    };
   }
 
-  get value(): Date {
-    return this.date;
+  static create({ date, label }: { date: Date; label: string }): Either<TValidDateErrors, ValidDate> {
+    const isValidDateOrError = this.validate(date, label);
+
+    if (isValidDateOrError.isLeft()) {
+      return left(isValidDateOrError.value);
+    }
+
+    return right(new ValidDate({ date, label }));
   }
 
-  static create({ date, dateLabel }: { date: Date; dateLabel: string }) {
-    ValidDate.validate(date, dateLabel);
-
-    return new ValidDate(date);
-  }
-
-  static validate(date: Date, dateLabel: string) {
+  private static validate(date: Date, label: string): Either<TValidDateErrors, boolean> {
     const today = new Date();
 
     if (date > today) {
-      const standardizedDateLabel = dateLabel.trim().toLowerCase();
+      const standardizedLabel = label.trim().toLowerCase();
 
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `A ${standardizedDateLabel} não pode ser após a data atual`,
-      };
+      return left(new InvalidFieldError({ fieldName: standardizedLabel, value: date.toString() }));
     }
+
+    return right(true);
   }
 }

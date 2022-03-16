@@ -5,7 +5,7 @@ import Autoload from 'fastify-autoload';
 export default (fastify: FastifyInstance): void => {
   fastify.register(Autoload, {
     dir: path.join(__dirname, '../routes'),
-    ignorePattern: /.*(?<!\.route\.ts)$/,
+    // ignorePattern: /.*(?<!\.route\.ts)$/,
     options: {
       prefix: '/api',
     },

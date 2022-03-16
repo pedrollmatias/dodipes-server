@@ -18,6 +18,6 @@ export class JimpImageProcessor implements ImageProcessor {
     const { width, height } = dimensions;
     const imageAspectRatio = width / height;
 
-    return imageAspectRatio !== validAspectRatio;
+    return imageAspectRatio === validAspectRatio;
   }
 }

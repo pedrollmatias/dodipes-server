@@ -1,15 +1,17 @@
-import { CustomError, ErrorCodes } from '../../shared/custom-error';
+import { Either, left, right } from '../../../core/either';
+import { InternalError } from '../../../core/errors';
+import { MaxLengthError, MinLengthError, RequiredLetterError, RequiredNumberError } from '../../shared/domain.errors';
+import { ValueObject } from '../../shared/value-object';
 import { TPasswordHashMethod } from './user.types';
 
-export class Password {
-  private readonly password: string;
+interface IPasswordProps {
+  passwordHash: string;
+}
 
-  private constructor(password: string) {
-    this.password = password;
-  }
-
+export type TPasswordErrors = MinLengthError | MaxLengthError | RequiredLetterError | RequiredNumberError;
+export class Password extends ValueObject<IPasswordProps> {
   get value(): string {
-    return this.password;
+    return this.props.passwordHash;
   }
 
   static async create({
@@ -18,38 +20,38 @@ export class Password {
   }: {
     plainText: string;
     passwordHashMethod: TPasswordHashMethod;
-  }): Promise<Password> {
-    Password.validate(plainText);
+  }): Promise<Either<TPasswordErrors | InternalError, Password>> {
+    const isValidPasswordOrError = this.validate(plainText);
 
-    const password = await passwordHashMethod(plainText);
+    if (isValidPasswordOrError.isLeft()) {
+      return left(isValidPasswordOrError.value);
+    }
 
-    return new Password(password);
+    const passwordHash = await passwordHashMethod(plainText);
+
+    return right(new Password({ passwordHash }));
   }
 
-  static validate(plainText: string) {
+  static validate(plainText: string): Either<TPasswordErrors, boolean> {
     const minLength = 6;
     const maxLength = 50;
 
     if (plainText.length < minLength) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `A senha precisa ter no mínimo ${minLength} caracteres`,
-      };
-    } else if (plainText.length > maxLength) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: `A senha precisa ter no máximo ${maxLength} caracteres`,
-      };
-    } else if (plainText.search(/\d/) === -1) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'A senha precisa conter pelo menos um número',
-      };
-    } else if (plainText.search(/[a-zA-Z]/) === -1) {
-      throw <CustomError>{
-        statusCode: ErrorCodes.NOT_ACCEPTABLE,
-        message: 'A senha precisa conter pelo menos uma letra',
-      };
+      return left(new MinLengthError({ fieldName: 'senha', minLength, actualLength: plainText.length }));
     }
+
+    if (plainText.length > maxLength) {
+      return left(new MaxLengthError({ fieldName: 'senha', maxLength, actualLength: plainText.length }));
+    }
+
+    if (plainText.search(/\d/) === -1) {
+      return left(new RequiredNumberError({ fieldName: 'senha' }));
+    }
+
+    if (plainText.search(/[a-zA-Z]/) === -1) {
+      return left(new RequiredLetterError({ fieldName: 'senha' }));
+    }
+
+    return right(true);
   }
 }

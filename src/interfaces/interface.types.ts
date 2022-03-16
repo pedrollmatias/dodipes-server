@@ -1,12 +1,18 @@
-/*
- * - O modelo dos schemas para validação dos dados da requisição adotado segue o padrão do AJV.
- * - Apenas o tipo do schema é importado do AJV, não as funcionalidades.
- * - Desde que seja utilizado o mesmo padrão de schema, qualquer validador irá funcionar, já que
- * é uma dependência injetada.
- * - Isso não fere os princípios da Clean Architecture, apesar dehaver um import do ajv na
- * camada de interface.
- */
+export interface IRequesPropsIndexes {
+  body?: unknown;
+  headers?: unknown;
+  params?: unknown;
+  querystring?: unknown;
+}
 
-import { JSONSchemaType } from 'ajv';
+export interface IRequest<IRequestProps extends IRequesPropsIndexes> {
+  body: IRequestProps['body'];
+  headers: IRequestProps['headers'];
+  params: IRequestProps['params'];
+  querystring: IRequestProps['querystring'];
+}
 
-export type TSchemaModel<T> = JSONSchemaType<T>;
+export interface IResponse {
+  statusCode: number;
+  payload: unknown;
+}

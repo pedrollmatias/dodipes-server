@@ -1,5 +1,6 @@
 import { compare, hash } from 'bcrypt';
-import { TPasswordHashMethod, TPasswordHashVerifyMethod } from '../../domain/entities/user/user.types';
+import { TPasswordHashVerifyMethod } from '../../application/use-cases/auth-user/auth-user.types';
+import { TPasswordHashMethod } from '../../domain/entities/user/user.types';
 
 export class BcryptHasher {
   hash: TPasswordHashMethod = (plainText: string): Promise<string> => {

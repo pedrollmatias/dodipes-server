@@ -1,37 +1,41 @@
 import { MongoHelper } from './helpers/mongo-helper';
-import { UserRepository } from '../../../application/use-cases/user/user-repository';
+import { IRepositoryUser, UserRepository } from '../../../application/repositories/user-repository';
 import { Document, Filter, ObjectId } from 'mongodb';
-import { TInsertResponse } from '../../../application/shared/use-case.types';
-import { IDomainUser } from '../../../domain/entities/user/user.types';
+import { MongodbRepository } from './mongodb-repository';
+import { IInsertionDTO } from '../../../application/shared/output-dto';
 
 const userCollectionName = 'users';
 
-export class MongodbUserRepository implements UserRepository {
-  findById(userId: string): Promise<IDomainUser | null> {
-    const userObjectId = new ObjectId(userId);
-
-    return this.findOne({ _id: userObjectId });
+export class MongodbUserRepository extends MongodbRepository implements UserRepository<ObjectId> {
+  findById(userId: ObjectId): Promise<IRepositoryUser<ObjectId> | null> {
+    return this.findOne({ _id: userId });
   }
 
-  async findOne(query: Filter<Document>): Promise<IDomainUser | null> {
+  async findOne(query: Filter<Document>): Promise<IRepositoryUser<ObjectId> | null> {
     const userDoc = await MongoHelper.getCollection(userCollectionName).findOne(query);
-    const user = userDoc && { ...userDoc, _id: userDoc._id.toString() };
 
-    return <IDomainUser>(<unknown>user);
+    if (!userDoc) {
+      return null;
+    }
+
+    const { _id, createdAt, email, name, avatar, modifiedAt, passwordHash } = userDoc;
+
+    const repositoryUser: IRepositoryUser<ObjectId> = {
+      _id,
+      createdAt,
+      email,
+      name,
+      avatar,
+      modifiedAt,
+      passwordHash,
+    };
+
+    return repositoryUser;
   }
 
-  getNextId(): string {
-    return new ObjectId().toString();
-  }
+  async insertOne(user: IRepositoryUser<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
+    const { insertedId } = await MongoHelper.getCollection(userCollectionName).insertOne(user);
 
-  async insertOne(user: IDomainUser): Promise<TInsertResponse> {
-    const userObjectId = new ObjectId(user._id);
-
-    await MongoHelper.getCollection(userCollectionName).insertOne({
-      ...user,
-      _id: userObjectId,
-    });
-
-    return { insertedId: user._id };
+    return { insertedId };
   }
 }
