@@ -15,7 +15,7 @@ interface IPresenter {
   handle: ({ outputDto }: { outputDto: Either<Error, any> }) => IResponse;
 }
 
-export const flowController = async <RequestProps extends IRequesPropsIndexes>({
+export const defaultFlowController = async <RequestProps extends IRequesPropsIndexes>({
   request,
   controller,
   useCase,
