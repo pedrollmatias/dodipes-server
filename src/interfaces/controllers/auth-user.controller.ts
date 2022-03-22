@@ -3,6 +3,8 @@ import { Either, left, right } from '../../core/either';
 import { IBody, IHeaders } from '../../infraestructure/webserver/fastify/routes/auth-user/auth-user.types';
 import { IRequest } from '../interface.types';
 
+export type TAuthUserControllerErrors = InvalidTokenTypeError;
+
 export class AuthUserController {
   handle({
     request,
@@ -11,7 +13,7 @@ export class AuthUserController {
       headers: IHeaders;
       body: IBody;
     }>;
-  }): Either<InvalidTokenTypeError, IAuthUserInputDTO> {
+  }): Either<TAuthUserControllerErrors, IAuthUserInputDTO> {
     const { body, headers } = request;
     const { authorization } = headers;
 
@@ -50,7 +52,7 @@ export class AuthUserController {
   }
 }
 
-class InvalidTokenTypeError extends Error {
+export class InvalidTokenTypeError extends Error {
   constructor() {
     super('O token não é do tipo Bearer');
 

@@ -14,9 +14,14 @@ import { ForbiddenError } from '../../application/shared/use-case.errors';
 import { InvalidCredentialsError } from '../../application/use-cases/auth-user/auth-user.errors';
 import { TAuthUserErrors } from '../../application/use-cases/auth-user/auth-user.use-case';
 import { IAuthUserOutputDTO } from '../../application/use-cases/auth-user/auth-user.output-dto';
+import { InvalidTokenTypeError, TAuthUserControllerErrors } from '../controllers/auth-user.controller';
 
 export class AuthUserPresenter extends Presenter {
-  handle({ outputDto }: { outputDto: Either<TAuthUserErrors, IAuthUserOutputDTO> }): IResponse {
+  handle({
+    outputDto,
+  }: {
+    outputDto: Either<TAuthUserErrors | TAuthUserControllerErrors, IAuthUserOutputDTO>;
+  }): IResponse {
     if (outputDto.isLeft()) {
       switch (outputDto.constructor) {
         case InvalidAvatarError:
@@ -26,6 +31,7 @@ export class AuthUserPresenter extends Presenter {
         case RequiredLetterError:
         case RequiredNumberError:
         case InvalidFieldError:
+        case InvalidTokenTypeError:
           return this.badRequest(outputDto.value.message);
         case ForbiddenError:
           return this.forbidden(outputDto.value.message);

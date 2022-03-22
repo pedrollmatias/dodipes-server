@@ -13,3 +13,11 @@ export class ForbiddenError extends Error {
     this.name = 'ForbiddenError';
   }
 }
+
+export class ResourceNotFoundError extends Error {
+  constructor({ message }: { message?: string }) {
+    super(message ?? 'Recurso não encontrado');
+
+    this.name = 'ResourceNotFoundError';
+  }
+}

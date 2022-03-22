@@ -5,6 +5,7 @@ import { IInsertionDTO } from '../../shared/output-dto';
 import { Either, left, right } from '../../../core/either';
 import { DuplicatedRegisterError } from '../../shared/use-case.errors';
 import { IDomainUser, TPasswordHashMethod } from '../../../domain/entities/user/user.types';
+import { UseCase } from '../../shared/use-case';
 
 export interface IAddUserRepositories<RepositoryIdType> {
   userRepository: UserRepository<RepositoryIdType>;
@@ -16,7 +17,7 @@ export interface IAddUserExternalInterfaces {
 
 export type TAddUserErrors = TUserErrors | DuplicatedRegisterError;
 
-export class AddUser<RepositoryIdType> {
+export class AddUser<RepositoryIdType> implements UseCase<IAddUserInputDTO, IInsertionDTO<RepositoryIdType>> {
   private readonly userRepository: UserRepository<RepositoryIdType>;
 
   private readonly passwordHashMethod: TPasswordHashMethod;

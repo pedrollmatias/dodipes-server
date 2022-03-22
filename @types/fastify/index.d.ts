@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
 
-interface ILocals {
+export interface ILocals {
   userId: string;
   email: string;
 }

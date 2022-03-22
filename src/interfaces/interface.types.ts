@@ -1,4 +1,5 @@
 export interface IRequesPropsIndexes {
+  locals?: unknown;
   body?: unknown;
   headers?: unknown;
   params?: unknown;
@@ -6,6 +7,7 @@ export interface IRequesPropsIndexes {
 }
 
 export interface IRequest<IRequestProps extends IRequesPropsIndexes> {
+  locals: IRequestProps['locals'];
   body: IRequestProps['body'];
   headers: IRequestProps['headers'];
   params: IRequestProps['params'];

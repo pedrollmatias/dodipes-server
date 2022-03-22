@@ -30,6 +30,6 @@ export class AddUserPresenter<RepositoryIdType> extends Presenter {
       }
     }
 
-    return this.success<IInsertionDTO<RepositoryIdType>>(outputDto.value);
+    return this.success(outputDto.value);
   }
 }
