@@ -1,8 +1,8 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { IBody, IResponse } from './get-user-by-email.types';
+import { IQuerystring, IResponse } from './get-user-by-email.types';
 
-const bodySchema: JSONSchemaType<IBody> = {
+const queryStringSchema: JSONSchemaType<IQuerystring> = {
   type: 'object',
   properties: {
     email: {
@@ -52,7 +52,8 @@ const responseSchema: JSONSchemaType<IResponse> = {
 };
 
 const schema: FastifySchema = {
-  body: bodySchema,
+  querystring: queryStringSchema,
+  // body: bodySchema,
   response: {
     200: responseSchema,
   },

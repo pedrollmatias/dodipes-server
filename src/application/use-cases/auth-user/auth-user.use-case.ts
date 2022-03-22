@@ -43,20 +43,16 @@ export class AuthUser<RepositoryIdType> {
     this.tokenHandler = tokenHandler;
   }
 
-  async handle({
-    inputDto,
-    tokenKey,
-  }: {
-    inputDto: IAuthUserInputDTO;
-    tokenKey?: string | Buffer;
-  }): Promise<Either<TAuthUserErrors, IAuthUserOutputDTO>> {
-    const { email, password, name, avatar, token } = inputDto;
+  async handle({ inputDto }: { inputDto: IAuthUserInputDTO }): Promise<Either<TAuthUserErrors, IAuthUserOutputDTO>> {
+    const { email, password, name, avatar, token, tokenKey } = inputDto;
 
     const repositoryUser = await this.userRepository.findOne({ email });
 
     const userExists = Boolean(repositoryUser);
     const isValidGoogleToken = token && tokenKey ? Boolean(this.tokenHandler.verify(token, tokenKey)) : false;
-    const isValidPassword = password ? await this.passwordHashVerifyMethod(password, repositoryUser?.passwordHash) : false;
+    const isValidPassword = password
+      ? await this.passwordHashVerifyMethod(password, repositoryUser?.passwordHash)
+      : false;
     const hastToken = Boolean(token);
 
     const isValidGoogleAuth = userExists && hastToken && isValidGoogleToken;

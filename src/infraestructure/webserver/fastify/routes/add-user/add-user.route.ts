@@ -8,7 +8,7 @@ import { IBody } from './add-user.types';
 import { defaultFlowController } from '../../../../../core/default-flow-controller';
 
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post<{ Body: IBody }>('/user/registration', { schema }, async (request, reply): Promise<void> => {
+  server.post<{ Body: IBody }>('/users', { schema }, async (request, reply): Promise<void> => {
     const { payload, statusCode } = await defaultFlowController({
       request: toAdaptedRequest<{ body: IBody }>(request),
       controller: addUserController,

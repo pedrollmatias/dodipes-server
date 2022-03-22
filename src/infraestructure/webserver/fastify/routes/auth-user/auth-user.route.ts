@@ -27,7 +27,7 @@ export default async (server: FastifyInstance): Promise<void> => {
 
     const inputDto = inputDtoOrError.value;
     const tokenKey = inputDto.token ? await getGooglePublicKey(inputDto.token) : undefined;
-    const outputDto = await authUserUseCase.handle({ inputDto, tokenKey });
+    const outputDto = await authUserUseCase.handle({ inputDto: { ...inputDto, tokenKey } });
     const { payload, statusCode } = authUserPresenter.handle({ outputDto });
 
     return reply.status(statusCode).send(payload);
