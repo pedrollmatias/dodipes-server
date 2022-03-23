@@ -1,6 +1,5 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { ObjectId } from 'mongodb';
 import { IInsertionDTO } from '../../../../../application/shared/output-dto';
 import { IBody } from './add-user.types';
 
@@ -34,12 +33,11 @@ const bodySchema: JSONSchemaType<IBody> = {
   required: ['email', 'name'],
 };
 
-const responseSchema: JSONSchemaType<IInsertionDTO<ObjectId>> = {
+const responseSchema: JSONSchemaType<IInsertionDTO<null>> = {
   type: 'object',
   properties: {
     insertedId: {
-      type: 'object',
-      required: [],
+      type: 'string',
     },
   },
   required: ['insertedId'],
@@ -48,7 +46,7 @@ const responseSchema: JSONSchemaType<IInsertionDTO<ObjectId>> = {
 const schema: FastifySchema = {
   body: bodySchema,
   response: {
-    200: responseSchema,
+    '2xx': responseSchema,
   },
 };
 

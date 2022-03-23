@@ -1,8 +1,8 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { IQuerystring, IResponse } from './get-user-by-email.types';
+import { IParams, IResponse } from './get-user-by-email.types';
 
-const queryStringSchema: JSONSchemaType<IQuerystring> = {
+const paramsSchema: JSONSchemaType<IParams> = {
   type: 'object',
   properties: {
     email: {
@@ -16,24 +16,21 @@ const responseSchema: JSONSchemaType<IResponse> = {
   type: 'object',
   properties: {
     _id: {
-      type: 'object',
-      required: [],
+      type: 'string',
     },
     avatar: {
       nullable: true,
       type: 'string',
     },
     createdAt: {
-      type: 'object',
-      required: [],
+      type: 'string',
     },
     email: {
       type: 'string',
     },
     modifiedAt: {
       nullable: true,
-      type: 'object',
-      required: [],
+      type: 'string',
     },
     name: {
       type: 'object',
@@ -52,10 +49,9 @@ const responseSchema: JSONSchemaType<IResponse> = {
 };
 
 const schema: FastifySchema = {
-  querystring: queryStringSchema,
-  // body: bodySchema,
+  params: paramsSchema,
   response: {
-    200: responseSchema,
+    '2xx': responseSchema,
   },
 };
 

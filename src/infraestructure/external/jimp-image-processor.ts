@@ -1,4 +1,4 @@
-import { ImageProcessor, TImageDimensions } from '../../domain/shared/image-processor';
+import { ImageProcessor, TImageDimensions } from '../../domain/shared/image/image-processor';
 import Jimp from 'jimp';
 
 export class JimpImageProcessor implements ImageProcessor {

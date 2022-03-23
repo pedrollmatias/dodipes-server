@@ -67,7 +67,7 @@ export class AuthUser<RepositoryIdType> {
       }
 
       const { insertedId } = addedUserOrError.value;
-      const userId = this.userRepository.idToString(insertedId);
+      const userId = this.userRepository.idToString(<RepositoryIdType>insertedId);
       const accessToken = this.generateAccessToken({ payload: { email, userId } });
 
       return right({ accessToken });

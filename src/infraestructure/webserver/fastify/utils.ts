@@ -4,6 +4,9 @@ import { IRequesPropsIndexes, IRequest } from '../../../interfaces/interface.typ
 export const toAdaptedRequest = <RequestProps extends IRequesPropsIndexes>(
   request: FastifyRequest
 ): IRequest<RequestProps> => ({
-  ...request,
+  body: request.body,
+  headers: request.headers,
+  locals: request.locals,
+  params: request.params,
   querystring: request.query,
 });

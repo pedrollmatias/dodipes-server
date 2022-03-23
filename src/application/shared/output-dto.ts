@@ -1,1 +1,1 @@
-export type IInsertionDTO<RepositoryIdType> = { insertedId: RepositoryIdType };
+export type IInsertionDTO<RepositoryIdType> = { insertedId: RepositoryIdType | string };

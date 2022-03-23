@@ -1,6 +1,7 @@
 import { Either, left, right } from '../../../core/either';
 import { MaxLengthError, MinLengthError } from '../../shared/domain.errors';
 import { ValueObject } from '../../shared/value-object';
+import { IName } from './user.types';
 
 interface INameProps {
   firstName: string;
@@ -10,20 +11,20 @@ interface INameProps {
 export type TNameErrors = MinLengthError | MaxLengthError;
 
 export class Name extends ValueObject<INameProps> {
-  get value(): INameProps {
+  get value(): IName {
     return {
       firstName: this.props.firstName,
       lastName: this.props.lastName,
     };
   }
 
-  static create({ firstName, lastName }: INameProps): Either<TNameErrors, Name> {
+  static create({ firstName, lastName }: IName): Either<TNameErrors, Name> {
     const isValidOrError = Name.validate({ firstName, lastName });
 
     return isValidOrError.isLeft() ? left(isValidOrError.value) : right(new Name({ firstName, lastName }));
   }
 
-  private static validate({ firstName, lastName }: INameProps): Either<TNameErrors, boolean> {
+  private static validate({ firstName, lastName }: IName): Either<TNameErrors, boolean> {
     const isValidFirstNameOrError = this.validateFirstOrLastName(firstName);
 
     return isValidFirstNameOrError.isLeft()

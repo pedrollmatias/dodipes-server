@@ -1,38 +1,44 @@
-// import { CustomError, ErrorCodes } from '../../shared/custom-error';
+import { Either, left, right } from '../../../core/either';
+import { MaxLengthError, MinLengthError } from '../../shared/domain.errors';
+import { ValueObject } from '../../shared/value-object';
 
-// export class StoreName {
-//   private readonly storeName: string;
+interface IStoreNameProps {
+  storeName: string;
+}
 
-//   private constructor(storeName: string) {
-//     this.storeName = storeName;
-//   }
+export type TStoreNameErrors = MinLengthError | MaxLengthError;
 
-//   get value(): string {
-//     return this.storeName;
-//   }
+export class StoreName extends ValueObject<IStoreNameProps> {
+  get value(): string {
+    return this.props.storeName;
+  }
 
-//   static create({ storeName }: { storeName: string }): StoreName {
-//     this.validate(storeName);
+  static create({ storeName }: { storeName: string }): Either<TStoreNameErrors, StoreName> {
+    const isValidStoreNameOrError = this.validate(storeName);
 
-//     return new StoreName(storeName);
-//   }
+    if (isValidStoreNameOrError.isLeft()) {
+      return left(isValidStoreNameOrError.value);
+    }
 
-//   static validate(storeName: string): void {
-//     const minLength = 3;
-//     const maxLength = 255;
+    return right(new StoreName({ storeName }));
+  }
 
-//     if (storeName.length < minLength) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: `O nome do estabelecimento deve ter no mínimo ${minLength} caracteres`,
-//       };
-//     }
+  private static validate(storeName: string): Either<TStoreNameErrors, boolean> {
+    const minLength = 3;
+    const maxLength = 255;
 
-//     if (storeName.length > maxLength) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: `O nome do estabelecimento deve ter no máximo ${maxLength} caracteres`,
-//       };
-//     }
-//   }
-// }
+    if (storeName.length < minLength) {
+      return left(
+        new MinLengthError({ fieldName: 'nome do estabelecimento', actualLength: storeName.length, minLength })
+      );
+    }
+
+    if (storeName.length > maxLength) {
+      return left(
+        new MaxLengthError({ fieldName: 'nome do estabelecimento', actualLength: storeName.length, maxLength })
+      );
+    }
+
+    return right(true);
+  }
+}

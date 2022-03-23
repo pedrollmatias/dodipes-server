@@ -1,44 +1,64 @@
-// import { ImageProcessor } from '../../shared/image-processor';
-// import { Media } from '../../shared/media';
-// import { IStoreMedia } from './store.types';
+import { ImageProcessor } from '../../shared/image/image-processor';
+import { Image, TImageErrors } from '../../shared/image/image';
+import { IStoreMedia } from './store.types';
+import { ValueObject } from '../../shared/value-object';
+import { Either, left, right } from '../../../core/either';
 
-// export class StoreMedia extends Media {
-//   private readonly logo?: Buffer;
+interface IStoreMediaProps {
+  coverPhoto?: Image;
+  logo?: Image;
+}
 
-//   private readonly coverPhoto?: Buffer;
+export type TStoreMediaErrors = TImageErrors;
 
-//   constructor(media?: IStoreMedia) {
-//     super();
-//     this.logo = media?.logo;
-//     this.coverPhoto = media?.coverPhoto;
-//   }
+export class StoreMedia extends ValueObject<IStoreMediaProps> {
+  get value(): IStoreMedia {
+    return {
+      coverPhoto: this.props.coverPhoto?.value,
+      logo: this.props.logo?.value,
+    };
+  }
 
-//   get value(): IStoreMedia {
-//     return {
-//       logo: this.logo,
-//       coverPhoto: this.coverPhoto,
-//     };
-//   }
+  static async create({
+    media,
+    imageProcessor,
+  }: {
+    media?: IStoreMedia;
+    imageProcessor: ImageProcessor;
+  }): Promise<Either<TStoreMediaErrors, StoreMedia>> {
+    let storeMediaData: IStoreMediaProps = {};
+    const aspectRatio = [1, 1];
 
-//   static async create({
-//     media,
-//     imageProcessor,
-//   }: {
-//     media?: IStoreMedia;
-//     imageProcessor: ImageProcessor;
-//   }): Promise<StoreMedia> {
-//     if (media?.logo) {
-//       const aspectRatio = [1, 1];
+    if (media?.coverPhoto) {
+      const { coverPhoto } = media;
+      const coverPhotoOrError = await Image.create({
+        image: coverPhoto,
+        imageProcessor,
+        validationOptions: { aspectRatio },
+      });
 
-//       await StoreMedia.validateImage(media.logo, imageProcessor, { aspectRatio });
-//     }
+      if (coverPhotoOrError.isLeft()) {
+        return left(coverPhotoOrError.value);
+      }
 
-//     if (media?.coverPhoto) {
-//       const aspectRatio = [1, 1];
+      storeMediaData = { ...storeMediaData, coverPhoto: coverPhotoOrError.value };
+    }
 
-//       await StoreMedia.validateImage(media.coverPhoto, imageProcessor, { aspectRatio });
-//     }
+    if (media?.logo) {
+      const { logo } = media;
+      const logoOrError = await Image.create({
+        image: logo,
+        imageProcessor,
+        validationOptions: { aspectRatio },
+      });
 
-//     return new StoreMedia(media);
-//   }
-// }
+      if (logoOrError.isLeft()) {
+        return left(logoOrError.value);
+      }
+
+      storeMediaData = { ...storeMediaData, logo: logoOrError.value };
+    }
+
+    return right(new StoreMedia(storeMediaData));
+  }
+}

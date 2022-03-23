@@ -1,128 +1,100 @@
-// import { CustomError, ErrorCodes } from '../../shared/custom-error';
-// import { ImageProcessor } from '../../shared/image-processor';
-// import { ValidDate } from '../../shared/valid-date';
-// import { Address } from './address';
-// import { IAddress, IDomainStore, IStoreMedia, IStoreUser } from './store.types';
-// import { StoreMedia } from './store-media';
-// import { StoreName } from './store-name';
-// import { StoreUser } from './store-user';
-// import { Storename } from './storename';
+import { Either, left, right } from '../../../core/either';
+import { Address, TAddressErrors } from '../../shared/address/address';
+import { Entity } from '../../shared/entity';
+import { ImageProcessor } from '../../shared/image/image-processor';
+import { TValidDateErrors, ValidDate } from '../../shared/valid-date';
+import { StoreMedia, TStoreMediaErrors } from './store-media';
+import { StoreName, TStoreNameErrors } from './store-name';
+import { IDomainStore } from './store.types';
+import { Storename, TStorenameErrors } from './storename';
 
-// export class Store {
-//   private readonly storeId: string;
+export interface IStoreProps {
+  address: Address;
+  createdAt: ValidDate;
+  media?: StoreMedia;
+  modifiedAt?: ValidDate;
+  name: StoreName;
+  storename: Storename;
+}
 
-//   private readonly name: StoreName;
+export type TStoreErrors = TStoreNameErrors | TStorenameErrors | TAddressErrors | TStoreMediaErrors | TValidDateErrors;
 
-//   private readonly storename: Storename;
+export class Store extends Entity<IStoreProps> {
+  get value(): IDomainStore {
+    return {
+      _id: this._id,
+      address: this.props.address.value,
+      createdAt: this.props.createdAt.props.date,
+      name: this.props.name.value,
+      storename: this.props.storename.value,
+      media: this.props.media?.value,
+      modifiedAt: this.props.modifiedAt?.props?.date,
+    };
+  }
 
-//   private readonly address: Address;
+  static async create({
+    data,
+    imageProcessor,
+  }: {
+    data: IDomainStore;
+    imageProcessor: ImageProcessor;
+  }): Promise<Either<TStoreErrors, Store>> {
+    const { _id, address, createdAt, name, storename, media, modifiedAt } = data;
 
-//   private readonly media?: StoreMedia;
+    const addressOrError = Address.create({ address });
 
-//   private readonly users: StoreUser[];
+    if (addressOrError.isLeft()) {
+      return left(addressOrError.value);
+    }
 
-//   private readonly createdAt: ValidDate;
+    const createdAtOrError = ValidDate.create({ date: createdAt, label: 'data de criação do estabelecimento' });
 
-//   private readonly modifiedAt?: ValidDate;
+    if (createdAtOrError.isLeft()) {
+      return left(createdAtOrError.value);
+    }
 
-//   constructor({
-//     storeId,
-//     address,
-//     createdAt,
-//     name,
-//     storename,
-//     users,
-//     media,
-//     modifiedAt,
-//   }: {
-//     storeId: string;
-//     name: StoreName;
-//     storename: Storename;
-//     address: Address;
-//     media?: StoreMedia;
-//     users: StoreUser[];
-//     createdAt: ValidDate;
-//     modifiedAt?: ValidDate;
-//   }) {
-//     this.storeId = storeId;
-//     this.name = name;
-//     this.storename = storename;
-//     this.address = address;
-//     this.media = media;
-//     this.users = users;
-//     this.createdAt = createdAt;
-//     this.modifiedAt = modifiedAt;
-//   }
+    const nameOrError = StoreName.create({ storeName: name });
 
-//   get value(): IDomainStore {
-//     return {
-//       storeId: this.storeId,
-//       name: this.name.value,
-//       storename: this.storename.value,
-//       address: this.address.value,
-//       media: this.media?.value,
-//       users: this.users.map((user) => user.value),
-//       createdAt: this.createdAt.value,
-//       modifiedAt: this.modifiedAt?.value,
-//     };
-//   }
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
 
-//   static async create({
-//     data: { storeId, address, createdAt, name, storename, users, media, modifiedAt },
-//     imageProcessor,
-//   }: {
-//     data: {
-//       storeId: string;
-//       name: string;
-//       storename: string;
-//       address: IAddress;
-//       media?: IStoreMedia;
-//       users: IStoreUser[];
-//       createdAt: Date;
-//       modifiedAt?: Date;
-//     };
-//     imageProcessor: ImageProcessor;
-//   }): Promise<Store> {
-//     const nameInstance = StoreName.create({ storeName: name });
-//     const storenameInstance = Storename.create({ storename });
-//     const addressInstance = Address.create({ address });
-//     const mediaInstance = await StoreMedia.create({ media, imageProcessor });
-//     const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do estabelecimento' });
+    const storenameOrError = Storename.create({ storename });
 
-//     if (users.length > 1) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: 'Não é possível criar um estabelecimento com mais de um usuário',
-//       };
-//     }
+    if (storenameOrError.isLeft()) {
+      return left(storenameOrError.value);
+    }
 
-//     const usersInstances = users.map(({ userId, insertedAt, isAdmin }: IStoreUser): StoreUser => {
-//       const insertedAtInstance = ValidDate.create({ date: insertedAt, dateLabel: 'data de inserção do usuário' });
+    const mediaOrError = await StoreMedia.create({ media, imageProcessor });
 
-//       return StoreUser.create({
-//         storeUser: {
-//           userId,
-//           isAdmin,
-//           insertedAt: insertedAtInstance.value,
-//         },
-//       });
-//     });
+    if (mediaOrError.isLeft()) {
+      return left(mediaOrError.value);
+    }
 
-//     let modifiedAtInstance;
+    let modifiedAtValue;
 
-//     if (modifiedAt) {
-//       modifiedAtInstance = ValidDate.create({ date: modifiedAt, dateLabel: 'data de atualização do estabelecimento' });
-//     }
+    if (modifiedAt) {
+      const modifiedAtOrError = ValidDate.create({ date: modifiedAt, label: 'data de modificação do estabelecimento' });
 
-//     return new Store({
-//       storeId,
-//       name: nameInstance,
-//       storename: storenameInstance,
-//       address: addressInstance,
-//       media: mediaInstance,
-//       createdAt: createdAtInstance,
-//       users: usersInstances,
-//       modifiedAt: modifiedAtInstance,
-//     });
-//   }
-// }
+      if (modifiedAtOrError.isLeft()) {
+        return left(modifiedAtOrError.value);
+      }
+
+      modifiedAtValue = modifiedAtOrError.value;
+    }
+
+    return right(
+      new Store(
+        {
+          address: addressOrError.value,
+          createdAt: createdAtOrError.value,
+          name: nameOrError.value,
+          storename: storenameOrError.value,
+          media: mediaOrError.value,
+          modifiedAt: modifiedAtValue,
+        },
+        _id
+      )
+    );
+  }
+}

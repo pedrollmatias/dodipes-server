@@ -30,6 +30,15 @@ export class MaxLengthError extends Error {
   }
 }
 
+export class ExactLengthError extends Error {
+  constructor({ fieldName, exactLength, actualLength }: { fieldName: string; exactLength: number; actualLength: number }) {
+    super(
+      `O campo "${fieldName}" deve ter no ${exactLength.toString()} caracteres. Ocorrência: ${actualLength.toString()}`
+    );
+    this.name = 'ExactLengthError';
+  }
+}
+
 export class InvalidEmailError extends Error {
   constructor({ email }: { email: string }) {
     super(`O email "${email}" não é valido`);

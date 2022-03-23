@@ -16,7 +16,7 @@
 // import { MongodbStoreRepository } from '../../../repositories/mongodb/mongodb-store-repository';
 
 // export default async (server: FastifyInstance): Promise<void> => {
-//   server.post('/stores/storename-availability', async (request): Promise<ICheckStorenameAvailabilityResponse> => {
+//   server.get('/storenames/availability', async (request): Promise<ICheckStorenameAvailabilityResponse> => {
 //     const controllerDataValidator = new AjvDataValidator<ICheckStorenameAvailabilityRequest>(ajv);
 //     const controllerSchemaValidator = new AjvSchemaValidator<ICheckStorenameAvailabilityRequest>(ajv);
 //     const controller = new DefaultController<ICheckStorenameAvailabilityRequest>({

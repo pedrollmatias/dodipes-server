@@ -1,33 +1,35 @@
-// import { CustomError, ErrorCodes } from '../../shared/custom-error';
-// import { ValueObject } from '../../shared/value-object';
+import { Either, left, right } from '../../../core/either';
+import { InvalidFieldError } from '../../shared/domain.errors';
+import { ValueObject } from '../../shared/value-object';
 
-// interface IStorenameProps {
-//   storename: string;
-// }
+interface IStorenameProps {
+  storename: string;
+}
 
-// export class Storename extends ValueObject<IStorenameProps> {
-//   // private constructor(storename: string) {
-//   //   this.storename = storename;
-//   // }
+export type TStorenameErrors = InvalidFieldError;
 
-//   get value(): string {
-//     return this.storename;
-//   }
+export class Storename extends ValueObject<IStorenameProps> {
+  get value(): string {
+    return this.props.storename;
+  }
 
-//   static create({ storename }: { storename: string }): Storename {
-//     Storename.validate(storename);
+  static create({ storename }: { storename: string }): Either<TStorenameErrors, Storename> {
+    const isValidStorenameOrError = this.validate(storename);
 
-//     return new Storename(storename);
-//   }
+    if (isValidStorenameOrError.isLeft()) {
+      return left(isValidStorenameOrError.value);
+    }
 
-//   static validate(storename: string): void {
-//     const storenameRegex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/;
+    return right(new Storename({ storename }));
+  }
 
-//     if (!storenameRegex.test(storename)) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: 'O storename não é válido',
-//       };
-//     }
-//   }
-// }
+  private static validate(storename: string): Either<InvalidFieldError, boolean> {
+    const storenameRegex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/;
+
+    if (!storenameRegex.test(storename)) {
+      return left(new InvalidFieldError({ fieldName: 'storename', value: storename }));
+    }
+
+    return right(true);
+  }
+}
