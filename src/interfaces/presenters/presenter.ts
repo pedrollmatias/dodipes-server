@@ -10,6 +10,11 @@ export enum ErrorStatusCodes {
   INTERNAL_SERVER_ERROR = 500,
 }
 
+export enum SuccessStatusCodes {
+  OK = 200,
+  NO_CONTENT = 204,
+}
+
 export class Presenter {
   public badRequest(message: string): IResponse {
     return { payload: message, statusCode: ErrorStatusCodes.BAD_REQUEST };
@@ -27,6 +32,10 @@ export class Presenter {
     return { payload: message, statusCode: ErrorStatusCodes.FORBIDDEN };
   }
 
+  public notAcceptable(message: string): IResponse {
+    return { payload: message, statusCode: ErrorStatusCodes.NOT_ACCEPTABLE };
+  }
+
   public notFound(message: string): IResponse {
     return { payload: message, statusCode: ErrorStatusCodes.NOT_FOUND };
   }
@@ -36,6 +45,10 @@ export class Presenter {
   }
 
   public success<OutputDTO>(payload: OutputDTO): IResponse {
-    return { payload, statusCode: 200 };
+    return { payload, statusCode: SuccessStatusCodes.OK };
+  }
+
+  public successNoContent(): IResponse {
+    return { payload: null, statusCode: SuccessStatusCodes.NO_CONTENT };
   }
 }

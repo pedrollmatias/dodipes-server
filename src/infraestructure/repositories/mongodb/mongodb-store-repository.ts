@@ -69,4 +69,10 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
 
     return <IRepositoryStoreByUser<ObjectId>[]>stores;
   }
+
+  async findOneByStorename(storename: string): Promise<IRepositoryStoreByUser<ObjectId> | null> {
+    const store = await MongoHelper.getCollection(storeCollectionName).findOne({ storename });
+
+    return <IRepositoryStoreByUser<ObjectId>>store;
+  }
 }
