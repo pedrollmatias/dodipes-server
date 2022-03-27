@@ -1,7 +1,6 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { IAuthUserOutputDTO } from '../../../../../application/use-cases/auth-user/auth-user.output-dto';
-import { IBody, IHeaders } from './auth-user.types';
+import { IBody, IHeaders, IResponse } from './auth-user.types';
 
 const headersSchema: JSONSchemaType<IHeaders> = {
   type: 'object',
@@ -44,7 +43,7 @@ const bodySchema: JSONSchemaType<IBody> = {
   required: ['email'],
 };
 
-const responseSchema: JSONSchemaType<IAuthUserOutputDTO> = {
+const responseSchema: JSONSchemaType<IResponse> = {
   type: 'object',
   properties: {
     accessToken: {

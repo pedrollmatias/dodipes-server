@@ -4,6 +4,7 @@ import { IName } from '../../../domain/entities/user/user.types';
 import { UserRepository } from '../../repositories/user-repository';
 import { IInsertionDTO } from '../../shared/output-dto';
 import { TokenHanlder } from '../../shared/token-handler';
+import { UseCase } from '../../shared/use-case';
 import { ForbiddenError } from '../../shared/use-case.errors';
 import { InvalidCredentialsError } from './auth-user.errors';
 import { IAuthUserInputDTO } from './auth-user.input-dto';
@@ -21,7 +22,7 @@ export interface IAuthUserExternalInterfaces {
 
 export type TAuthUserErrors = TUserErrors | ForbiddenError | InvalidCredentialsError;
 
-export class AuthUser<RepositoryIdType> {
+export class AuthUser<RepositoryIdType> extends UseCase<IAuthUserInputDTO, IAuthUserOutputDTO> {
   private readonly userRepository: UserRepository<RepositoryIdType>;
 
   private readonly passwordHashVerifyMethod: TPasswordHashVerifyMethod;
@@ -35,6 +36,7 @@ export class AuthUser<RepositoryIdType> {
     repositories: IAuthUserRepositories<RepositoryIdType>;
     externalInterfaces: IAuthUserExternalInterfaces;
   }) {
+    super();
     const { userRepository } = repositories;
     const { passwordHashVerifyMethod, tokenHandler } = externalInterfaces;
 

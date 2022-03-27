@@ -9,4 +9,8 @@ export class MongodbRepository implements Repository<ObjectId> {
   idToString(id: ObjectId): string {
     return id.toString();
   }
+
+  stringToId(id: string): ObjectId {
+    return new ObjectId(id);
+  }
 }

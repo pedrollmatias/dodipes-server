@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-
 import { toAdaptedRequest } from '../../utils';
 import { defaultFlowController } from '../../../../../core/default-flow-controller';
 import { ILocals } from '../../../../../../@types/fastify';

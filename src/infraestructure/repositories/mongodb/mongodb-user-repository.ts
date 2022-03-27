@@ -7,7 +7,7 @@ import { IInsertionDTO } from '../../../application/shared/output-dto';
 const userCollectionName = 'users';
 
 export class MongodbUserRepository extends MongodbRepository implements UserRepository<ObjectId> {
-  findById(userId: ObjectId): Promise<IRepositoryUser<ObjectId> | null> {
+  findOneById(userId: ObjectId): Promise<IRepositoryUser<ObjectId> | null> {
     return this.findOne({ _id: userId });
   }
 

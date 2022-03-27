@@ -1,15 +1,7 @@
-// import { MongoHelper } from './helpers/mongo-helper';
-// import { Document, Filter, ObjectId } from 'mongodb';
-// import { TRemoveResponse, TUpdateResponse, TInsertResponse } from '../../../application/shared/use-case.types';
-// import {
-//   IRepositoryStore,
-//   IStoreRepositoryUpdateOneData,
-//   StoreRepository,
-// } from '../../../application/use-cases/store/store-repository';
-// import { IDomainStore } from '../../../domain/entities/store/store.types';
-// import { CustomError, ErrorCodes } from '../../../domain/shared/custom-error';
-
-// export const storeCollectionName = 'stores';
+import { ObjectId } from 'mongodb';
+import { IRepositoryStoreByUser, StoreRepository } from '../../../application/repositories/store-repository';
+import { MongoHelper } from './helpers/mongo-helper';
+import { MongodbRepository } from './mongodb-repository';
 
 // export class MongodbStoreRepository implements StoreRepository {
 //   async deleteOne(storeId: string): Promise<TRemoveResponse> {
@@ -67,3 +59,14 @@
 //     return { updatedId: storeId };
 //   }
 // }
+
+const storeCollectionName = 'stores';
+
+export class MongodbStoreRepository extends MongodbRepository implements StoreRepository<ObjectId> {
+  async findByUserId(userId: ObjectId): Promise<IRepositoryStoreByUser<ObjectId>[]> {
+    const storesCursor = MongoHelper.getCollection(storeCollectionName).find({ 'users._id': userId });
+    const stores = await storesCursor.toArray();
+
+    return <IRepositoryStoreByUser<ObjectId>[]>stores;
+  }
+}

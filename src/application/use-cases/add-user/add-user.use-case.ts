@@ -17,7 +17,7 @@ export interface IAddUserExternalInterfaces {
 
 export type TAddUserErrors = TUserErrors | DuplicatedRegisterError;
 
-export class AddUser<RepositoryIdType> implements UseCase<IAddUserInputDTO, IInsertionDTO<RepositoryIdType>> {
+export class AddUser<RepositoryIdType> extends UseCase<IAddUserInputDTO, IInsertionDTO<RepositoryIdType>> {
   private readonly userRepository: UserRepository<RepositoryIdType>;
 
   private readonly passwordHashMethod: TPasswordHashMethod;
@@ -29,6 +29,7 @@ export class AddUser<RepositoryIdType> implements UseCase<IAddUserInputDTO, IIns
     repositories: IAddUserRepositories<RepositoryIdType>;
     externalInterfaces: IAddUserExternalInterfaces;
   }) {
+    super();
     const { userRepository } = repositories;
     const { passwordHashMethod } = externalInterfaces;
 

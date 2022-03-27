@@ -7,9 +7,11 @@ export interface IRepositoryUser<RepositoryIdType> extends IDomainUserProps {
 }
 
 export abstract class UserRepository<RepositoryIdType> extends Repository<RepositoryIdType> {
-  abstract findById: (userId: RepositoryIdType) => Promise<IRepositoryUser<RepositoryIdType> | null>;
+  abstract findOneById: (userId: RepositoryIdType) => Promise<IRepositoryUser<RepositoryIdType> | null>;
 
-  abstract findOne: <QueryType>(query: QueryType) => Promise<IRepositoryUser<RepositoryIdType> | null>;
+  abstract findOne: <QueryType extends Record<string, unknown>>(
+    query: QueryType
+  ) => Promise<IRepositoryUser<RepositoryIdType> | null>;
 
   abstract insertOne: (userData: IRepositoryUser<RepositoryIdType>) => Promise<IInsertionDTO<RepositoryIdType>>;
 }

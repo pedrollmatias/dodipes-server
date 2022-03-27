@@ -3,7 +3,7 @@ import { Either, left } from './either';
 
 // TODO: Verificar uso do any
 
-interface IController<RequestProps> {
+interface IController<RequestProps extends IRequesPropsIndexes> {
   handle: ({ request }: { request: IRequest<RequestProps> }) => Either<Error, any>;
 }
 

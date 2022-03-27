@@ -1,3 +1,4 @@
+import { IAuthUserOutputDTO } from '../../../../../application/use-cases/auth-user/auth-user.output-dto';
 import { IName } from '../../../../../domain/entities/user/user.types';
 
 export type IHeaders = {
@@ -10,3 +11,5 @@ export type IBody = {
   password?: string;
   avatar?: string;
 };
+
+export type IResponse = IAuthUserOutputDTO;

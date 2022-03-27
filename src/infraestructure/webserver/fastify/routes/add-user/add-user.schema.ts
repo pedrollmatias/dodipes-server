@@ -1,7 +1,6 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { IInsertionDTO } from '../../../../../application/shared/output-dto';
-import { IBody } from './add-user.types';
+import { IBody, IResponse } from './add-user.types';
 
 const bodySchema: JSONSchemaType<IBody> = {
   type: 'object',
@@ -33,7 +32,7 @@ const bodySchema: JSONSchemaType<IBody> = {
   required: ['email', 'name'],
 };
 
-const responseSchema: JSONSchemaType<IInsertionDTO<null>> = {
+const responseSchema: JSONSchemaType<IResponse> = {
   type: 'object',
   properties: {
     insertedId: {
