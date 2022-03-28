@@ -1,5 +1,11 @@
 import { ObjectId } from 'mongodb';
-import { IRepositoryStoreByUser, StoreRepository } from '../../../application/repositories/store-repository';
+import {
+  IRepositoryStore,
+  IRepositoryStoreByUser,
+  IRepositoryStoreUser,
+  StoreRepository,
+} from '../../../application/repositories/store-repository';
+import { IInsertionDTO } from '../../../application/shared/output-dto';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
 
@@ -74,5 +80,17 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
     const store = await MongoHelper.getCollection(storeCollectionName).findOne({ storename });
 
     return <IRepositoryStoreByUser<ObjectId>>store;
+  }
+
+  async insertOne(
+    store: IRepositoryStore<ObjectId>,
+    adminUser: IRepositoryStoreUser<ObjectId>
+  ): Promise<IInsertionDTO<ObjectId>> {
+    const insertedDoc = await MongoHelper.getCollection(storeCollectionName).insertOne({
+      ...store,
+      users: [adminUser],
+    });
+
+    return { insertedId: insertedDoc.insertedId };
   }
 }

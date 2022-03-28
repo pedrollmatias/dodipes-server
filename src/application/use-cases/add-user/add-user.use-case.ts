@@ -4,7 +4,7 @@ import { IAddUserInputDTO } from './add-user.input-dto';
 import { IInsertionDTO } from '../../shared/output-dto';
 import { Either, left, right } from '../../../core/either';
 import { DuplicatedRegisterError } from '../../shared/use-case.errors';
-import { IDomainUser, TPasswordHashMethod } from '../../../domain/entities/user/user.types';
+import { TPasswordHashMethod } from '../../../domain/entities/user/user.types';
 import { UseCase } from '../../shared/use-case';
 
 export interface IAddUserRepositories<RepositoryIdType> {
@@ -59,24 +59,15 @@ export class AddUser<RepositoryIdType> extends UseCase<IAddUserInputDTO, IInsert
     }
 
     const userInstance = userOrError.value;
-    const isValidUserOrError = await this.validate(userInstance.value);
-
-    if (isValidUserOrError.isLeft()) {
-      return left(isValidUserOrError.value);
-    }
-
-    const insertUserResult = await this.userRepository.insertOne({ ...userInstance.value, _id: userId });
-
-    return right(insertUserResult);
-  }
-
-  private async validate(user: IDomainUser): Promise<Either<DuplicatedRegisterError, boolean>> {
+    const user = userInstance.value;
     const userExists = Boolean(await this.userRepository.findOne({ email: user.email }));
 
     if (userExists) {
       return left(new DuplicatedRegisterError({ entityName: 'usuário' }));
     }
 
-    return right(true);
+    const insertUserResult = await this.userRepository.insertOne({ ...userInstance.value, _id: userId });
+
+    return right(insertUserResult);
   }
 }

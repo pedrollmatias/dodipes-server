@@ -2,7 +2,7 @@ import { Either, left, right } from '../../../core/either';
 import { InvalidFieldError } from '../../shared/domain.errors';
 import { ValueObject } from '../../shared/value-object';
 
-const validStates = [
+export const validStates = [
   'AC',
   'AL',
   'AP',

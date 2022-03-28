@@ -13,5 +13,5 @@ export abstract class UserRepository<RepositoryIdType> extends Repository<Reposi
     query: QueryType
   ) => Promise<IRepositoryUser<RepositoryIdType> | null>;
 
-  abstract insertOne: (userData: IRepositoryUser<RepositoryIdType>) => Promise<IInsertionDTO<RepositoryIdType>>;
+  abstract insertOne: (user: IRepositoryUser<RepositoryIdType>) => Promise<IInsertionDTO<RepositoryIdType>>;
 }
