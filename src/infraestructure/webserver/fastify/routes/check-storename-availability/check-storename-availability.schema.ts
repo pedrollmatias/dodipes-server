@@ -13,7 +13,7 @@ const paramsSchema: JSONSchemaType<IParams> = {
 };
 
 const schema: FastifySchema = {
-  headers: paramsSchema,
+  params: paramsSchema,
   // TODO: reponse
   // response: {
   //   204: {},

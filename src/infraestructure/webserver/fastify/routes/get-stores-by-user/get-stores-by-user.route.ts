@@ -11,7 +11,7 @@ import schema from './get-stores-by-user.schema';
 import { IParams } from './get-stores-by-user.types';
 
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post<{ Params: IParams }>(
+  server.get<{ Params: IParams }>(
     '/users/:userId/stores',
     { schema, preHandler: verifyToken },
     async (request, reply): Promise<void> => {
