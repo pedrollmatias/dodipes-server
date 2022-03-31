@@ -1,10 +1,12 @@
 // import { IDomainItem } from '../item/item.types';
 
-// export interface IDomainCategory {
-//   // _id: string;
-//   name: string;
-//   active?: boolean;
-//   items: IDomainItem[];
-//   createdAt?: Date;
-//   modifiedAt?: Date;
-// }
+import { IDomainEntity } from '../../shared/domain.types';
+
+export interface IDomainCategoryProps {
+  name: string;
+  active?: boolean;
+  createdAt: Date;
+  modifiedAt?: Date;
+}
+
+export type IDomainCategory = IDomainEntity & IDomainCategoryProps;

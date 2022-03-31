@@ -1,6 +1,6 @@
 export class DuplicatedRegisterError extends Error {
   constructor({ entityName }: { entityName: string }) {
-    super(`Já existe um registro da entidade ${entityName}`);
+    super(`Já existe um registro da entidade ${entityName.toLowerCase()}`);
 
     this.name = 'DuplicatedRegisterError';
   }

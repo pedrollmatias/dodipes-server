@@ -19,9 +19,11 @@ export interface IRepositoryStoreByUser<RepositoryIdType> extends IRepositorySto
 }
 
 export abstract class StoreRepository<RepositoryIdType> extends Repository<RepositoryIdType> {
+  abstract findById: (storeId: RepositoryIdType) => Promise<IRepositoryStore<RepositoryIdType> | null>;
+
   abstract findByUserId: (userId: RepositoryIdType) => Promise<IRepositoryStoreByUser<RepositoryIdType>[]>;
 
-  abstract findOneByStorename: (storename: string) => Promise<IRepositoryStore<RepositoryIdType> | null>;
+  abstract findByStorename: (storename: string) => Promise<IRepositoryStore<RepositoryIdType> | null>;
 
   abstract insertOne: (
     store: IRepositoryStore<RepositoryIdType>,

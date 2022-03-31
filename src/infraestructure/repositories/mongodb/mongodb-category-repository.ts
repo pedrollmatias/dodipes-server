@@ -8,6 +8,12 @@
 // import { MongoHelper } from './helpers/mongo-helper';
 // import { storeCollectionName } from './mongodb-store-repository';
 
+import { ObjectId } from 'mongodb';
+import { CategoryRepository, IRepositoryCategory } from '../../../application/repositories/category-repository';
+import { IInsertionDTO } from '../../../application/shared/output-dto';
+import { MongoHelper } from './helpers/mongo-helper';
+import { MongodbRepository } from './mongodb-repository';
+
 // export class MongodbCategoryRepository implements CategoryRepository {
 //   async findById(storeId: string, categoryId: string): Promise<IDomainCategory | null> {
 //     const storeObjectId = new ObjectId(storeId);
@@ -79,3 +85,17 @@
 //     return { removedId: categoryId };
 //   }
 // }
+
+const categoryCollectionName = 'categories';
+
+export class MongodbCategoryRepository extends MongodbRepository implements CategoryRepository<ObjectId> {
+  async findByName(name: string): Promise<IRepositoryCategory<ObjectId>> {
+    const catetegory = await MongoHelper.getCollection(categoryCollectionName).findOne({ name });
+
+    return <IRepositoryCategory<ObjectId>>catetegory;
+  }
+
+  insertOne(category: IRepositoryCategory<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
+    return MongoHelper.getCollection(categoryCollectionName).insertOne(category);
+  }
+}

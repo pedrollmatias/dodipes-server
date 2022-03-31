@@ -29,7 +29,7 @@ export class CheckStorenameAvailability<RepositoryIdType> extends UseCase<
   }): Promise<Either<Error, ICheckStorenameAvailabilityOutputDTO>> {
     const { storename } = inputDto;
 
-    const store = await this.storeRepository.findOneByStorename(storename);
+    const store = await this.storeRepository.findByStorename(storename);
 
     return store ? right({ available: false }) : right({ available: true });
   }

@@ -12,6 +12,7 @@ import {
   RequiredLetterError,
   RequiredNumberError,
 } from '../../domain/shared/domain.errors';
+import { DuplicatedRegisterError } from '../../application/shared/use-case.errors';
 
 export class AddUserPresenter<RepositoryIdType> extends Presenter {
   handle({ outputDto }: { outputDto: Either<TAddUserErrors, IInsertionDTO<RepositoryIdType>> }): IResponse {
@@ -24,6 +25,7 @@ export class AddUserPresenter<RepositoryIdType> extends Presenter {
         case RequiredLetterError:
         case RequiredNumberError:
         case InvalidFieldError:
+        case DuplicatedRegisterError:
           return this.badRequest(outputDto.value.message);
         default:
           return this.internalServerError();

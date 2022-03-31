@@ -70,6 +70,12 @@ import { MongodbRepository } from './mongodb-repository';
 const storeCollectionName = 'stores';
 
 export class MongodbStoreRepository extends MongodbRepository implements StoreRepository<ObjectId> {
+  async findById(storeId: ObjectId): Promise<IRepositoryStore<ObjectId> | null> {
+    const store = await MongoHelper.getCollection(storeCollectionName).findOne({ _id: storeId });
+
+    return <IRepositoryStore<ObjectId>>store;
+  }
+
   async findByUserId(userId: ObjectId): Promise<IRepositoryStoreByUser<ObjectId>[]> {
     const storesCursor = MongoHelper.getCollection(storeCollectionName).find({ 'users._id': userId });
     const stores = (await storesCursor.toArray()).map((store) => {
@@ -84,22 +90,20 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
     return <IRepositoryStoreByUser<ObjectId>[]>stores;
   }
 
-  async findOneByStorename(storename: string): Promise<IRepositoryStoreByUser<ObjectId> | null> {
+  async findByStorename(storename: string): Promise<IRepositoryStoreByUser<ObjectId> | null> {
     const store = await MongoHelper.getCollection(storeCollectionName).findOne({ storename });
 
     return <IRepositoryStoreByUser<ObjectId>>store;
   }
 
-  async insertOne(
+  insertOne(
     store: IRepositoryStore<ObjectId>,
     adminUser: IRepositoryStoreUser<ObjectId>
   ): Promise<IInsertionDTO<ObjectId>> {
-    const insertedDoc = await MongoHelper.getCollection(storeCollectionName).insertOne({
+    return MongoHelper.getCollection(storeCollectionName).insertOne({
       ...store,
       users: [adminUser],
     });
-
-    return { insertedId: insertedDoc.insertedId };
   }
 
   private binaryToBuffer(binary: Binary): Buffer {

@@ -1,3 +1,4 @@
+export * from './add-category';
 export * from './add-store';
 export * from './add-user';
 export * from './auth-user';
