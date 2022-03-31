@@ -1,9 +1,9 @@
 import { Either, left, right } from '../../../core/either';
 import { Address, TAddressErrors } from '../../shared/address/address';
 import { Entity } from '../../shared/entity';
+import { Image, TImageErrors } from '../../shared/image/image';
 import { ImageProcessor } from '../../shared/image/image-processor';
 import { TValidDateErrors, ValidDate } from '../../shared/valid-date';
-import { StoreMedia, TStoreMediaErrors } from './store-media';
 import { StoreName, TStoreNameErrors } from './store-name';
 import { IDomainStore } from './store.types';
 import { Storename, TStorenameErrors } from './storename';
@@ -11,23 +11,25 @@ import { Storename, TStorenameErrors } from './storename';
 export interface IStoreProps {
   address: Address;
   createdAt: ValidDate;
-  media?: StoreMedia;
+  logo?: Image;
+  coverPhoto?: Image;
   modifiedAt?: ValidDate;
   name: StoreName;
   storename: Storename;
 }
 
-export type TStoreErrors = TStoreNameErrors | TStorenameErrors | TAddressErrors | TStoreMediaErrors | TValidDateErrors;
+export type TStoreErrors = TStoreNameErrors | TStorenameErrors | TAddressErrors | TImageErrors | TValidDateErrors;
 
 export class Store extends Entity<IStoreProps> {
   get value(): IDomainStore {
     return {
       _id: this._id,
       address: this.props.address.value,
+      coverPhoto: this.props.coverPhoto?.value,
       createdAt: this.props.createdAt.props.date,
+      logo: this.props.coverPhoto?.value,
       name: this.props.name.value,
       storename: this.props.storename.value,
-      media: this.props.media?.value,
       modifiedAt: this.props.modifiedAt?.props?.date,
     };
   }
@@ -39,7 +41,7 @@ export class Store extends Entity<IStoreProps> {
     data: IDomainStore;
     imageProcessor: ImageProcessor;
   }): Promise<Either<TStoreErrors, Store>> {
-    const { _id, address, createdAt, name, storename, media, modifiedAt } = data;
+    const { _id, address, createdAt, name, storename, logo, coverPhoto, modifiedAt } = data;
 
     const addressOrError = Address.create({ address });
 
@@ -65,13 +67,7 @@ export class Store extends Entity<IStoreProps> {
       return left(storenameOrError.value);
     }
 
-    const mediaOrError = await StoreMedia.create({ media, imageProcessor });
-
-    if (mediaOrError.isLeft()) {
-      return left(mediaOrError.value);
-    }
-
-    let modifiedAtValue;
+    let coverPhotoValue, logoValue, modifiedAtValue;
 
     if (modifiedAt) {
       const modifiedAtOrError = ValidDate.create({ date: modifiedAt, label: 'data de modificação do estabelecimento' });
@@ -83,6 +79,34 @@ export class Store extends Entity<IStoreProps> {
       modifiedAtValue = modifiedAtOrError.value;
     }
 
+    if (coverPhoto) {
+      const coverPhotoOrError = await Image.create({
+        image: coverPhoto,
+        imageProcessor,
+        validationOptions: { aspectRatio: [1, 1] },
+      });
+
+      if (coverPhotoOrError.isLeft()) {
+        return left(coverPhotoOrError.value);
+      }
+
+      coverPhotoValue = coverPhotoOrError.value;
+    }
+
+    if (logo) {
+      const logoOrError = await Image.create({
+        image: logo,
+        imageProcessor,
+        validationOptions: { aspectRatio: [1, 1] },
+      });
+
+      if (logoOrError.isLeft()) {
+        return left(logoOrError.value);
+      }
+
+      logoValue = logoOrError.value;
+    }
+
     return right(
       new Store(
         {
@@ -90,7 +114,8 @@ export class Store extends Entity<IStoreProps> {
           createdAt: createdAtOrError.value,
           name: nameOrError.value,
           storename: storenameOrError.value,
-          media: mediaOrError.value,
+          logo: logoValue,
+          coverPhoto: coverPhotoValue,
           modifiedAt: modifiedAtValue,
         },
         _id

@@ -6,11 +6,12 @@ import schema from './add-store.schema';
 import { addStoreController } from '../../../../../interfaces/controllers';
 import { addStore } from '../../../../../application/use-cases';
 import { addStorePresenter } from '../../../../../interfaces/presenters';
+import { verifyToken } from '../../middlewares/verify-token';
 
 export default async (server: FastifyInstance): Promise<void> => {
   server.post<{ Params: IParams; Body: IBody }>(
     '/users/:userId/stores',
-    { schema },
+    { schema, preHandler: verifyToken },
     async (request, reply): Promise<void> => {
       const { payload, statusCode } = await defaultFlowController({
         request: toAdaptedRequest<{ params: IParams; body: IBody }>(request),

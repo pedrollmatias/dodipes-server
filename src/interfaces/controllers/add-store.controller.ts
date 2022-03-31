@@ -9,4 +9,10 @@ export class AddStoreController {
 
     return right({ ...body, ...params });
   }
+
+  private stringBase64ToBuffer(stringBase64: string): Buffer {
+    const [, relevantPart] = stringBase64.split(',');
+
+    return Buffer.from(relevantPart, 'base64');
+  }
 }

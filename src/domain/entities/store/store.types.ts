@@ -7,14 +7,10 @@ export interface IDomainStoreProps {
   name: string;
   storename: string;
   address: IAddress;
-  media?: IStoreMedia;
-  createdAt: Date;
-  modifiedAt?: Date;
-}
-
-export interface IStoreMedia {
   logo?: Buffer;
   coverPhoto?: Buffer;
+  createdAt: Date;
+  modifiedAt?: Date;
 }
 
 export type IDomainStore = IDomainEntity & IDomainStoreProps;

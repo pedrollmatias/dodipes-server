@@ -45,21 +45,14 @@ const bodySchema: JSONSchemaType<IBody> = {
       },
       required: ['city', 'neighborhood', 'number', 'state', 'street', 'zipCode'],
     },
-    media: {
+
+    coverPhoto: {
       nullable: true,
-      type: 'object',
-      properties: {
-        coverPhoto: {
-          nullable: true,
-          type: 'object',
-          required: [],
-        },
-        logo: {
-          nullable: true,
-          type: 'object',
-          required: [],
-        },
-      },
+      type: 'string',
+    },
+    logo: {
+      nullable: true,
+      type: 'string',
     },
     name: {
       type: 'string',

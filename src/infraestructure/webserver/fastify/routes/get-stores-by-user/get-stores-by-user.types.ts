@@ -4,4 +4,9 @@ export type IParams = {
   userId: string;
 };
 
-export type IResponse = IGetStoresByUserOutputDto<string>;
+interface IResponseStore extends Omit<IGetStoresByUserOutputDto<string>, 'logo' | 'coverPhoto'> {
+  logo?: string;
+  coverPhoto?: string;
+}
+
+export type IResponse = IResponseStore[];

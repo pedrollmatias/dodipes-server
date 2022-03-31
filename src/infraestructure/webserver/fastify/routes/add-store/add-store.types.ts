@@ -1,9 +1,9 @@
-import { IStoreMedia } from '../../../../../domain/entities/store/store.types';
 import { IAddress } from '../../../../../domain/shared/address/address.types';
 
 export interface IBody {
   address: IAddress;
-  media?: IStoreMedia;
+  logo?: string;
+  coverPhoto?: string;
   name: string;
   storename: string;
 }

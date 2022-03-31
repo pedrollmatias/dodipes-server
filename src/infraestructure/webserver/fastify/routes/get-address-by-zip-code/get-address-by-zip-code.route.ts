@@ -9,7 +9,7 @@ import { getAddressByZipCode } from '../../../../../application/use-cases';
 import { getAddressByZipCodePresenter } from '../../../../../interfaces/presenters';
 
 export default async (server: FastifyInstance): Promise<void> => {
-  server.post<{ Params: IParams }>('/addresses/:zipCode', { schema }, async (request, reply): Promise<void> => {
+  server.get<{ Params: IParams }>('/addresses/:zipCode', { schema }, async (request, reply): Promise<void> => {
     const { payload, statusCode } = await defaultFlowController({
       request: toAdaptedRequest<{ params: IParams }>(request),
       controller: getAddressByZipCodeContoller,

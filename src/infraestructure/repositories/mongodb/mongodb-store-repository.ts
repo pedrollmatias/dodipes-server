@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { Binary, ObjectId } from 'mongodb';
 import {
   IRepositoryStore,
   IRepositoryStoreByUser,
@@ -6,6 +6,7 @@ import {
   StoreRepository,
 } from '../../../application/repositories/store-repository';
 import { IInsertionDTO } from '../../../application/shared/output-dto';
+import { IMedia } from '../../../application/shared/use-case.types';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
 
@@ -71,7 +72,14 @@ const storeCollectionName = 'stores';
 export class MongodbStoreRepository extends MongodbRepository implements StoreRepository<ObjectId> {
   async findByUserId(userId: ObjectId): Promise<IRepositoryStoreByUser<ObjectId>[]> {
     const storesCursor = MongoHelper.getCollection(storeCollectionName).find({ 'users._id': userId });
-    const stores = await storesCursor.toArray();
+    const stores = (await storesCursor.toArray()).map((store) => {
+      const coverPhoto: IMedia = store.coverPhoto
+        ? { ...store.coverPhoto, data: this.binaryToBuffer(store.coverPhoto.data) }
+        : undefined;
+      const logo: IMedia = store.logo ? { ...store.logo, data: this.binaryToBuffer(store.logo.data) } : undefined;
+
+      return { ...store, logo, coverPhoto };
+    });
 
     return <IRepositoryStoreByUser<ObjectId>[]>stores;
   }
@@ -92,5 +100,9 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
     });
 
     return { insertedId: insertedDoc.insertedId };
+  }
+
+  private binaryToBuffer(binary: Binary): Buffer {
+    return Buffer.from(binary.buffer);
   }
 }

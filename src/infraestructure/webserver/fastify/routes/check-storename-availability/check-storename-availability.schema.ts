@@ -1,23 +1,32 @@
 import { JSONSchemaType } from 'ajv';
 import { FastifySchema } from 'fastify';
-import { IParams } from './check-storename-availability.types';
+import { IQuery, IResponse } from './check-storename-availability.types';
 
-const paramsSchema: JSONSchemaType<IParams> = {
+const querySchema: JSONSchemaType<IQuery> = {
   type: 'object',
   properties: {
     storename: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
   required: ['storename'],
 };
 
+const responseSchema: JSONSchemaType<IResponse> = {
+  type: 'object',
+  properties: {
+    available: {
+      type: 'boolean',
+    },
+  },
+  required: ['available'],
+};
+
 const schema: FastifySchema = {
-  params: paramsSchema,
-  // TODO: reponse
-  // response: {
-  //   204: {},
-  // },
+  querystring: querySchema,
+  response: {
+    '2xx': responseSchema,
+  },
 };
 
 export default schema;

@@ -2,9 +2,12 @@ import { Repository } from './repository';
 import { IDomainStoreProps } from '../../domain/entities/store/store.types';
 import { IDomainStoreUserProps } from '../../domain/entities/store-user/store-user.types';
 import { IInsertionDTO } from '../shared/output-dto';
+import { IMedia } from '../shared/use-case.types';
 
-export interface IRepositoryStore<RepositoryIdType> extends IDomainStoreProps {
+export interface IRepositoryStore<RepositoryIdType> extends Omit<IDomainStoreProps, 'logo' | 'coverPhoto'> {
   _id: RepositoryIdType;
+  logo?: IMedia;
+  coverPhoto?: IMedia;
 }
 
 export interface IRepositoryStoreUser<RepositoryIdType> extends Omit<IDomainStoreUserProps, 'storeId'> {

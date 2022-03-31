@@ -13,70 +13,65 @@ const paramsSchema: JSONSchemaType<IParams> = {
 };
 
 const responseSchema: JSONSchemaType<IResponse> = {
-  type: 'object',
-  properties: {
-    _id: {
-      type: 'string',
-    },
-    address: {
-      type: 'object',
-      properties: {
-        city: {
-          type: 'string',
-        },
-        complement: {
-          nullable: true,
-          type: 'string',
-        },
-        neighborhood: {
-          type: 'string',
-        },
-        number: {
-          type: 'string',
-        },
-        state: {
-          type: 'string',
-        },
-        street: {
-          type: 'string',
-        },
-        zipCode: {
-          type: 'string',
-        },
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
       },
-      required: ['city', 'neighborhood', 'number', 'state', 'street', 'zipCode'],
-    },
-    createdAt: {
-      type: 'string',
-    },
-    media: {
-      nullable: true,
-      type: 'object',
-      properties: {
-        coverPhoto: {
-          nullable: true,
-          type: 'object',
-          required: [],
+      address: {
+        type: 'object',
+        properties: {
+          city: {
+            type: 'string',
+          },
+          complement: {
+            nullable: true,
+            type: 'string',
+          },
+          neighborhood: {
+            type: 'string',
+          },
+          number: {
+            type: 'string',
+          },
+          state: {
+            type: 'string',
+          },
+          street: {
+            type: 'string',
+          },
+          zipCode: {
+            type: 'string',
+          },
         },
-        logo: {
-          nullable: true,
-          type: 'object',
-          required: [],
-        },
+        required: ['city', 'neighborhood', 'number', 'state', 'street', 'zipCode'],
+      },
+      createdAt: {
+        type: 'string',
+      },
+      coverPhoto: {
+        nullable: true,
+        type: 'string',
+      },
+      logo: {
+        nullable: true,
+        type: 'string',
+      },
+      modifiedAt: {
+        type: 'string',
+        nullable: true,
+      },
+      name: {
+        type: 'string',
+      },
+      storename: {
+        type: 'string',
       },
     },
-    modifiedAt: {
-      type: 'string',
-      nullable: true,
-    },
-    name: {
-      type: 'string',
-    },
-    storename: {
-      type: 'string',
-    },
+    required: ['_id', 'address', 'createdAt', 'name', 'storename'],
   },
-  required: ['_id', 'address', 'createdAt', 'name', 'storename'],
 };
 
 const schema: FastifySchema = {

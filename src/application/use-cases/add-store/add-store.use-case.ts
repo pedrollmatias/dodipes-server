@@ -8,6 +8,7 @@ import { UseCase } from '../../shared/use-case';
 import { IAddStoreInputDTO } from './add-store.input-dto';
 import { ResourceNotFoundError } from '../../shared/use-case.errors';
 import { IInsertionDTO } from '../../shared/output-dto';
+import { IMedia } from '../../shared/use-case.types';
 
 export interface IAddStoreRepositories<RepositoryIdType> {
   storeRepository: StoreRepository<RepositoryIdType>;
@@ -47,6 +48,9 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
     const storeData = inputDto;
     const storeId = this.storeRepository.getNextId();
 
+    const logoMedia = storeData.logo ? this.stringBase64ToMedia(storeData.logo) : undefined;
+    const coverPhotoMedia = storeData.coverPhoto ? this.stringBase64ToMedia(storeData.coverPhoto) : undefined;
+
     const storeOrError = await Store.create({
       data: {
         _id: this.storeRepository.idToString(storeId),
@@ -54,7 +58,8 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
         createdAt: new Date(),
         name: storeData.name,
         storename: storeData.storename,
-        media: storeData.media,
+        logo: logoMedia?.data,
+        coverPhoto: coverPhotoMedia?.data,
       },
       imageProcessor: this.imageProcessor,
     });
@@ -88,11 +93,19 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
     const storeUserInstance = storeUserOrError.value;
     const storeUser = storeUserInstance.value;
 
-    const insertedIdOrError = await this.storeRepository.insertOne(
-      { ...store, _id: storeId },
+    const insertedResult = await this.storeRepository.insertOne(
+      { ...store, _id: storeId, logo: logoMedia, coverPhoto: coverPhotoMedia },
       { _id: userId, insertedAt: storeUser.insertedAt, isAdmin: storeUser.isAdmin }
     );
 
-    return right(insertedIdOrError);
+    return right(insertedResult);
+  }
+
+  private stringBase64ToMedia(stringBase64: string): IMedia {
+    const [info, dataStr] = stringBase64.split(',');
+    const [, mimeType] = info.split(':');
+    const data = Buffer.from(dataStr, 'base64');
+
+    return { data, mimeType };
   }
 }

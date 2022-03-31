@@ -49,6 +49,6 @@ export class Presenter {
   }
 
   public successNoContent(): IResponse {
-    return { payload: null, statusCode: SuccessStatusCodes.NO_CONTENT };
+    return { payload: {}, statusCode: SuccessStatusCodes.NO_CONTENT };
   }
 }
