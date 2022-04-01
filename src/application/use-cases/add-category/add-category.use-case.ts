@@ -34,7 +34,6 @@ export class AddCategory<RepositoryIdType> extends UseCase<IAddCategoryInputDTO,
     inputDto: IAddCategoryInputDTO;
   }): Promise<Either<TCategoryErrors, IInsertionDTO<RepositoryIdType>>> {
     const { active, name, storeId } = inputDto;
-
     const store = await this.storeRepository.findById(this.storeRepository.stringToId(storeId));
 
     if (!store) {
@@ -50,7 +49,7 @@ export class AddCategory<RepositoryIdType> extends UseCase<IAddCategoryInputDTO,
     const categoryId = this.categoryRepository.getNextId();
 
     const categoryOrError = Category.create({
-      data: { _id: this.categoryRepository.idToString(categoryId), createdAt: new Date(), name, active },
+      data: { _id: this.categoryRepository.idToString(categoryId), createdAt: new Date(), name, active, storeId },
     });
 
     if (categoryOrError.isLeft()) {
@@ -60,7 +59,11 @@ export class AddCategory<RepositoryIdType> extends UseCase<IAddCategoryInputDTO,
     const categoryInstance = categoryOrError.value;
     const category = categoryInstance.value;
 
-    const insertedResult = await this.categoryRepository.insertOne({ ...category, _id: categoryId });
+    const insertedResult = await this.categoryRepository.insertOne({
+      ...category,
+      _id: categoryId,
+      storeId: this.categoryRepository.stringToId(category.storeId),
+    });
 
     return right(insertedResult);
   }

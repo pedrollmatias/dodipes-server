@@ -3,6 +3,7 @@
 import { IDomainEntity } from '../../shared/domain.types';
 
 export interface IDomainCategoryProps {
+  storeId: string;
   name: string;
   active?: boolean;
   createdAt: Date;

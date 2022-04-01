@@ -98,4 +98,11 @@ export class MongodbCategoryRepository extends MongodbRepository implements Cate
   insertOne(category: IRepositoryCategory<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
     return MongoHelper.getCollection(categoryCollectionName).insertOne(category);
   }
+
+  async findAllByStoreId(storeId: ObjectId): Promise<IRepositoryCategory<ObjectId>[]> {
+    const categoriesCursor = MongoHelper.getCollection(categoryCollectionName).find({ storeId });
+    const categories = await categoriesCursor.toArray();
+
+    return <IRepositoryCategory<ObjectId>[]>categories;
+  }
 }

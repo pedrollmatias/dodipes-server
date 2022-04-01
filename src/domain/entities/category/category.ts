@@ -1,70 +1,11 @@
-// import { Item } from '../item/item';
-// import { ValidDate } from '../../shared/valid-date';
-// import { IDomainCategory } from './category.types';
-
 import { Either, left, right } from '../../../core/either';
 import { Entity } from '../../shared/entity';
 import { TValidDateErrors, ValidDate } from '../../shared/valid-date';
 import { CategoryName, TCategoryNameErrors } from './category-name';
 import { IDomainCategory } from './category.types';
 
-// export class Category {
-//   private readonly name: string;
-
-//   private readonly active?: boolean;
-
-//   private readonly items: Item[];
-
-//   private readonly createdAt: ValidDate;
-
-//   private constructor({
-//     createdAt,
-//     items,
-//     name,
-//     active,
-//   }: {
-//     name: string;
-//     active?: boolean;
-//     items: Item[];
-//     createdAt: ValidDate;
-//   }) {
-//     this.name = name;
-//     this.active = active;
-//     this.items = items;
-//     this.createdAt = createdAt;
-//   }
-
-//   get value(): IDomainCategory {
-//     return {
-//       name: this.name,
-//       active: this.active,
-//       items: this.items.map((item: Item) => item.value),
-//       createdAt: this.createdAt.value,
-//     };
-//   }
-
-//   static create({
-//     data: { createdAt, items, name, active },
-//   }: {
-//     data: {
-//       name: string;
-//       active?: boolean;
-//       createdAt: Date;
-//       items: [];
-//     };
-//   }): Category {
-//     const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação da categoria' });
-
-//     return new Category({
-//       name,
-//       active,
-//       items,
-//       createdAt: createdAtInstance,
-//     });
-//   }
-// }
-
 interface ICategoryProps {
+  storeId: string;
   name: CategoryName;
   active?: boolean;
   createdAt: ValidDate;
@@ -81,11 +22,12 @@ export class Category extends Entity<ICategoryProps> {
       active: this.props.active,
       createdAt: this.props.createdAt.props.date,
       modifiedAt: this.props.modifiedAt?.props.date,
+      storeId: this.props.storeId,
     };
   }
 
   static create({
-    data: { _id, name, createdAt, modifiedAt, active },
+    data: { _id, name, createdAt, modifiedAt, active, storeId },
   }: {
     data: IDomainCategory;
   }): Either<TCategoryErrors, Category> {
@@ -120,6 +62,7 @@ export class Category extends Entity<ICategoryProps> {
           name: nameOrError.value,
           active,
           modifiedAt: modifiedAtValue,
+          storeId,
         },
         _id
       )

@@ -16,7 +16,6 @@ export class AddCategoryPresenter extends Presenter {
           return this.badRequest(outputDto.value.message);
         case ResourceNotFoundError:
           return this.notFound(outputDto.value.message);
-
         default:
           return this.internalServerError();
       }
