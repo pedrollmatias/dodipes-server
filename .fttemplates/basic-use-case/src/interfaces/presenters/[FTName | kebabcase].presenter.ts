@@ -1,5 +1,5 @@
-import { I<FTName | pascalCase>OutputDTO, T<FTName | pascalCase>Errors } from '../../application/use-cases/<FTName | kebabcase>/<FTName | kebabcase>.output-dto';
-import { I<FTName | pascalCase>Errors } from '../../application/use-cases/<FTName | kebabcase>/<FTName | kebabcase>.use-case';
+import { I<FTName | pascalCase>OutputDTO } from '../../application/use-cases/<FTName | kebabcase>/<FTName | kebabcase>.output-dto';
+import { T<FTName | pascalCase>Errors } from '../../application/use-cases/<FTName | kebabcase>/<FTName | kebabcase>.use-case';
 import { Either } from '../../core/either';
 import { IResponse } from '../interface.types';
 import { Presenter } from './presenter';
