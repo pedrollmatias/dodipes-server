@@ -1,4 +1,4 @@
-import { categoryRepository, storeRepository } from '../../../infraestructure/repositories/mongodb';
+import { categoryRepository, storeRepository } from '../../../infrastructure/repositories/mongodb';
 import { AddCategory } from './add-category.use-case';
 
 export const addCategory = new AddCategory({

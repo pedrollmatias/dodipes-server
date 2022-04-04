@@ -1,6 +1,6 @@
 import { AddStore } from './add-store.use-case';
-import { jimpImageProcessor } from '../../../infraestructure/external';
-import { storeRepository, userRepository } from '../../../infraestructure/repositories/mongodb';
+import { jimpImageProcessor } from '../../../infrastructure/external';
+import { storeRepository, userRepository } from '../../../infrastructure/repositories/mongodb';
 
 export const addStore = new AddStore({
   externalInterfaces: {

@@ -1,0 +1,5 @@
+{
+  "customVariables": ["HttpRoute", "HttpMethod"],
+  "omitParentDirectory": true,
+  "absolutePath": true
+}

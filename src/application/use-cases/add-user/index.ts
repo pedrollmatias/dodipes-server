@@ -1,5 +1,5 @@
-import { bcryptHasher } from '../../../infraestructure/external';
-import { userRepository } from '../../../infraestructure/repositories/mongodb';
+import { bcryptHasher } from '../../../infrastructure/external';
+import { userRepository } from '../../../infrastructure/repositories/mongodb';
 import { AddUser } from './add-user.use-case';
 
 export const addUserUseCase = new AddUser({

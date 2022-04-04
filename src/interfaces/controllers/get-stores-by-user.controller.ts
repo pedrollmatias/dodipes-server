@@ -1,7 +1,7 @@
 import { ILocals } from '../../../@types/fastify';
 import { IGetStoresByUserInputDto } from '../../application/use-cases/get-stores-by-user/get-stores-by-user.input-dto';
 import { Either, right } from '../../core/either';
-import { IParams } from '../../infraestructure/webserver/fastify/routes/get-stores-by-user/get-stores-by-user.types';
+import { IParams } from '../../infrastructure/webserver/fastify/routes/get-stores-by-user/get-stores-by-user.types';
 import { IRequest } from '../interface.types';
 
 export class GetStoresByUserController {

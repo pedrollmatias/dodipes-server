@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { createServer } from './infraestructure/webserver/fastify/server';
-import { MongoHelper } from './infraestructure/repositories/mongodb/helpers/mongo-helper';
+import { createServer } from './infrastructure/webserver/fastify/server';
+import { MongoHelper } from './infrastructure/repositories/mongodb/helpers/mongo-helper';
 
 (async () => {
   try {

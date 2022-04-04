@@ -1,6 +1,6 @@
 import { IAuthUserInputDTO } from '../../application/use-cases/auth-user/auth-user.input-dto';
 import { Either, left, right } from '../../core/either';
-import { IBody, IHeaders } from '../../infraestructure/webserver/fastify/routes/auth-user/auth-user.types';
+import { IBody, IHeaders } from '../../infrastructure/webserver/fastify/routes/auth-user/auth-user.types';
 import { IRequest } from '../interface.types';
 
 export type TAuthUserControllerErrors = InvalidTokenTypeError;
