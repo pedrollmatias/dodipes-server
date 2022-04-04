@@ -4,9 +4,9 @@ import { IBody, IParams, IQuery } from '../../infrastructure/webserver/fastify/r
 import { IRequest } from '../interface.types';
 
 export class <FTName | pascalcase>Controller {
-  handle({ request }: { request: IRequest<{ body: IBody; params: IParams; query: IQuery }> }): Either<Error, I<FTName | pascalcase>InputDTO> {
-    const { body, params, query } = request;
+  handle({ request }: { request: IRequest<{ body: IBody; params: IParams; querystring: IQuery }> }): Either<Error, I<FTName | pascalcase>InputDTO> {
+    const { body, params, querystring } = request;
 
-    return right({ ...body, ...params, ...query });
+    return right({ ...body, ...params, ...querystring });
   }
 }
