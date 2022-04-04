@@ -1,4 +1,5 @@
 {
+  "name": "Basic use case template",
   "customVariables": ["HttpRoute", "HttpMethod"],
   "omitParentDirectory": true,
   "absolutePath": true

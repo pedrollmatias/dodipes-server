@@ -3,7 +3,9 @@ import { FastifySchema } from 'fastify';
 import { IParams, IBody, IQuery, IResponse } from './<FTName | kebabcase>.types';
 
 const bodySchema: JSONSchemaType<IBody> = {};
+
 const querySchema: JSONSchemaType<IQuery> = {};
+
 const paramsSchema: JSONSchemaType<IParams> = {};
 
 const responseSchema: JSONSchemaType<IResponse> = {};
