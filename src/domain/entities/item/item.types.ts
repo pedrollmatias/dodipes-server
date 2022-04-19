@@ -1,10 +1,14 @@
-// export interface IDomainItem {
-//   _id: string;
-//   name: string;
-//   description?: string;
-//   price: number;
-//   active?: boolean;
-//   media?: Buffer;
-//   createdAt: Date;
-//   modifiedAt?: Date;
-// }
+import { IDomainEntity } from '../../shared/domain.types';
+
+export interface IDomainItemProps {
+  categoryId: string;
+  name: string;
+  description?: string;
+  price: number;
+  active?: boolean;
+  createdAt: Date;
+  modifiedAt?: Date;
+  media?: Buffer;
+}
+
+export type IDomainItem = IDomainEntity & IDomainItemProps;

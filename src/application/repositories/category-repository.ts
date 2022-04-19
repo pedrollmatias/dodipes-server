@@ -8,6 +8,8 @@ export interface IRepositoryCategory<RepositoryIdType> extends Omit<IDomainCateg
 }
 
 export abstract class CategoryRepository<RepositoryIdType> extends Repository<RepositoryIdType> {
+  abstract findById: (categoryId: RepositoryIdType) => Promise<IRepositoryCategory<RepositoryIdType> | null>;
+
   abstract findByName: (name: string) => Promise<IRepositoryCategory<RepositoryIdType>>;
 
   abstract findAllByStoreId: (storeId: RepositoryIdType) => Promise<IRepositoryCategory<RepositoryIdType>[]>;

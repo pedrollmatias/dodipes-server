@@ -67,7 +67,7 @@ export class Store extends Entity<IStoreProps> {
       return left(storenameOrError.value);
     }
 
-    let coverPhotoValue, logoValue, modifiedAtValue;
+    let coverPhotoValue: Image | undefined, logoValue: Image | undefined, modifiedAtValue: ValidDate | undefined;
 
     if (modifiedAt) {
       const modifiedAtOrError = ValidDate.create({ date: modifiedAt, label: 'data de modificação do estabelecimento' });

@@ -8,7 +8,7 @@ import { IGetUserByEmailOutputDTO } from '../../application/use-cases/get-user-b
 export class GetUserByEmailPresenter<RepositoryIdType> extends Presenter {
   handle({ outputDto }: { outputDto: Either<TGetUserByEmailErrors, IGetUserByEmailOutputDTO<RepositoryIdType>> }): IResponse {
     if (outputDto.isLeft()) {
-      switch (outputDto.constructor) {
+      switch (outputDto.value.constructor) {
         case ResourceNotFoundError:
           return this.notFound(outputDto.value.message);
         case ForbiddenError:

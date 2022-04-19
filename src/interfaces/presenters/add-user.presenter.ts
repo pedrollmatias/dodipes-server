@@ -17,7 +17,7 @@ import { DuplicatedRegisterError } from '../../application/shared/use-case.error
 export class AddUserPresenter<RepositoryIdType> extends Presenter {
   handle({ outputDto }: { outputDto: Either<TAddUserErrors, IInsertionDTO<RepositoryIdType>> }): IResponse {
     if (outputDto.isLeft()) {
-      switch (outputDto.constructor) {
+      switch (outputDto.value.constructor) {
         case InvalidAvatarError:
         case InvalidEmailError:
         case MinLengthError:

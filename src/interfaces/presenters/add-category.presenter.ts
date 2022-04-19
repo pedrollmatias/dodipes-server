@@ -9,7 +9,7 @@ import { Presenter } from './presenter';
 export class AddCategoryPresenter extends Presenter {
   handle({ outputDto }: { outputDto: Either<TAddCategoryErrors, IInsertionDTO<string>> }): IResponse {
     if (outputDto.isLeft()) {
-      switch (outputDto.constructor) {
+      switch (outputDto.value.constructor) {
         case MaxLengthError:
         case InvalidFieldError:
         case DuplicatedRegisterError:

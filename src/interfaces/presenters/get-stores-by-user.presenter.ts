@@ -13,7 +13,7 @@ export class GetStoresByUserPresenter<RepositoryIdType> extends Presenter {
     outputDto: Either<TGetStoresByUserErrors, IGetStoresByUserOutputDto<RepositoryIdType>[]>;
   }): IResponse {
     if (outputDto.isLeft()) {
-      switch (outputDto.constructor) {
+      switch (outputDto.value.constructor) {
         case ForbiddenError:
           return this.forbidden(outputDto.value.message);
         default:

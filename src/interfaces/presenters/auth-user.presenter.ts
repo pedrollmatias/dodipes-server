@@ -23,7 +23,7 @@ export class AuthUserPresenter extends Presenter {
     outputDto: Either<TAuthUserErrors | TAuthUserControllerErrors, IAuthUserOutputDTO>;
   }): IResponse {
     if (outputDto.isLeft()) {
-      switch (outputDto.constructor) {
+      switch (outputDto.value.constructor) {
         case InvalidAvatarError:
         case InvalidEmailError:
         case MinLengthError:

@@ -1,35 +1,33 @@
-// import { CustomError, ErrorCodes } from '../../shared/custom-error';
+import { Either, left, right } from '../../../core/either';
+import { ValueObject } from '../../shared/value-object';
+import { InvalidPriceTypeError } from './item.errors';
 
-// export class Price {
-//   private readonly price: number;
+export interface IPriceProps {
+  price: number;
+}
 
-//   private constructor(price: number) {
-//     this.price = price;
-//   }
+export type TPriceErrors = InvalidPriceTypeError;
 
-//   get value(): number {
-//     return this.price;
-//   }
+export class Price extends ValueObject<IPriceProps> {
+  get value(): number {
+    return this.props.price;
+  }
 
-//   static create({ price }: { price: number }): Price {
-//     this.validate(price);
+  static create({ price }: { price: number }): Either<TPriceErrors, Price> {
+    const isValidPriceOrError = this.validate(price);
 
-//     return new Price(price);
-//   }
+    if (isValidPriceOrError.isLeft()) {
+      return left(isValidPriceOrError.value);
+    }
 
-//   static validate(price: number): void {
-//     if (!price) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: 'O preço do item não pode ser vazio',
-//       };
-//     }
+    return right(new Price({ price }));
+  }
 
-//     if (price <= 0) {
-//       throw <CustomError>{
-//         statusCode: ErrorCodes.NOT_ACCEPTABLE,
-//         message: 'O preço do item precisa ser positivo',
-//       };
-//     }
-//   }
-// }
+  private static validate(price: number): Either<InvalidPriceTypeError, boolean> {
+    if (!Number.isInteger(price)) {
+      return left(new InvalidPriceTypeError());
+    }
+
+    return right(true);
+  }
+}

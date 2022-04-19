@@ -31,7 +31,7 @@ export class GetStoresByUser<RepositoryIdType> extends UseCase<
   }): Promise<Either<TGetStoresByUserErrors, IGetStoresByUserOutputDto<RepositoryIdType>[]>> {
     const { requestUserId, userId } = inputDto;
     const repositoryUserId = this.storeRepository.stringToId(userId);
-    const stores = await this.storeRepository.findByUserId(repositoryUserId);
+    const stores = await this.storeRepository.findAllByUserId(repositoryUserId);
 
     if (!stores.length) {
       return right(stores);

@@ -1,73 +1,100 @@
-// import { ImageProcessor } from '../../shared/image-processor';
-// import { ValidDate } from '../../shared/valid-date';
-// import { ItemMedia } from './item-media';
-// import { IDomainItem } from './item.types';
-// import { Price } from './price';
+import { Either, left, right } from '../../../core/either';
+import { Entity } from '../../shared/entity';
+import { Image, TImageErrors } from '../../shared/image/image';
+import { ImageProcessor } from '../../shared/image/image-processor';
+import { TValidDateErrors, ValidDate } from '../../shared/valid-date';
+import { IDomainItem } from './item.types';
+import { Price, TPriceErrors } from './price';
 
-// export class Item {
-//   private readonly _id: string;
+export interface IItemProps {
+  categoryId: string;
+  name: string;
+  description?: string;
+  price: Price;
+  active?: boolean;
+  createdAt: ValidDate;
+  modifiedAt?: ValidDate;
+  media?: Image;
+}
 
-//   private readonly name: string;
+export type TItemErrors = TPriceErrors | TImageErrors | TValidDateErrors;
 
-//   private readonly description?: string;
+export class Item extends Entity<IItemProps> {
+  get value(): IDomainItem {
+    return {
+      _id: this._id,
+      categoryId: this.props.categoryId,
+      createdAt: this.props.createdAt.value.date,
+      name: this.props.name,
+      description: this.props.description,
+      price: this.props.price.value,
+      active: this.props.active,
+      media: this.props.media?.value,
+      modifiedAt: this.props.modifiedAt?.value.date,
+    };
+  }
 
-//   private readonly price: Price;
+  static async create({
+    data,
+    imageProcessor,
+  }: {
+    data: IDomainItem;
+    imageProcessor: ImageProcessor;
+  }): Promise<Either<TItemErrors, Item>> {
+    const { _id, categoryId, createdAt, name, price, active, description, media, modifiedAt } = data;
 
-//   private readonly active?: boolean;
+    const priceOrError = Price.create({ price });
 
-//   private readonly media?: ItemMedia;
+    if (priceOrError.isLeft()) {
+      return left(priceOrError.value);
+    }
 
-//   private readonly createdAt: ValidDate;
+    const createdAtOrError = ValidDate.create({ date: createdAt, label: 'data de criação do item' });
 
-//   private constructor(item: {
-//     _id: string;
-//     name: string;
-//     description?: string;
-//     price: Price;
-//     active?: boolean;
-//     media?: ItemMedia;
-//     createdAt: ValidDate;
-//   }) {
-//     this._id = item._id;
-//     this.name = item.name;
-//     this.description = item.description;
-//     this.price = item.price;
-//     this.active = item.active;
-//     this.media = item.media;
-//     this.createdAt = item.createdAt;
-//   }
+    if (createdAtOrError.isLeft()) {
+      return left(createdAtOrError.value);
+    }
 
-//   get value(): IDomainItem {
-//     return {
-//       _id: this._id,
-//       name: this.name,
-//       description: this.description,
-//       price: this.price.value,
-//       active: this.active,
-//       media: this.media?.value,
-//       createdAt: this.createdAt.value,
-//     };
-//   }
+    let mediaValue: Image | undefined, modifiedAtValue: ValidDate | undefined;
 
-//   static async create({
-//     data: { _id, createdAt, name, price, active, description, media },
-//     imageProcessor,
-//   }: {
-//     data: IDomainItem;
-//     imageProcessor: ImageProcessor;
-//   }): Promise<Item> {
-//     const priceInstance = Price.create({ price });
-//     const mediaInstance = await ItemMedia.create({ media, imageProcessor });
-//     const createdAtInstance = ValidDate.create({ date: createdAt, dateLabel: 'data de criação do item' });
+    if (media) {
+      const mediaOrError = await Image.create({
+        image: media,
+        imageProcessor,
+        validationOptions: { aspectRatio: [15, 10] },
+      });
 
-//     return new Item({
-//       _id,
-//       name,
-//       active,
-//       description,
-//       price: priceInstance,
-//       media: mediaInstance,
-//       createdAt: createdAtInstance,
-//     });
-//   }
-// }
+      if (mediaOrError.isLeft()) {
+        return left(mediaOrError.value);
+      }
+
+      mediaValue = mediaOrError.value;
+    }
+
+    if (modifiedAt) {
+      const modifiedAtOrError = ValidDate.create({ date: modifiedAt, label: 'data de modificação do estabelecimento' });
+
+      if (modifiedAtOrError.isLeft()) {
+        return left(modifiedAtOrError.value);
+      }
+
+      modifiedAtValue = modifiedAtOrError.value;
+    }
+
+    return right(
+      new Item(
+        {
+          categoryId,
+          createdAt: createdAtOrError.value,
+          name,
+          price: priceOrError.value,
+          active,
+          description,
+          media: mediaValue,
+          modifiedAt: modifiedAtValue,
+        },
+        _id
+      )
+    );
+  }
+}
