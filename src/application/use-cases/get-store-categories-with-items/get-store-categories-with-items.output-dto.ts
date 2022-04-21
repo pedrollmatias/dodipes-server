@@ -5,4 +5,14 @@ export interface IGetStoreCategoriesWithItemsOutputDTO<RepositoryIdType> {
   active?: boolean;
   createdAt: Date | string;
   modifiedAt?: Date | string;
+  items: {
+    _id: RepositoryIdType | string;
+    name: string;
+    description?: string;
+    price: number;
+    active?: boolean;
+    createdAt: Date | string;
+    modifiedAt?: Date | string;
+    media?: string;
+  }[];
 }

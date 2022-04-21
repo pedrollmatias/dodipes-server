@@ -37,6 +37,7 @@ export class GetStoresByUser<RepositoryIdType> extends UseCase<
       return right(stores);
     }
 
+    // TODO: change to db query
     const requestUserInAllStoresUsers = stores.every((store) =>
       store.users.some((user) => this.storeRepository.idToString(user._id) === requestUserId)
     );
@@ -44,6 +45,8 @@ export class GetStoresByUser<RepositoryIdType> extends UseCase<
     if (!requestUserInAllStoresUsers) {
       return left(new ForbiddenError());
     }
+
+    // console.log(stores);
 
     return right(stores);
   }

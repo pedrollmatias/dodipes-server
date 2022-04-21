@@ -1,5 +1,5 @@
 import { Either, left, right } from '../../../core/either';
-import { stringBase64ToMedia } from '../../../core/utils';
+import { stringBase64ToBuffer } from '../../../core/utils';
 import { Item, TItemErrors } from '../../../domain/entities/item/item';
 import { ImageProcessor } from '../../../domain/shared/image/image-processor';
 import { CategoryRepository } from '../../repositories/category-repository';
@@ -67,8 +67,7 @@ export class AddItem<RepositoryIdType> extends UseCase<IAddItemInputDTO, IInsert
     }
 
     const itemId = this.itemRepository.getNextId();
-
-    const media = itemData.media ? stringBase64ToMedia(itemData.media) : undefined;
+    const mediaBuffer = itemData.media ? stringBase64ToBuffer(itemData.media) : undefined;
 
     const itemOrError = await Item.create({
       data: {
@@ -76,7 +75,7 @@ export class AddItem<RepositoryIdType> extends UseCase<IAddItemInputDTO, IInsert
         _id: this.itemRepository.idToString(itemId),
         createdAt: new Date(),
         active: itemData.active ?? true,
-        media: media?.data,
+        media: mediaBuffer,
       },
       imageProcessor: this.imageProcessor,
     });
@@ -91,7 +90,7 @@ export class AddItem<RepositoryIdType> extends UseCase<IAddItemInputDTO, IInsert
       ...itemInstace.value,
       _id: itemId,
       categoryId,
-      media,
+      media: itemData.media,
     });
 
     return right(insertedResult);

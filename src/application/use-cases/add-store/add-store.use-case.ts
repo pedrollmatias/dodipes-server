@@ -8,7 +8,7 @@ import { UseCase } from '../../shared/use-case';
 import { IAddStoreInputDTO } from './add-store.input-dto';
 import { ResourceNotFoundError } from '../../shared/use-case.errors';
 import { IInsertionDTO } from '../../shared/output-dto';
-import { stringBase64ToMedia } from '../../../core/utils';
+import { stringBase64ToBuffer } from '../../../core/utils';
 
 export interface IAddStoreRepositories<RepositoryIdType> {
   storeRepository: StoreRepository<RepositoryIdType>;
@@ -48,8 +48,8 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
     const storeData = inputDto;
     const storeId = this.storeRepository.getNextId();
 
-    const logoMedia = storeData.logo ? stringBase64ToMedia(storeData.logo) : undefined;
-    const coverPhotoMedia = storeData.coverPhoto ? stringBase64ToMedia(storeData.coverPhoto) : undefined;
+    const coverPhotoBuffer = storeData.coverPhoto ? stringBase64ToBuffer(storeData.coverPhoto) : undefined;
+    const logoBuffer = storeData.logo ? stringBase64ToBuffer(storeData.logo) : undefined;
 
     const storeOrError = await Store.create({
       data: {
@@ -58,8 +58,8 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
         createdAt: new Date(),
         name: storeData.name,
         storename: storeData.storename,
-        logo: logoMedia?.data,
-        coverPhoto: coverPhotoMedia?.data,
+        coverPhoto: coverPhotoBuffer,
+        logo: logoBuffer,
       },
       imageProcessor: this.imageProcessor,
     });
@@ -94,7 +94,7 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
     const storeUser = storeUserInstance.value;
 
     const insertedResult = await this.storeRepository.insertOne(
-      { ...store, _id: storeId, logo: logoMedia, coverPhoto: coverPhotoMedia },
+      { ...store, _id: storeId, logo: storeData.logo, coverPhoto: storeData.coverPhoto },
       { _id: userId, insertedAt: storeUser.insertedAt, isAdmin: storeUser.isAdmin }
     );
 

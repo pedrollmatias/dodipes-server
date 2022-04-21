@@ -1,6 +1,11 @@
 import { ObjectId } from 'mongodb';
-import { CategoryRepository, IRepositoryCategory } from '../../../application/repositories/category-repository';
+import {
+  CategoryRepository,
+  IRepositoryCategory,
+  IRepositoryCategoryWithItems,
+} from '../../../application/repositories/category-repository';
 import { IInsertionDTO } from '../../../application/shared/output-dto';
+import { mediaToStringBase64 } from '../../../core/utils';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
 
@@ -23,10 +28,19 @@ export class MongodbCategoryRepository extends MongodbRepository implements Cate
     return MongoHelper.getCollection(categoryCollectionName).insertOne(category);
   }
 
-  async findAllByStoreId(storeId: ObjectId): Promise<IRepositoryCategory<ObjectId>[]> {
+  async findAllWithItemsByStoreId(storeId: ObjectId): Promise<IRepositoryCategoryWithItems<ObjectId>[]> {
     const categoriesCursor = MongoHelper.getCollection(categoryCollectionName).find({ storeId });
-    const categories = await categoriesCursor.toArray();
+    const categories = await categoriesCursor
+      .map((category) => ({
+        ...category,
+        items: (category.items || []).map((item: any) => {
+          const media = item.media ? mediaToStringBase64(item.media) : undefined;
 
-    return <IRepositoryCategory<ObjectId>[]>categories;
+          return { ...item, media };
+        }),
+      }))
+      .toArray();
+
+    return <IRepositoryCategoryWithItems<ObjectId>[]>categories;
   }
 }

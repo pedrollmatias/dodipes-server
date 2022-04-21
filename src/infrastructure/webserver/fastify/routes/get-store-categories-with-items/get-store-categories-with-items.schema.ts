@@ -37,6 +37,43 @@ const responseSchema: JSONSchemaType<IResponse> = {
       storeId: {
         type: 'string',
       },
+      items: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+            },
+            active: {
+              nullable: true,
+              type: 'boolean',
+            },
+            createdAt: {
+              type: 'string',
+            },
+            description: {
+              nullable: true,
+              type: 'string',
+            },
+            media: {
+              nullable: true,
+              type: 'string',
+            },
+            modifiedAt: {
+              nullable: true,
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            price: {
+              type: 'integer',
+            },
+          },
+          required: ['createdAt', 'name', 'price'],
+        },
+      },
     },
     required: ['_id', 'createdAt', 'name', 'storeId'],
   },

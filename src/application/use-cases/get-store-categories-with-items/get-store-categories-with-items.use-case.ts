@@ -28,7 +28,7 @@ export class GetStoreCategoriesWithItems<RepositoryIdType> extends UseCase<
   }): Promise<Either<Error, IGetStoreCategoriesWithItemsOutputDTO<RepositoryIdType>[]>> {
     const { storeId } = inputDto;
 
-    const categories = await this.categoryRepository.findAllByStoreId(this.categoryRepository.stringToId(storeId));
+    const categories = await this.categoryRepository.findAllWithItemsByStoreId(this.categoryRepository.stringToId(storeId));
 
     return right(categories);
   }

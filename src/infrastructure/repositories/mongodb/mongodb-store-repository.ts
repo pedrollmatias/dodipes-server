@@ -1,4 +1,4 @@
-import { Binary, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import {
   IRepositoryStore,
   IRepositoryStoreByUser,
@@ -6,7 +6,7 @@ import {
   StoreRepository,
 } from '../../../application/repositories/store-repository';
 import { IInsertionDTO } from '../../../application/shared/output-dto';
-import { IMedia } from '../../../application/shared/use-case.types';
+import { mediaToStringBase64, stringBase64ToMedia } from '../../../core/utils';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
 
@@ -27,14 +27,14 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
 
   async findAllByUserId(userId: ObjectId): Promise<IRepositoryStoreByUser<ObjectId>[]> {
     const storesCursor = MongoHelper.getCollection(storeCollectionName).find({ 'users._id': userId });
-    const stores = (await storesCursor.toArray()).map((store) => {
-      const coverPhoto: IMedia = store.coverPhoto
-        ? { ...store.coverPhoto, data: this.binaryToBuffer(store.coverPhoto.data) }
-        : undefined;
-      const logo: IMedia = store.logo ? { ...store.logo, data: this.binaryToBuffer(store.logo.data) } : undefined;
+    const stores = await storesCursor
+      .map((store) => {
+        const coverPhoto = store.coverPhoto ? mediaToStringBase64(store.coverPhoto) : undefined;
+        const logo = store.logo ? mediaToStringBase64(store.logo) : undefined;
 
-      return { ...store, logo, coverPhoto };
-    });
+        return { ...store, logo, coverPhoto };
+      })
+      .toArray();
 
     return <IRepositoryStoreByUser<ObjectId>[]>stores;
   }
@@ -49,13 +49,14 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
     store: IRepositoryStore<ObjectId>,
     adminUser: IRepositoryStoreUser<ObjectId>
   ): Promise<IInsertionDTO<ObjectId>> {
+    const coverPhotoMedia = store.coverPhoto && stringBase64ToMedia(store.coverPhoto);
+    const logoMedia = store.logo && stringBase64ToMedia(store.logo);
+
     return MongoHelper.getCollection(storeCollectionName).insertOne({
       ...store,
+      coverPhoto: coverPhotoMedia,
+      logo: logoMedia,
       users: [adminUser],
     });
-  }
-
-  private binaryToBuffer(binary: Binary): Buffer {
-    return Buffer.from(binary.buffer);
   }
 }
