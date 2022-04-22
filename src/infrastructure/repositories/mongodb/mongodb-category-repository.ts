@@ -1,10 +1,11 @@
 import { ObjectId } from 'mongodb';
 import {
   CategoryRepository,
+  ICategoryUpdateData,
   IRepositoryCategory,
   IRepositoryCategoryWithItems,
 } from '../../../application/repositories/category-repository';
-import { IInsertionDTO } from '../../../application/shared/output-dto';
+import { IInsertionDTO, IRemovalDTO, IUpdateDTO } from '../../../application/shared/output-dto';
 import { mediaToStringBase64 } from '../../../core/utils';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
@@ -24,8 +25,10 @@ export class MongodbCategoryRepository extends MongodbRepository implements Cate
     return <IRepositoryCategory<ObjectId>>catetegory;
   }
 
-  insertOne(category: IRepositoryCategory<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
-    return MongoHelper.getCollection(categoryCollectionName).insertOne(category);
+  async insertOne(category: IRepositoryCategory<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
+    const insertionResult = await MongoHelper.getCollection(categoryCollectionName).insertOne(category);
+
+    return { insertedId: insertionResult.insertedId.toString() };
   }
 
   async findAllWithItemsByStoreId(storeId: ObjectId): Promise<IRepositoryCategoryWithItems<ObjectId>[]> {
@@ -42,5 +45,20 @@ export class MongodbCategoryRepository extends MongodbRepository implements Cate
       .toArray();
 
     return <IRepositoryCategoryWithItems<ObjectId>[]>categories;
+  }
+
+  async updateById(categoryId: ObjectId, update: ICategoryUpdateData): Promise<IUpdateDTO<ObjectId>> {
+    const { upsertedId } = await MongoHelper.getCollection(categoryCollectionName).updateOne(
+      { _id: categoryId },
+      update
+    );
+
+    return { updatedId: upsertedId.toString() };
+  }
+
+  async removeById(categoryId: ObjectId): Promise<IRemovalDTO<ObjectId>> {
+    await MongoHelper.getCollection(categoryCollectionName).deleteOne({ _id: categoryId });
+
+    return { removedId: categoryId.toString() };
   }
 }
