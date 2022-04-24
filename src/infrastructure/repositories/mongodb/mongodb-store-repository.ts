@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import {
+  IAcceptStoreInvitationUpdate,
   IRepositoryStore,
   IRepositoryStoreByUser,
   IRepositoryStoreUser,
@@ -7,6 +8,7 @@ import {
 } from '../../../application/repositories/store-repository';
 import { IInsertionDTO } from '../../../application/shared/output-dto';
 import { mediaToStringBase64, stringBase64ToMedia } from '../../../core/utils';
+import { storeUserInvitationStatusEnum } from '../../../domain/entities/store-user/invitation-status';
 import { MongoHelper } from './helpers/mongo-helper';
 import { MongodbRepository } from './mongodb-repository';
 
@@ -58,5 +60,39 @@ export class MongodbStoreRepository extends MongodbRepository implements StoreRe
       logo: logoMedia,
       users: [adminUser],
     });
+  }
+
+  async insertGuestUser(storeId: ObjectId, user: IRepositoryStoreUser<ObjectId>): Promise<IInsertionDTO<ObjectId>> {
+    const { _id } = user;
+
+    await MongoHelper.getCollection(storeCollectionName).updateOne({ _id: storeId }, { $push: { users: user } });
+
+    return { insertedId: _id };
+  }
+
+  async isAdminUser(storeId: ObjectId, userId: ObjectId): Promise<boolean> {
+    const store = await MongoHelper.getCollection(storeCollectionName).findOne({
+      _id: storeId,
+      'users._id': userId,
+      isAdmin: true,
+    });
+
+    return Boolean(store);
+  }
+
+  async userHasPendingInvitation(storeId: ObjectId, userId: ObjectId): Promise<boolean> {
+    const store = await MongoHelper.getCollection(storeCollectionName).findOne({
+      _id: storeId,
+      'users._id': { _id: userId, inviteStatus: storeUserInvitationStatusEnum.PENDING },
+    });
+
+    return Boolean(store);
+  }
+
+  async updateUserInvitation(storeId: ObjectId, userId: ObjectId, update: IAcceptStoreInvitationUpdate): Promise<void> {
+    await MongoHelper.getCollection(storeCollectionName).updateOne(
+      { _id: storeId, 'users._id': userId },
+      { 'users.$.inviteStatus': update.status, 'users.$.inviteFeedbackAt': update.invitationFeedbackAt }
+    );
   }
 }

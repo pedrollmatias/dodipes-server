@@ -81,6 +81,7 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
         insertedAt: new Date(),
         storeId: this.storeRepository.idToString(storeId),
         isAdmin: true,
+        isFounder: true,
       },
     });
 
@@ -95,7 +96,7 @@ export class AddStore<RepositoryIdType> extends UseCase<IAddStoreInputDTO, IInse
 
     const insertedResult = await this.storeRepository.insertOne(
       { ...store, _id: storeId, logo: storeData.logo, coverPhoto: storeData.coverPhoto },
-      { _id: userId, insertedAt: storeUser.insertedAt, isAdmin: storeUser.isAdmin }
+      { _id: userId, insertedAt: storeUser.insertedAt, isAdmin: true }
     );
 
     return right(insertedResult);

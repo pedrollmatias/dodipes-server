@@ -31,7 +31,15 @@ export class MaxLengthError extends Error {
 }
 
 export class ExactLengthError extends Error {
-  constructor({ fieldName, exactLength, actualLength }: { fieldName: string; exactLength: number; actualLength: number }) {
+  constructor({
+    fieldName,
+    exactLength,
+    actualLength,
+  }: {
+    fieldName: string;
+    exactLength: number;
+    actualLength: number;
+  }) {
     super(
       `O campo "${fieldName}" deve ter no ${exactLength.toString()} caracteres. Ocorrência: ${actualLength.toString()}`
     );
@@ -57,5 +65,14 @@ export class RequiredNumberError extends Error {
   constructor({ fieldName }: { fieldName: string }) {
     super(`O campo ${fieldName} precisa conter pelo menos um número`);
     this.name = 'RequiredNumberError';
+  }
+}
+
+export class InvalidEnumError extends Error {
+  constructor({ value, enumValues }: { value: string; enumValues: string[] }) {
+    const enumArrayStr = enumValues.join(', ');
+
+    super(`O valor "${value}" não é permitido pelo campo. Permitidos: "[${enumArrayStr}]"`);
+    this.name = 'InvalidEnumError';
   }
 }

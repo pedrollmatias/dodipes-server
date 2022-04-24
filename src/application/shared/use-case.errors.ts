@@ -21,3 +21,19 @@ export class ResourceNotFoundError extends Error {
     this.name = 'ResourceNotFoundError';
   }
 }
+
+export class InvalidStoreAdminError extends Error {
+  constructor() {
+    super('O usuário não é administrador do estabelecimento');
+
+    this.name = 'InvalidStoreAdminError';
+  }
+}
+
+export class InvalidStoreInvitationError extends Error {
+  constructor() {
+    super('Não existe um convite pendente para o usuário');
+
+    this.name = 'InvalidStoreInvitationError';
+  }
+}
